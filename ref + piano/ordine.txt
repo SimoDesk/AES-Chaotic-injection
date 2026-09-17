@@ -1,0 +1,12 @@
+- lettura extra sul tema
+	- Lorenz system [A_Chaotic_Encryption-Based_Wireless_Secure_Transmission_System_for_Satellite_Communication]
+	- (1) Discrete chaotic and (2) Continuous chaotic [2410.21177v1]
+	- The GCM (Galois Counter Mode) [nistspecialpublication800-38d]
+- implementazione AES standard in C++
+- test performance AES standard
+- ricerca mappe caotiche e soluzioni di implementazioni oltre la s-table
+- implementazione varie mappe caotica per la s-table
+- test performance per ogni implementazione
+- sviluppo in python del sistema machine learning
+- implementazione e verifica del machine unlearning
+- studio caratteristiche anti-quantum
