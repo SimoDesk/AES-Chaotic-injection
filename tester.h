@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
@@ -9,7 +10,7 @@
 
 #define AAD_LENGTH 128 // Length of the Additional Authenticated Data (AAD) in bytes
 
-#define TEST_NUMBER 10 // Set to 1 for a single test, or any other number for multiple tests
+#define TEST_NUMBER 100 // Set to 1 for a single test, or any other number for multiple tests
 
 // Structure to hold the results of AES-GCM encryption and decryption
 struct stats {
@@ -31,7 +32,10 @@ void getRandomValue(uint8_t* key, size_t key_size);
 uint64_t read_energy();
 
 // Function to calculate and print the elapsed time, energy consumed, and power consumed during encryption and authentication. The function takes the start and end times as struct timespec, as well as the energy consumption values before and after the operation. It calculates the elapsed time in seconds, the energy consumed in microjoules, and the power consumed in watts, and prints these values to the console.
-void calcStats(struct stats* st, struct timespec start, struct timespec end, uint64_t energy_start, uint64_t energy_end, char* operazione);
+void calcStats(struct stats* st, struct timespec start, struct timespec end, uint64_t energy_start, uint64_t energy_end);
+
+// Function to save the calculated statistics to a file.
+void saveStatsToFile(struct stats* stEnc, struct stats* stDec, const char* filename, const char* alg_name);
 
 // Function to benchmark the AES-GCM encryption and decryption functions. The function takes the algorithm name, pointers to the encryption and decryption functions, 
 //the plaintext, key, IV, and AAD as parameters. It performs multiple iterations of encryption and decryption, measuring the time and energy consumed for each operation.

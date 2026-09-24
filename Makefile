@@ -29,14 +29,18 @@ aes.o: aes_default/aes.c
 	mkdir -p $(AUX_DIR)
 	$(CC) $(CFLAGS) $(PROFILING_FLAGS) -c aes_default/aes.c -o aes.o
 
-# Run the executable with sudo privileges if the 'run' target is invoked
+# Run the compiled executable with sudo privileges, change ownership of the results file, and execute the memory calculator script.
+# The ownership change ensures that the results file is accessible to the current user after execution.
 run: all
 	sudo ./$(TARGET)
+	sudo chown $(USER):$(USER) results.txt
+	python3 memoryCalculator.py
 
 # Install the necessary dependencies for the project, including NetworkX, Matplotlib, and pip for Python 3.
 setup:
 	sudo apt update
 	sudo apt install -y python3-networkx python3-matplotlib python3-pip
+	sudo apt install -y graphviz python3-pygraphviz
 
 # Clean up the build artifacts and auxiliary files
 clean:

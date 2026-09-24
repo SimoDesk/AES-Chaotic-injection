@@ -1,5 +1,4 @@
 #include "tester.h"
-#include <stdio.h>
 
 // Fill the buffer with random values
 void getRandomValue(uint8_t* buf, size_t buf_size) {
@@ -23,28 +22,49 @@ uint64_t read_energy() {
     return energy;
 }
 
-void calcStats(struct stats* st, struct timespec start, struct timespec end, uint64_t energy_start, uint64_t energy_end, char* operazione) {
+void calcStats(struct stats* st, struct timespec start, struct timespec end, uint64_t energy_start, uint64_t energy_end) {
 
     // Calculate the elapsed time in seconds
     double elapsed_time = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
-    printf("Tempo impiegato per cifratura e autenticazione %s: %.6f secondi\n", operazione, elapsed_time);
 
     // Calculate the energy consumed in microjoules
     uint64_t energy_consumed = energy_end - energy_start;
-    printf("Energia consumata per cifratura e autenticazione %s: %lu microjoules\n", operazione, energy_consumed);
 
     // Calculate the power consumed in watts
     double power_consumed = (double)energy_consumed / elapsed_time / 1e6; // Convert microjoules to joules
-    printf("Potenza consumata per cifratura e autenticazione %s: %.6f W\n", operazione, power_consumed);
 
     st->elapsed_time = elapsed_time;
     st->energy_consumed = energy_consumed;
     st->power_consumed = power_consumed;
 }
 
+void saveStatsToFile(struct stats* stEnc, struct stats* stDec, const char* filename, const char* alg_name) {
+    FILE* file = fopen(filename, "w");
+    if (file == NULL) {
+        perror("Errore nell'apertura del file");
+        return;
+    }
+
+    fprintf(file, "=== TEST %s, %i iterazioni ===\n", alg_name, TEST_NUMBER);
+    fprintf(file, "Tempo impiegato per cifratura e autenticazione: %.6f secondi\n", stEnc->elapsed_time);
+    fprintf(file, "Energia consumata per cifratura e autenticazione: %lu microjoules\n", stEnc->energy_consumed);
+    fprintf(file, "Potenza consumata per cifratura e autenticazione: %.6f W\n", stEnc->power_consumed);
+    fprintf(file, "*memoryEnc*\n");
+
+    fprintf(file, "---------------------------\n");
+
+    fprintf(file, "Tempo impiegato per decifratura e autenticazione: %.6f secondi\n", stDec->elapsed_time);
+    fprintf(file, "Energia consumata per decifratura e autenticazione: %lu microjoules\n", stDec->energy_consumed);
+    fprintf(file, "Potenza consumata per decifratura e autenticazione: %.6f W\n", stDec->power_consumed);
+    fprintf(file, "*memoryDec*\n");
+
+    fprintf(file, "======================================================\n\n");
+
+    fclose(file);
+}
+
 void banchmark(struct stats* chypherStats, struct stats* decypherStats, const char* alg_name, AES_GCM_encrypt_func encrypt_func, AES_GCM_decrypt_func decrypt_func, uint8_t* text, uint8_t* key, uint8_t* iv, uint8_t* aad) {
 
-    printf("=== TEST %s, %i iterazioni ===\n", alg_name, TEST_NUMBER);
     // Inizialization of AES context for GCM mode
     struct AES_ctx ctx_gcm;
     AES_init_ctx_iv(&ctx_gcm, key, iv);
@@ -93,10 +113,8 @@ void banchmark(struct stats* chypherStats, struct stats* decypherStats, const ch
 
     /*****************************************************************************/
 
-    calcStats(chypherStats, start, end, energy_start, energy_end, "AES-GCM standard");
+    calcStats(chypherStats, start, end, energy_start, energy_end);
 
-
-    printf("---------------\n");
 
 
     /*****************************************************************************/
@@ -150,5 +168,8 @@ void banchmark(struct stats* chypherStats, struct stats* decypherStats, const ch
     /*****************************************************************************/
     /* Encrypt mesurements calculations                                          */
 
-    calcStats(decypherStats, start, end, energy_start, energy_end, "AES-GCM standard");
+    calcStats(decypherStats, start, end, energy_start, energy_end);
+
+
+    saveStatsToFile(chypherStats, decypherStats, "results.txt", alg_name);
 }

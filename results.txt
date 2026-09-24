@@ -1,0 +1,11 @@
+=== TEST AES-GCM standard, 100 iterazioni ===
+Tempo impiegato per cifratura e autenticazione: 49.866195 secondi
+Energia consumata per cifratura e autenticazione: 953102602 microjoules
+Potenza consumata per cifratura e autenticazione: 19.113201 W
+Memoria consumata per cifratura: 440 byte
+---------------------------
+Tempo impiegato per decifratura e autenticazione: 49.004678 secondi
+Energia consumata per decifratura e autenticazione: 919140774 microjoules
+Potenza consumata per decifratura e autenticazione: 18.756184 W
+Memoria consumata per decifratura: 408 byte
+===========================
