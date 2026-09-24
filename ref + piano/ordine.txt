@@ -2,8 +2,13 @@
 	- Lorenz system [A_Chaotic_Encryption-Based_Wireless_Secure_Transmission_System_for_Satellite_Communication]
 	- (1) Discrete chaotic and (2) Continuous chaotic [2410.21177v1]
 	- The GCM (Galois Counter Mode) [nistspecialpublication800-38d]
-- implementazione AES standard in C++
+- implementazione AES standard in C
+	- tiny AES (https://github.com/kokke/tiny-AES-c.git)
+	- tiny AES come base usata per altri paper [3360774.3368202], [ETASR_12204]
 - test performance AES standard
+	- RAPL per energia [3177754]
+	- time.h & CLOCK_MONOTONIC per tempo [A Guide to Experimental Algorithmics -McGeoch] (mancante)
+	- sys/resource.h per RAM (standard POSIX, non ho trovato paper), networkX per l'estrazione dei dati di memoria dai file [Exploring_Network_Structure_Dynamics_and_Function_]
 - ricerca mappe caotiche e soluzioni di implementazioni oltre la s-table
 - implementazione varie mappe caotica per la s-table
 - test performance per ogni implementazione
