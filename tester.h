@@ -5,6 +5,7 @@
 #include <time.h>
 
 #include "aes_default/aes.h"
+#include "aes_chaos/aes_chaos.h"
 
 #define TEXT_LENGTH (1024 * 1024 * 5) // 5 MB
 
@@ -19,12 +20,6 @@ struct stats {
     double power_consumed;
 };
 
-// Function pointer types for AES-GCM encryption and decryption functions
-typedef void (*AES_GCM_encrypt_func)(struct AES_ctx* ctx, struct AES_GCM_result* res, size_t length, size_t iv_len, uint8_t* aad, size_t aad_length);
-
-// Function pointer type for AES-GCM decryption function. The function returns an integer indicating the success or failure of the decryption and authentication process.
-typedef int (*AES_GCM_decrypt_func)(struct AES_ctx* ctx, struct AES_GCM_result* res, const uint8_t* tag, size_t length, size_t iv_len, uint8_t* aad, size_t aad_length);
-
 // Function to create a random key based on a seed value. The key is filled with random bytes generated using the standard rand() function, which is seeded with the provided seed value. The size of the key is specified by the key_size parameter.
 void getRandomValue(uint8_t* key, size_t key_size);
 
@@ -37,6 +32,8 @@ void calcStats(struct stats* st, struct timespec start, struct timespec end, uin
 // Function to save the calculated statistics to a file.
 void saveStatsToFile(struct stats* stEnc, struct stats* stDec, const char* filename, const char* alg_name);
 
-// Function to benchmark the AES-GCM encryption and decryption functions. The function takes the algorithm name, pointers to the encryption and decryption functions, 
-//the plaintext, key, IV, and AAD as parameters. It performs multiple iterations of encryption and decryption, measuring the time and energy consumed for each operation.
-void banchmark(struct stats* chypherStats, struct stats* decypherStats, const char* alg_name, AES_GCM_encrypt_func encrypt_func, AES_GCM_decrypt_func decrypt_func, uint8_t* text, uint8_t* key, uint8_t* iv, uint8_t* aad);
+// Function to benchmark the AES-GCM encryption and decryption functions. The function takes the algorithm name,
+// the plaintext, key, IV, and AAD as parameters. It performs multiple iterations of encryption and decryption, measuring the time and energy consumed for each operation.
+void benchmark(struct stats* chypherStats, struct stats* decypherStats, const char* alg_name, uint8_t* text, uint8_t* key, uint8_t* iv, uint8_t* aad);
+
+void benchmark_chaos(struct stats* chypherStats, struct stats* decypherStats, const char* map_name, uint8_t* text, uint8_t* key, uint8_t* iv, uint8_t* aad, ChaosMap chaos_map);

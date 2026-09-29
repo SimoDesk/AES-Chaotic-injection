@@ -5,6 +5,7 @@
 
 
 #include "aes_default/aes.h"
+#include "aes_chaos/aes_chaos.h"
 #include "tester.h"
 
 int main(void)
@@ -15,11 +16,11 @@ int main(void)
     unsigned int seed = 11122024;
     srand(seed); // Set the initial seed for rand() function
 
-    uint8_t* key = malloc(32 * sizeof(uint8_t));
-    getRandomValue(key, 32);
+    uint8_t* key = malloc(AES_KEYLEN * sizeof(uint8_t));
+    getRandomValue(key, AES_KEYLEN);
 
-    uint8_t* iv = malloc(16 * sizeof(uint8_t));
-    getRandomValue(iv, 16);
+    uint8_t* iv = malloc(AES_IVLEN * sizeof(uint8_t));
+    getRandomValue(iv, AES_IVLEN);
 
     uint8_t* text = malloc(TEXT_LENGTH * sizeof(uint8_t));
     getRandomValue(text, TEXT_LENGTH);
@@ -29,7 +30,10 @@ int main(void)
     
     struct stats stCypher, stDecypher;
     
-    banchmark(&stCypher, &stDecypher, "AES-GCM standard", AES_GCM_authenticated_encrypt_buffer, AES_GCM_authenticated_decrypt_buffer, text, key, iv, aad);
+    benchmark(&stCypher, &stDecypher, "AES-GCM standard", text, key, iv, aad);
+
+    benchmark_chaos(&stCypher, &stDecypher, "AES-GCM Logistic Map", text, key, iv, aad, LOGISTIC_MAP);
+
 
 /*
     // Attack Simulation: Alteration of a byte in the ciphertext

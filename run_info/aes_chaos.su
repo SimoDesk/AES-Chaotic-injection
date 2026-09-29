@@ -1,0 +1,8 @@
+aes_chaos/aes_chaos.c:323:13:Cipher	96	static
+aes_chaos/aes_chaos.c:200:6:AES_CHAOS_init_ctx	112	static
+aes_chaos/aes_chaos.c:223:6:AES_CHAOS_init_ctx_iv	32	static
+aes_chaos/aes_chaos.c:229:6:AES_CHAOS_ctx_set_iv	8	static
+aes_chaos/aes_chaos.c:357:6:AES_CHAOS_galoisMoltiplication	216	static
+aes_chaos/aes_chaos.c:402:6:AES_CHAOS_GCM_xcrypt_buffer	80	static
+aes_chaos/aes_chaos.c:432:6:AES_CHAOS_GCM_authenticated_encrypt_buffer	240	static
+aes_chaos/aes_chaos.c:538:5:AES_CHAOS_GCM_authenticated_decrypt_buffer	208	static
