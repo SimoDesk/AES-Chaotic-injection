@@ -29,33 +29,38 @@ int main(void)
     getRandomValue(aad, AAD_LENGTH);
     
     struct stats stCypher, stDecypher;
-    
-    benchmark(&stCypher, &stDecypher, "AES-GCM standard", text, key, iv, aad);
 
-    benchmark_chaos(&stCypher, &stDecypher, "AES-GCM Logistic Map", text, key, iv, aad, LOGISTIC_MAP);
-
-
-/*
-    // Attack Simulation: Alteration of a byte in the ciphertext
-    printf("Simulazione attacco: alterazione di un byte del testo cifrato...\n");
-    
-    memcpy(buffer.buf, text, TEXT_LENGTH);
-    
-    AES_init_ctx_iv(&ctx_gcm, key, iv);
-    AES_GCM_authenticated_encrypt_buffer(&ctx_gcm, &buffer, TEXT_LENGTH, 12, aad, AAD_LENGTH);
-    
-    // Randomly alter a byte in the ciphertext to simulate tampering
-    buffer.buf[5] ^= 0xFF; 
-
-    AES_init_ctx_iv(&ctx_gcm, key, iv);
-    is_valid = AES_GCM_authenticated_decrypt_buffer(&ctx_gcm, &buffer, buffer.tag, TEXT_LENGTH, 12, aad, AAD_LENGTH);
-
-    if (is_valid) {
-        printf("[ERRORE CRITICO] Il tag manomesso è stato accettato!\n");
-    } else {
-        printf("[SUCCESS] Sicurezza attiva: pacchetto manomesso scartato correttamente.\n");
+    FILE *file = fopen("results.csv", "a");
+    if (file != NULL) {
+        if (ftell(file) == 0) {
+            fprintf(file, "Mappa,Fase,Iterazioni,Tempo_s,Energia_uJ,Potenza_W,Memoria_B\n");
+        }
+        fclose(file);
     }
-*/
+    
+    #ifdef NO_CHAOS
+        benchmark(&stCypher, &stDecypher, "AES-GCM standard", text, key, iv, aad);
+    #endif
+
+    #ifdef USE_LOGISTIC_MAP
+        benchmark_chaos(&stCypher, &stDecypher, "AES-GCM Logistic Map", text, key, iv, aad, LOGISTIC_MAP);
+    #endif
+
+    #ifdef USE_TENT_MAP
+        benchmark_chaos(&stCypher, &stDecypher, "AES-GCM Tent Map", text, key, iv, aad, TENT_MAP);
+    #endif
+
+    #ifdef USE_HENON_MAP
+        benchmark_chaos(&stCypher, &stDecypher, "AES-GCM Henon Map", text, key, iv, aad, HENON_MAP);
+    #endif
+
+    #ifdef USE_ARNOLD_CAT_MAP
+        benchmark_chaos(&stCypher, &stDecypher, "AES-GCM Arnold Cat Map", text, key, iv, aad, ARNOLD_CAT_MAP);
+    #endif
+
+    #ifdef USE_SINE_MAP
+        benchmark_chaos(&stCypher, &stDecypher, "AES-GCM Sine Map", text, key, iv, aad, SINE_MAP);
+    #endif
 
     free(key);
     free(iv);

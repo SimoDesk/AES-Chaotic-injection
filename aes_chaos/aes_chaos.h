@@ -7,7 +7,6 @@
 #define AES256 1
 
 #define AES_CHAOS_BLOCKLEN 16 // Block length in bytes - AES is 128b block only
-#define AES_CHAOS_IVLEN 12 // IV length in bytes 
 #define AES_CHAOS_GCM_TAGLEN 16 // Tag length in bytes - GCM is 128b tag only
 
 #if defined(AES256) && (AES256 == 1)
@@ -21,22 +20,63 @@
     #define AES_CHAOS_keyExpSize 176
 #endif
 
+// Define default parameters for the chaotic implementation.
 #define DEFAULT_APLHA 0.050
 #define DEFAULT_BETA 0.001
 #define DEFAULT_GAMMA 255
 #define DEFAULT_DELTA 1
 
+// Define the chaotic map types.
 typedef enum {
-  LOGISTIC_MAP
+  LOGISTIC_MAP,
+  TENT_MAP,
+  HENON_MAP,
+  ARNOLD_CAT_MAP,
+  SINE_MAP
 } ChaosMap;
 
-#define DEFAULT_LOGISTIC_P 3.75
-#define DEFAULT_LOGISTIC_X 0.5
-
+// Define the structures for the logistic map and its default parameters.
 struct LogisticMap {
   double x;
   double p;
 };
+#define DEFAULT_LOGISTIC_P 3.75
+#define DEFAULT_LOGISTIC_X 0.5
+
+// Define the structures for the tent map and its default parameters.
+struct TentMap {
+  double x;
+  double p;
+};
+#define DEFAULT_TENT_P 1.9998;
+#define DEFAULT_TENT_X 0.123;
+
+// Define the structures for the Henon map and its default parameters.
+struct HenonMap {
+  double x;
+  double y;
+  double a;
+  double b;
+};
+#define DEFAULT_HENON_A 1.4
+#define DEFAULT_HENON_B 0.3
+#define DEFAULT_HENON_X 0.1
+#define DEFAULT_HENON_Y 0.1
+
+
+struct ArnoldCatMap {
+  double x;
+  double y;
+};
+#define DEFAULT_ARNOLD_X 0.123
+#define DEFAULT_ARNOLD_Y 0.456
+
+struct SineMap {
+  double x;
+  double mu;
+};
+#define DEFAULT_SINE_X 0.123
+#define DEFAULT_SINE_MU 0.99
 
 struct AES_CHAOS_ctx
 {

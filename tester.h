@@ -1,9 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-#include <time.h>
-
 #include "aes_default/aes.h"
 #include "aes_chaos/aes_chaos.h"
 
@@ -11,7 +5,9 @@
 
 #define AAD_LENGTH 128 // Length of the Additional Authenticated Data (AAD) in bytes
 
-#define TEST_NUMBER 100 // Set to 1 for a single test, or any other number for multiple tests
+#define TEST_NUMBER 2 // Set to 1 for a single test, or any other number for multiple tests
+
+#define FILENAME "results.csv" // File to save the results
 
 // Structure to hold the results of AES-GCM encryption and decryption
 struct stats {
@@ -30,7 +26,7 @@ uint64_t read_energy();
 void calcStats(struct stats* st, struct timespec start, struct timespec end, uint64_t energy_start, uint64_t energy_end);
 
 // Function to save the calculated statistics to a file.
-void saveStatsToFile(struct stats* stEnc, struct stats* stDec, const char* filename, const char* alg_name);
+void saveStatsToFile(struct stats* stEnc, struct stats* stDec, char* filename, const char* alg_name);
 
 // Function to benchmark the AES-GCM encryption and decryption functions. The function takes the algorithm name,
 // the plaintext, key, IV, and AAD as parameters. It performs multiple iterations of encryption and decryption, measuring the time and energy consumed for each operation.

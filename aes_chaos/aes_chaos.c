@@ -71,6 +71,64 @@ static double iterateLogisticMap(void* state) {
   return map->x - x_old;
 }
 
+// iterate the tent map following the equation x_{n+1} = p * x_n if x_n < 0.5 else p * (1 - x_n) and return the difference between the new and old value of x
+static double iterateTentMap(void* state) {
+  struct TentMap* map = (struct TentMap*) state;
+
+  double x_old = map->x;
+
+  if (map->x < 0.5) {
+    map->x = map->p * map->x;
+  } else {
+    map->x = map->p * (1 - map->x);
+  }
+
+  // Return the difference between the new and old value of x, aka DELTA_W
+  return map->x - x_old;
+}
+
+// iterate the Henon map following the equations x_{n+1} = 1 - a * x_n^2 + y_n and y_{n+1} = b * x_n and return the difference between the new and old value of x
+static double iterateHenonMap(void* state) {
+  struct HenonMap* map = (struct HenonMap*) state;
+
+  double x_old = map->x;
+  double y_old = map->y;
+
+  map->x = 1 - (map->a * (x_old * x_old)) + y_old;
+  map->y = map->b * x_old;
+
+  // Return the difference between the new and old value of x, aka DELTA_W
+  return map->x - x_old;
+}
+
+// iterate the Arnold Cat Map following the equations x_{n+1} = (x_n + y_n) mod 1 and y_{n+1} = (x_n + 2 * y_n) mod 1 and return the difference between the new and old value of x
+static double iterateArnoldCatMap(void* state) {
+    struct ArnoldCatMap* map = (struct ArnoldCatMap*) state;
+
+    double x_old = map->x;
+    double y_old = map->y;
+
+    // Apply the Arnold Cat Map transformation
+    map->x = fmod((x_old + y_old), 1.0);
+    map->y = fmod((x_old + 2 * y_old), 1.0);
+
+    // Return the difference between the new and old value of x, aka DELTA_W
+    return map->x - x_old;
+}
+
+// iterate the Sine Map following the equation x_{n+1} = mu * sin(pi * x_n) and return the difference between the new and old value of x
+static double iterateSineMap(void* state) {
+    struct SineMap* map = (struct SineMap*) state;
+
+    double x_old = map->x;
+
+    // Apply the Sine Map transformation
+    map->x = map->mu * sin(M_PI * x_old);
+
+    // Return the difference between the new and old value of x, aka DELTA_W
+    return map->x - x_old;
+}
+
 // Update the chaotic state and compute the new value of W_t based on the chaotic map and the parameters alpha, beta, gamma, and delta
 static void updateChaos(struct AES_CHAOS_ctx* ctx) {
   double delta_w = 0.0;
@@ -79,6 +137,18 @@ static void updateChaos(struct AES_CHAOS_ctx* ctx) {
   switch (ctx->map) {
     case LOGISTIC_MAP:
       delta_w = iterateLogisticMap(ctx->map_state);
+      break;
+    case TENT_MAP:
+      delta_w = iterateTentMap(ctx->map_state);
+      break;
+    case HENON_MAP:
+      delta_w = iterateHenonMap(ctx->map_state);
+      break;
+    case ARNOLD_CAT_MAP:
+      delta_w = iterateArnoldCatMap(ctx->map_state);
+      break;
+    case SINE_MAP:
+      delta_w = iterateSineMap(ctx->map_state);
       break;
     default:
       // Handle error: unknown chaos map
@@ -99,6 +169,36 @@ static void resetChaos(struct AES_CHAOS_ctx* ctx) {
                 struct LogisticMap* map = (struct LogisticMap*)ctx->map_state;
                 map->x = DEFAULT_LOGISTIC_X; // Reset to the default initial value
                 map->p = DEFAULT_LOGISTIC_P; // Reset to the default parameter value
+            }
+            break;
+        case TENT_MAP:
+            if (ctx->map_state != NULL) {
+                struct TentMap* map = (struct TentMap*)ctx->map_state;
+                map->x = DEFAULT_TENT_X; // Reset to the default initial value
+                map->p = DEFAULT_TENT_P; // Reset to the default parameter value
+            }
+            break;
+        case HENON_MAP:
+            if (ctx->map_state != NULL) {
+                struct HenonMap* map = (struct HenonMap*)ctx->map_state;
+                map->x = DEFAULT_HENON_X; // Reset to the default initial value
+                map->y = DEFAULT_HENON_Y; // Reset to the default initial value
+                map->a = DEFAULT_HENON_A; // Reset to the default parameter value 
+                map->b = DEFAULT_HENON_B; // Reset to the default parameter value
+            }
+            break;
+        case ARNOLD_CAT_MAP:
+            if (ctx->map_state != NULL) {
+                struct ArnoldCatMap* map = (struct ArnoldCatMap*)ctx->map_state;
+                map->x = DEFAULT_ARNOLD_X; // Reset to the default initial value
+                map->y = DEFAULT_ARNOLD_Y; // Reset to the default initial value
+            }
+            break;
+        case SINE_MAP:
+            if (ctx->map_state != NULL) {
+                struct SineMap* map = (struct SineMap*)ctx->map_state;
+                map->x = DEFAULT_SINE_X; // Reset to the default initial value
+                map->mu = DEFAULT_SINE_MU; // Reset to the default parameter value
             }
             break;
         default:
@@ -206,15 +306,63 @@ void AES_CHAOS_init_ctx(struct AES_CHAOS_ctx* ctx, const uint8_t* key, ChaosMap 
   ctx->gamma = DEFAULT_GAMMA;
   ctx->delta = DEFAULT_DELTA;
 
-  if (map_type == LOGISTIC_MAP) {
-    // Nota: in un'applicazione reale, gestire il fallimento di malloc
-    ctx->map_state = malloc(sizeof(struct LogisticMap)); 
-    if (ctx->map_state == NULL) // Handle memory allocation failure
-      return;
+  switch (map_type) {
+    case LOGISTIC_MAP: {
+      ctx->map_state = malloc(sizeof(struct LogisticMap));
+      if (ctx->map_state == NULL) // Handle memory allocation failure
+        return;
 
-    struct LogisticMap* log_map = (struct LogisticMap*)ctx->map_state;
-    log_map->p = DEFAULT_LOGISTIC_P;
-    log_map->x = DEFAULT_LOGISTIC_X;
+      struct LogisticMap* log_map = (struct LogisticMap*)ctx->map_state;
+      log_map->p = DEFAULT_LOGISTIC_P;
+      log_map->x = DEFAULT_LOGISTIC_X;
+      break;
+    }
+    case TENT_MAP: {
+      ctx->map_state = malloc(sizeof(struct TentMap));
+      if (ctx->map_state == NULL) // Handle memory allocation failure
+        return;
+
+      struct TentMap* tent_map = (struct TentMap*)ctx->map_state;
+      tent_map->p = DEFAULT_TENT_P;
+      tent_map->x = DEFAULT_TENT_X;
+      break;
+    }
+    case HENON_MAP: {
+      ctx->map_state = malloc(sizeof(struct HenonMap));
+      if (ctx->map_state == NULL) // Handle memory allocation failure
+        return;
+
+      struct HenonMap* henon_map = (struct HenonMap*)ctx->map_state;
+      henon_map->a = DEFAULT_HENON_A;
+      henon_map->b = DEFAULT_HENON_B;
+      henon_map->x = DEFAULT_HENON_X;
+      henon_map->y = DEFAULT_HENON_Y;
+      break;
+    }
+    case ARNOLD_CAT_MAP: {
+      ctx->map_state = malloc(sizeof(struct ArnoldCatMap));
+      if (ctx->map_state == NULL) // Handle memory allocation failure
+        return;
+
+      struct ArnoldCatMap* arnold_map = (struct ArnoldCatMap*)ctx->map_state;
+      arnold_map->x = DEFAULT_ARNOLD_X;
+      arnold_map->y = DEFAULT_ARNOLD_Y;
+      break;
+    }
+    case SINE_MAP: {
+      ctx->map_state = malloc(sizeof(struct SineMap));
+      if (ctx->map_state == NULL) // Handle memory allocation failure
+        return;
+
+      struct SineMap* sine_map = (struct SineMap*)ctx->map_state;
+      sine_map->mu = DEFAULT_SINE_MU;
+      sine_map->x = DEFAULT_SINE_X;
+      break;
+    }
+    default:
+      // Handle error: unknown chaos map
+      ctx->map_state = NULL;
+      break;
   }
 
   KeyExpansion(ctx, key);
@@ -229,6 +377,8 @@ void AES_CHAOS_init_ctx_iv(struct AES_CHAOS_ctx* ctx, const uint8_t* key, const 
 void AES_CHAOS_ctx_set_iv(struct AES_CHAOS_ctx* ctx, const uint8_t* iv)
 {
   memcpy (ctx->Iv, iv, AES_CHAOS_BLOCKLEN);
+
+  resetChaos(ctx); // Reset the chaotic state and W_t to their initial values
 }
 
 static void AddRoundKey(uint8_t round, state_t* state, const uint8_t* RoundKey)
@@ -325,9 +475,6 @@ static void Cipher(struct AES_CHAOS_ctx* ctx, state_t* state, const uint8_t* Rou
   updateChaos(ctx);
 
   uint8_t round = 0;
-
-  // Reset the chaotic state and W_t before starting the encryption process
-  resetChaos(ctx); 
 
   AddRoundKey(0, state, RoundKey);
 
@@ -607,6 +754,21 @@ int AES_CHAOS_GCM_authenticated_decrypt_buffer(struct AES_CHAOS_ctx* ctx, struct
   }
   AES_CHAOS_galoisMoltiplication(S, H, S);
 
+  uint8_t Jinc[AES_CHAOS_BLOCKLEN];
+  memcpy(Jinc, J, AES_CHAOS_BLOCKLEN);
+  counterInc32(Jinc); 
+
+  uint8_t saved_iv_payload[AES_CHAOS_BLOCKLEN];
+  memcpy(saved_iv_payload, ctx->Iv, AES_CHAOS_BLOCKLEN);
+
+  memcpy(ctx->Iv, Jinc, AES_CHAOS_BLOCKLEN);
+  AES_CHAOS_GCM_xcrypt_buffer(ctx, res->buf, length);
+
+  memcpy(ctx->Iv, saved_iv_payload, AES_CHAOS_BLOCKLEN);
+
+  // In the chaotic imlpementation of the decryption, the tag is computed after the decryption of the ciphertext, because the chaotic state is updated during the decryption process.
+  // This means that the tag is computed based on the decrypted plaintext, which is consistent with the GCM specification.
+  // The tag is then compared to the provided tag to verify the authenticity of the message.
   uint8_t saved_iv_tag[AES_CHAOS_BLOCKLEN];
   memcpy(saved_iv_tag, ctx->Iv, AES_CHAOS_BLOCKLEN);
 
@@ -623,18 +785,6 @@ int AES_CHAOS_GCM_authenticated_decrypt_buffer(struct AES_CHAOS_ctx* ctx, struct
   if (diff != 0) {
     return 0;
   }
-
-  uint8_t Jinc[AES_CHAOS_BLOCKLEN];
-  memcpy(Jinc, J, AES_CHAOS_BLOCKLEN);
-  counterInc32(Jinc); 
-
-  uint8_t saved_iv_payload[AES_CHAOS_BLOCKLEN];
-  memcpy(saved_iv_payload, ctx->Iv, AES_CHAOS_BLOCKLEN);
-
-  memcpy(ctx->Iv, Jinc, AES_CHAOS_BLOCKLEN);
-  AES_CHAOS_GCM_xcrypt_buffer(ctx, res->buf, length);
-
-  memcpy(ctx->Iv, saved_iv_payload, AES_CHAOS_BLOCKLEN);
 
   return 1;
 }

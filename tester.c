@@ -1,7 +1,10 @@
-#include "tester.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <string.h>
+#include <time.h>
 
-// Counter of the number of tests performed
-static int test_done = 0;
+#include "tester.h"
 
 // Fill the buffer with random values
 void getRandomValue(uint8_t* buf, size_t buf_size) {
@@ -41,27 +44,22 @@ void calcStats(struct stats* st, struct timespec start, struct timespec end, uin
     st->power_consumed = power_consumed;
 }
 
-void saveStatsToFile(struct stats* stEnc, struct stats* stDec, const char* filename, const char* alg_name) {
+void saveStatsToFile(struct stats* stEnc, struct stats* stDec, char* filename, const char* alg_name) {
     FILE* file = fopen(filename, "a");
     if (file == NULL) {
         perror("Errore nell'apertura del file");
         return;
     }
 
-    fprintf(file, "=== TEST %s, %i iterazioni ===\n", alg_name, TEST_NUMBER);
-    fprintf(file, "Tempo impiegato per cifratura e autenticazione: %.6f secondi\n", stEnc->elapsed_time);
-    fprintf(file, "Energia consumata per cifratura e autenticazione: %lu microjoules\n", stEnc->energy_consumed);
-    fprintf(file, "Potenza consumata per cifratura e autenticazione: %.6f W\n", stEnc->power_consumed);
-    fprintf(file, "*memoryEnc_%i*\n", test_done);
+    fprintf(file, "%s,%s,%d,%f,%lu,%f,!\n",
+            alg_name, "Cifratura", TEST_NUMBER, 
+            stEnc->elapsed_time, stEnc->energy_consumed, stEnc->power_consumed);
 
-    fprintf(file, "---------------------------\n");
+    fprintf(file, "%s,%s,%d,%f,%lu,%f,!\n",
+            alg_name, "Decifratura", TEST_NUMBER, 
+            stDec->elapsed_time, stDec->energy_consumed, stDec->power_consumed);
 
-    fprintf(file, "Tempo impiegato per decifratura e autenticazione: %.6f secondi\n", stDec->elapsed_time);
-    fprintf(file, "Energia consumata per decifratura e autenticazione: %lu microjoules\n", stDec->energy_consumed);
-    fprintf(file, "Potenza consumata per decifratura e autenticazione: %.6f W\n", stDec->power_consumed);
-    fprintf(file, "*memoryDec_%i*\n", test_done++);
-
-    fprintf(file, "=============================================\n\n");
+    
 
     fclose(file);
 }
@@ -150,7 +148,8 @@ void benchmark(struct stats* chypherStats, struct stats* decypherStats, const ch
     }
 
     if (authentication_errors > 0) {
-        printf("[ERRORE CRITICO] Il tag manomesso è stato accettato!\n");
+        perror("[ERRORE CRITICO] Il tag è stato RIFIUTATO!\n");
+        exit(EXIT_FAILURE); // Exit the program if authentication fails
     }
 
 
@@ -174,11 +173,10 @@ void benchmark(struct stats* chypherStats, struct stats* decypherStats, const ch
     calcStats(decypherStats, start, end, energy_start, energy_end);
 
 
-    saveStatsToFile(chypherStats, decypherStats, "results.txt", alg_name);
+    saveStatsToFile(chypherStats, decypherStats, FILENAME, alg_name);
 }
 
 void benchmark_chaos(struct stats* chypherStats, struct stats* decypherStats, const char* map_name, uint8_t* text, uint8_t* key, uint8_t* iv, uint8_t* aad, ChaosMap chaos_map) {
-
     // Inizialization of AES context for GCM mode
     struct AES_CHAOS_ctx ctx_gcm;
     AES_CHAOS_init_ctx_iv(&ctx_gcm, key, iv, chaos_map);
@@ -261,7 +259,8 @@ void benchmark_chaos(struct stats* chypherStats, struct stats* decypherStats, co
     }
 
     if (authentication_errors > 0) {
-        printf("[ERRORE CRITICO] Il tag manomesso è stato accettato!\n");
+        perror("[ERRORE CRITICO] Il tag è stato RIFIUTATO!\n");
+        exit(EXIT_FAILURE); // Exit the program if authentication fails
     }
 
 
@@ -285,5 +284,7 @@ void benchmark_chaos(struct stats* chypherStats, struct stats* decypherStats, co
     calcStats(decypherStats, start, end, energy_start, energy_end);
 
 
-    saveStatsToFile(chypherStats, decypherStats, "results.txt", map_name);
+    saveStatsToFile(chypherStats, decypherStats, FILENAME, map_name);
+
+    free(ctx_gcm.map_state); // Free the allocated memory for the chaotic map state
 }
