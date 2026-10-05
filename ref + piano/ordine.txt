@@ -2,6 +2,14 @@
 	- Lorenz system [A_Chaotic_Encryption-Based_Wireless_Secure_Transmission_System_for_Satellite_Communication]
 	- (1) Discrete chaotic and (2) Continuous chaotic [2410.21177v1]
 	- The GCM (Galois Counter Mode) [nistspecialpublication800-38d]
+	- Approssimazione di integrali [NumericalRecipesinC] 
+	- valori deafault Lorenz map [atsc-1520-0469_1963_020_0130_dnf_2_0_co_2]
+	- valori default Rossler map [Rössler, O. E. (1976). "An Equation for Continuous Chaos". Physics Letters A, 57(5), 397-398] (mancante)
+	- valori default Chen map [1999-CHENUETA-YETANOTHERCHAOTICATTRACTOR-InternationalJournalofBifurcationandChaos]
+	- valori default Henon map [A Two-dimensional Mapping with a Strange Attractor]
+	- valori default Logistic and Tent maps [May_Nature_76]
+	- valori default Arnold Cat map [Arnold, V. I., & Avez, A. (1968). "Ergodic Problems of Classical Mechanics". W. A. Benjamin] (mancante)
+	- valore default sine map [BF01020332] (deducibile non esplicito)
 - implementazione AES standard in C
 	- tiny AES (https://github.com/kokke/tiny-AES-c.git)
 	- tiny AES come base usata per altri paper [3360774.3368202], [ETASR_12204]

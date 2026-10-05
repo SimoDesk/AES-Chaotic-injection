@@ -28,11 +28,15 @@
 
 // Define the chaotic map types.
 typedef enum {
+  NONE,
   LOGISTIC_MAP,
   TENT_MAP,
   HENON_MAP,
   ARNOLD_CAT_MAP,
-  SINE_MAP
+  SINE_MAP,
+  LORENZ_MAP,
+  CHEN_MAP,
+  ROSSLER_MAP
 } ChaosMap;
 
 // Define the structures for the logistic map and its default parameters.
@@ -53,10 +57,8 @@ struct TentMap {
 
 // Define the structures for the Henon map and its default parameters.
 struct HenonMap {
-  double x;
-  double y;
-  double a;
-  double b;
+  double x, y;
+  double a, b;
 };
 #define DEFAULT_HENON_A 1.4
 #define DEFAULT_HENON_B 0.3
@@ -65,8 +67,7 @@ struct HenonMap {
 
 
 struct ArnoldCatMap {
-  double x;
-  double y;
+  double x, y;
 };
 #define DEFAULT_ARNOLD_X 0.123
 #define DEFAULT_ARNOLD_Y 0.456
@@ -77,6 +78,45 @@ struct SineMap {
 };
 #define DEFAULT_SINE_X 0.123
 #define DEFAULT_SINE_MU 0.99
+
+struct LorenzMap {
+  double x, y, z;
+  double sigma, rho, beta;
+  double dt;
+};
+#define DEFAULT_LORENZ_X 0.1
+#define DEFAULT_LORENZ_Y 0.1
+#define DEFAULT_LORENZ_Z 0.1
+#define DEFAULT_LORENZ_SIGMA 10.0
+#define DEFAULT_LORENZ_RHO 28.0
+#define DEFAULT_LORENZ_BETA (8.0 / 3.0)
+
+struct ChenMap {
+  double x, y, z;
+  double a, b, c;
+  double dt;
+};
+#define DEFAULT_CHEN_X 0.1
+#define DEFAULT_CHEN_Y 0.1
+#define DEFAULT_CHEN_Z 0.1
+#define DEFAULT_CHEN_A 35.0
+#define DEFAULT_CHEN_B 3.0
+#define DEFAULT_CHEN_C 28.0
+
+struct RosslerMap {
+  double x, y, z;
+  double a, b, c;
+  double dt;
+};
+#define DEFAULT_ROSSLER_X 0.1
+#define DEFAULT_ROSSLER_Y 0.1
+#define DEFAULT_ROSSLER_Z 0.1
+#define DEFAULT_ROSSLER_A 0.2
+#define DEFAULT_ROSSLER_B 0.2
+#define DEFAULT_ROSSLER_C 5.7
+
+#define DEFAULT_DT 0.01
+
 
 struct AES_CHAOS_ctx
 {
@@ -97,6 +137,8 @@ struct AES_CHAOS_GCM_result {
   uint8_t* buf;
   uint8_t tag[AES_CHAOS_GCM_TAGLEN];
 };
+
+size_t AES_CHAOS_get_heap_size(ChaosMap map_type);
 
 void AES_CHAOS_init_ctx(struct AES_CHAOS_ctx* ctx, const uint8_t* key, ChaosMap map_type);
 void AES_CHAOS_init_ctx_iv(struct AES_CHAOS_ctx* ctx, const uint8_t* key, const uint8_t* iv, ChaosMap map_type);

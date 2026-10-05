@@ -129,6 +129,117 @@ static double iterateSineMap(void* state) {
     return map->x - x_old;
 }
 
+
+// Implementation of the differential equations for the Lorenz, Chen, and Rossler maps
+static void iterateDerivatives(ChaosMap map_type, double* state, double* parameters, double* derivatives) {
+    switch (map_type) {
+        case LORENZ_MAP:
+            derivatives[0] = parameters[0] * (state[1] - state[0]); // dx/dt = sigma * (y - x)
+            derivatives[1] = state[0] * (parameters[1] - state[2]) - state[1]; // dy/dt = x * (rho - z) - y
+            derivatives[2] = (state[0] * state[1]) - (parameters[2] * state[2]); // dz/dt = x * y - beta * z
+            break;
+        case CHEN_MAP:
+            derivatives[0] = parameters[0] * (state[1] - state[0]); // dx/dt = a * (y - x)
+            derivatives[1] = (parameters[2] - parameters[0]) * state[0] - state[0] * state[2] + parameters[1] * state[1]; // dy/dt = (c - a) * x - x * z + b * y
+            derivatives[2] = state[0] * state[1] - parameters[1] * state[2]; // dz/dt = x * y - b * z
+            break;
+        case ROSSLER_MAP:
+            derivatives[0] = -(state[1] + state[2]); // dx/dt = -y - z
+            derivatives[1] = state[0] + parameters[0] * state[1]; // dy/dt = x + a * y
+            derivatives[2] = parameters[1] + state[2] * (state[0] - parameters[2]); // dz/dt = b + z * (x - c)
+            break;
+        default:
+            // Handle error: unknown chaos map
+            break;
+    }
+}
+
+// Runge-Kutta 4th order method for iterating the Lorenz, Chen, and Rossler maps
+static void rk4_step(ChaosMap map_type, double* state, double* parameters, double dt) {
+    double k1[3], k2[3], k3[3], k4[3];
+    double temp_state[3];
+
+    // Calculate k1
+    iterateDerivatives(map_type, state, parameters, k1);
+
+    // Calculate k2
+    for (int i = 0; i < 3; i++) {
+        temp_state[i] = state[i] + 0.5 * dt * k1[i];
+    }
+    iterateDerivatives(map_type, temp_state, parameters, k2);
+
+    // Calculate k3
+    for (int i = 0; i < 3; i++) {
+        temp_state[i] = state[i] + 0.5 * dt * k2[i];
+    }
+    iterateDerivatives(map_type, temp_state, parameters, k3);
+
+    // Calculate k4
+    for (int i = 0; i < 3; i++) {
+        temp_state[i] = state[i] + dt * k3[i];
+    }
+    iterateDerivatives(map_type, temp_state, parameters, k4);
+
+    // Update the state using the weighted average of the slopes
+    for (int i = 0; i < 3; i++) {
+        state[i] += (dt / 6.0) * (k1[i] + 2*k2[i] + 2*k3[i] + k4[i]);
+    }
+}
+
+// iterate the Lorenz Map using the Runge-Kutta 4th order method and return the difference between the new and old value of x
+static double iterateLorenzMap(void* state) {
+    struct LorenzMap* map = (struct LorenzMap*) state;
+    double x_old = map->x;
+
+    double variables[3] = {map->x, map->y, map->z};
+    double parameters[3] = {map->sigma, map->rho, map->beta};
+
+    rk4_step(LORENZ_MAP, variables, parameters, map->dt);
+
+    map->x = variables[0];
+    map->y = variables[1];
+    map->z = variables[2];
+
+    // Return the difference between the new and old value of x, aka DELTA_W
+    return map->x - x_old;
+}
+
+// iterate the Chen Map using the Runge-Kutta 4th order method and return the difference between the new and old value of x
+static double iterateChenMap(void* state) {
+    struct ChenMap* map = (struct ChenMap*) state;
+    double x_old = map->x;
+
+    double variables[3] = {map->x, map->y, map->z};
+    double parameters[3] = {map->a, map->b, map->c};
+
+    rk4_step(CHEN_MAP, variables, parameters, map->dt);
+
+    map->x = variables[0];
+    map->y = variables[1];
+    map->z = variables[2];
+
+    // Return the difference between the new and old value of x, aka DELTA_W
+    return map->x - x_old;
+}
+
+// iterate the Rossler Map using the Runge-Kutta 4th order method and return the difference between the new and old value of x
+static double iterateRosslerMap(void* state) {
+    struct RosslerMap* map = (struct RosslerMap*) state;
+    double x_old = map->x;
+
+    double variables[3] = {map->x, map->y, map->z};
+    double parameters[3] = {map->a, map->b, map->c};
+
+    rk4_step(ROSSLER_MAP, variables, parameters, map->dt);
+
+    map->x = variables[0];
+    map->y = variables[1];
+    map->z = variables[2];
+
+    // Return the difference between the new and old value of x, aka DELTA_W
+    return map->x - x_old;
+}
+
 // Update the chaotic state and compute the new value of W_t based on the chaotic map and the parameters alpha, beta, gamma, and delta
 static void updateChaos(struct AES_CHAOS_ctx* ctx) {
   double delta_w = 0.0;
@@ -149,6 +260,15 @@ static void updateChaos(struct AES_CHAOS_ctx* ctx) {
       break;
     case SINE_MAP:
       delta_w = iterateSineMap(ctx->map_state);
+      break;
+    case LORENZ_MAP:
+      delta_w = iterateLorenzMap(ctx->map_state);
+      break;
+    case CHEN_MAP:
+      delta_w = iterateChenMap(ctx->map_state);
+      break;
+    case ROSSLER_MAP:
+      delta_w = iterateRosslerMap(ctx->map_state);
       break;
     default:
       // Handle error: unknown chaos map
@@ -199,6 +319,39 @@ static void resetChaos(struct AES_CHAOS_ctx* ctx) {
                 struct SineMap* map = (struct SineMap*)ctx->map_state;
                 map->x = DEFAULT_SINE_X; // Reset to the default initial value
                 map->mu = DEFAULT_SINE_MU; // Reset to the default parameter value
+            }
+            break;
+        case LORENZ_MAP:
+            if (ctx->map_state != NULL) {
+                struct LorenzMap* map = (struct LorenzMap*)ctx->map_state;
+                map->x = DEFAULT_LORENZ_X; // Reset to the default initial value
+                map->y = DEFAULT_LORENZ_Y; // Reset to the default initial value
+                map->z = DEFAULT_LORENZ_Z; // Reset to the default initial value
+                map->sigma = DEFAULT_LORENZ_SIGMA; // Reset to the default parameter value
+                map->rho = DEFAULT_LORENZ_RHO; // Reset to the default parameter value
+                map->beta = DEFAULT_LORENZ_BETA; // Reset to the default parameter value
+            }
+            break;
+        case CHEN_MAP:
+            if (ctx->map_state != NULL) {
+                struct ChenMap* map = (struct ChenMap*)ctx->map_state;
+                map->x = DEFAULT_CHEN_X; // Reset to the default initial value
+                map->y = DEFAULT_CHEN_Y; // Reset to the default initial value
+                map->z = DEFAULT_CHEN_Z; // Reset to the default initial value
+                map->a = DEFAULT_CHEN_A; // Reset to the default parameter value
+                map->b = DEFAULT_CHEN_B; // Reset to the default parameter value
+                map->c = DEFAULT_CHEN_C; // Reset to the default parameter value
+            }
+            break;
+        case ROSSLER_MAP:
+            if (ctx->map_state != NULL) {
+                struct RosslerMap* map = (struct RosslerMap*)ctx->map_state;
+                map->x = DEFAULT_ROSSLER_X; // Reset to the default initial value
+                map->y = DEFAULT_ROSSLER_Y; // Reset to the default initial value
+                map->z = DEFAULT_ROSSLER_Z; // Reset to the default initial value
+                map->a = DEFAULT_ROSSLER_A; // Reset to the default parameter value
+                map->b = DEFAULT_ROSSLER_B; // Reset to the default parameter value
+                map->c = DEFAULT_ROSSLER_C; // Reset to the default parameter value
             }
             break;
         default:
@@ -359,6 +512,51 @@ void AES_CHAOS_init_ctx(struct AES_CHAOS_ctx* ctx, const uint8_t* key, ChaosMap 
       sine_map->x = DEFAULT_SINE_X;
       break;
     }
+    case LORENZ_MAP: {
+      ctx->map_state = malloc(sizeof(struct LorenzMap));
+      if (ctx->map_state == NULL) // Handle memory allocation failure
+        return;
+
+      struct LorenzMap* lorenz_map = (struct LorenzMap*)ctx->map_state;
+      lorenz_map->sigma = DEFAULT_LORENZ_SIGMA;
+      lorenz_map->rho = DEFAULT_LORENZ_RHO;
+      lorenz_map->beta = DEFAULT_LORENZ_BETA;
+      lorenz_map->x = DEFAULT_LORENZ_X;
+      lorenz_map->y = DEFAULT_LORENZ_Y;
+      lorenz_map->z = DEFAULT_LORENZ_Z;
+      lorenz_map->dt = DEFAULT_DT;
+      break;
+    }
+    case CHEN_MAP: {
+      ctx->map_state = malloc(sizeof(struct ChenMap));
+      if (ctx->map_state == NULL) // Handle memory allocation failure
+        return;
+
+      struct ChenMap* chen_map = (struct ChenMap*)ctx->map_state;
+      chen_map->a = DEFAULT_CHEN_A;
+      chen_map->b = DEFAULT_CHEN_B;
+      chen_map->c = DEFAULT_CHEN_C;
+      chen_map->x = DEFAULT_CHEN_X;
+      chen_map->y = DEFAULT_CHEN_Y;
+      chen_map->z = DEFAULT_CHEN_Z;
+      chen_map->dt = DEFAULT_DT;
+      break;
+    }
+    case ROSSLER_MAP: {
+      ctx->map_state = malloc(sizeof(struct RosslerMap));
+      if (ctx->map_state == NULL) // Handle memory allocation failure
+        return;
+
+      struct RosslerMap* rossler_map = (struct RosslerMap*)ctx->map_state;
+      rossler_map->a = DEFAULT_ROSSLER_A;
+      rossler_map->b = DEFAULT_ROSSLER_B;
+      rossler_map->c = DEFAULT_ROSSLER_C;
+      rossler_map->x = DEFAULT_ROSSLER_X;
+      rossler_map->y = DEFAULT_ROSSLER_Y;
+      rossler_map->z = DEFAULT_ROSSLER_Z;
+      rossler_map->dt = DEFAULT_DT;
+      break;
+    }
     default:
       // Handle error: unknown chaos map
       ctx->map_state = NULL;
@@ -489,6 +687,29 @@ static void Cipher(struct AES_CHAOS_ctx* ctx, state_t* state, const uint8_t* Rou
     AddRoundKey(round, state, RoundKey);
   }
   AddRoundKey(Nr, state, RoundKey);
+}
+
+size_t AES_CHAOS_get_heap_size(ChaosMap map_type) {
+    switch (map_type) {
+        case LOGISTIC_MAP:
+            return sizeof(struct LogisticMap);
+        case TENT_MAP:
+            return sizeof(struct TentMap);
+        case HENON_MAP:
+            return sizeof(struct HenonMap);
+        case ARNOLD_CAT_MAP:
+            return sizeof(struct ArnoldCatMap);
+        case SINE_MAP:
+            return sizeof(struct SineMap);
+        case LORENZ_MAP:
+            return sizeof(struct LorenzMap);
+        case CHEN_MAP:
+            return sizeof(struct ChenMap);
+        case ROSSLER_MAP:
+            return sizeof(struct RosslerMap);
+        default:
+            return 0; // Unknown map type
+    }
 }
 
 /*****************************************************************************/

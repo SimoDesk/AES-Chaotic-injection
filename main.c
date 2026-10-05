@@ -33,7 +33,7 @@ int main(void)
     FILE *file = fopen("results.csv", "a");
     if (file != NULL) {
         if (ftell(file) == 0) {
-            fprintf(file, "Mappa,Fase,Iterazioni,Tempo_s,Energia_uJ,Potenza_W,Memoria_B\n");
+            fprintf(file, "Map,Fase,Iterations,Total_Time_s,Average_Time_s,Time_Standard_Deviation_s,Energy_uJ,Power_W,StackUsage_B,HeapUsage_B\n");
         }
         fclose(file);
     }
@@ -60,6 +60,18 @@ int main(void)
 
     #ifdef USE_SINE_MAP
         benchmark_chaos(&stCypher, &stDecypher, "AES-GCM Sine Map", text, key, iv, aad, SINE_MAP);
+    #endif
+
+    #ifdef USE_LORENZ_MAP
+        benchmark_chaos(&stCypher, &stDecypher, "AES-GCM Lorenz Map", text, key, iv, aad, LORENZ_MAP);
+    #endif
+
+    #ifdef USE_CHEN_MAP
+        benchmark_chaos(&stCypher, &stDecypher, "AES-GCM Chen Map", text, key, iv, aad, CHEN_MAP);
+    #endif
+
+    #ifdef USE_ROSSLER_MAP
+        benchmark_chaos(&stCypher, &stDecypher, "AES-GCM Rossler Map", text, key, iv, aad, ROSSLER_MAP);
     #endif
 
     free(key);

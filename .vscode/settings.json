@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "/home/simodesk/Documenti/tirocinio/AES-Chaotic-injection/aes_default"
+    "cmake.sourceDirectory": "/home/simodesk/Documenti/tirocinio/AES-Chaotic-injection/aes_default",
+    "makefile.configureOnOpen": false
 }
