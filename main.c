@@ -39,39 +39,39 @@ int main(void)
     }
     
     #ifdef NO_CHAOS
-        benchmark(&stCypher, &stDecypher, "AES-GCM standard", text, key, iv, aad);
+        benchmark(&stCypher, &stDecypher, "AES-GCM standard", text, key, iv, aad, NONE);
     #endif
 
     #ifdef USE_LOGISTIC_MAP
-        benchmark_chaos(&stCypher, &stDecypher, "AES-GCM Logistic Map", text, key, iv, aad, LOGISTIC_MAP);
+        benchmark(&stCypher, &stDecypher, "AES-GCM Logistic Map", text, key, iv, aad, LOGISTIC_MAP);
     #endif
 
     #ifdef USE_TENT_MAP
-        benchmark_chaos(&stCypher, &stDecypher, "AES-GCM Tent Map", text, key, iv, aad, TENT_MAP);
+        benchmark(&stCypher, &stDecypher, "AES-GCM Tent Map", text, key, iv, aad, TENT_MAP);
     #endif
 
     #ifdef USE_HENON_MAP
-        benchmark_chaos(&stCypher, &stDecypher, "AES-GCM Henon Map", text, key, iv, aad, HENON_MAP);
+        benchmark(&stCypher, &stDecypher, "AES-GCM Henon Map", text, key, iv, aad, HENON_MAP);
     #endif
 
     #ifdef USE_ARNOLD_CAT_MAP
-        benchmark_chaos(&stCypher, &stDecypher, "AES-GCM Arnold Cat Map", text, key, iv, aad, ARNOLD_CAT_MAP);
+        benchmark(&stCypher, &stDecypher, "AES-GCM Arnold Cat Map", text, key, iv, aad, ARNOLD_CAT_MAP);
     #endif
 
     #ifdef USE_SINE_MAP
-        benchmark_chaos(&stCypher, &stDecypher, "AES-GCM Sine Map", text, key, iv, aad, SINE_MAP);
+        benchmark(&stCypher, &stDecypher, "AES-GCM Sine Map", text, key, iv, aad, SINE_MAP);
     #endif
 
     #ifdef USE_LORENZ_MAP
-        benchmark_chaos(&stCypher, &stDecypher, "AES-GCM Lorenz Map", text, key, iv, aad, LORENZ_MAP);
+        benchmark(&stCypher, &stDecypher, "AES-GCM Lorenz Map", text, key, iv, aad, LORENZ_MAP);
     #endif
 
     #ifdef USE_CHEN_MAP
-        benchmark_chaos(&stCypher, &stDecypher, "AES-GCM Chen Map", text, key, iv, aad, CHEN_MAP);
+        benchmark(&stCypher, &stDecypher, "AES-GCM Chen Map", text, key, iv, aad, CHEN_MAP);
     #endif
 
     #ifdef USE_ROSSLER_MAP
-        benchmark_chaos(&stCypher, &stDecypher, "AES-GCM Rossler Map", text, key, iv, aad, ROSSLER_MAP);
+        benchmark(&stCypher, &stDecypher, "AES-GCM Rossler Map", text, key, iv, aad, ROSSLER_MAP);
     #endif
 
     free(key);

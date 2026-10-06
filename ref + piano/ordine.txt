@@ -13,6 +13,7 @@
 - implementazione AES standard in C
 	- tiny AES (https://github.com/kokke/tiny-AES-c.git)
 	- tiny AES come base usata per altri paper [3360774.3368202], [ETASR_12204]
+	- correttezza della randomicità delle implementazioni seguendo [nistspecialpublication800-22r1a] usando la libreria open source [https://github.com/stevenang/randomness_testsuite.git]
 - test performance AES standard
 	- RAPL per energia [3177754]
 	- time.h & CLOCK_MONOTONIC per tempo [A Guide to Experimental Algorithmics -McGeoch] (mancante)

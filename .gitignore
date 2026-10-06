@@ -1,3 +1,22 @@
 run_info/
 benchmark/
 *.csv
+
+# Object files
+*.o
+
+# Executables
+useAes/extract_bin
+
+# Binary and text files generated during the execution of the program.
+*.bin
+*.txt
+useAes/*.bin
+useAes/*.txt
+
+# Python cache files
+__pycache__/
+
+
+# Ignore the order file in the piano directory, but track all other files.
+!ordine.txt

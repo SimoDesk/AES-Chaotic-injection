@@ -1,7 +1,7 @@
 #include "aes_default/aes.h"
 #include "aes_chaos/aes_chaos.h"
 
-#define TEXT_LENGTH (1024 * 1024 * 50) // MB
+#define TEXT_LENGTH (1024 * 1024 * 5) // MB
 
 #define AAD_LENGTH 128 // Length of the Additional Authenticated Data (AAD) in bytes
 
@@ -23,6 +23,4 @@ void getRandomValue(uint8_t* key, size_t key_size);
 
 // Function to benchmark the AES-GCM encryption and decryption functions. The function takes the algorithm name,
 // the plaintext, key, IV, and AAD as parameters. It performs multiple iterations of encryption and decryption, measuring the time and energy consumed for each operation.
-void benchmark(struct stats* chypherStats, struct stats* decypherStats, const char* alg_name, uint8_t* text, uint8_t* key, uint8_t* iv, uint8_t* aad);
-
-void benchmark_chaos(struct stats* chypherStats, struct stats* decypherStats, const char* map_name, uint8_t* text, uint8_t* key, uint8_t* iv, uint8_t* aad, ChaosMap chaos_map);
+void benchmark(struct stats* chypherStats, struct stats* decypherStats, const char* alg_name, uint8_t* text, uint8_t* key, uint8_t* iv, uint8_t* aad, ChaosMap chaos_map);

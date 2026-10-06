@@ -174,3 +174,18 @@ clean:
 	rm -f results*.csv *.o
 	rm -rf $(BASE_AUX_DIR)/
 	rm -rf $(TARGET_DIR)/
+
+
+
+# Generating a binary executable for testing purposes. This target compiles the useAES.c, tester.c, and AES implementation files into an executable named 'extract_bin' and runs it.
+MAP ?= none
+
+clean_bin:
+	rm -f useAes/extract_bin
+	rm -f useAes/*.bin
+	rm -f useAes/*.txt
+
+generate_bin:
+	gcc -O3 -Wall -Wextra useAes/useAes.c tester.c aes_default/aes.c aes_chaos/aes_chaos.c -o useAes/extract_bin -lm
+	cd useAes && ./extract_bin $(MAP)
+	cd useAes && python3 convertToUTF.py
