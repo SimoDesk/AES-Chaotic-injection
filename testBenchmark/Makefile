@@ -1,13 +1,19 @@
 CC = gcc
 
+# Map_flag is set externally to control the inclusion of map files during compilation.
 MAP_FLAG ?=
 
+# Compiler flags for optimization and warnings. -O3 enables high-level optimizations, -Wall and -Wextra enable all warnings for better code quality.
 CFLAGS = -O3 -Wall -Wextra $(MAP_FLAG)
+
+# Profiling flags for stack usage and call graph information.
 PROFILING_FLAGS = -fstack-usage -fcallgraph-info -dumpdir $(AUX_DIR)
 
+# Auxiliary directory for storing profiling data and other temporary files.
 TARGET_DIR = benchmark
 TARGET ?= $(TARGET_DIR)/benchmark_engine 
 
+# If the PROFILE_AES or PROFILE_CHAOS variables are set, the corresponding profiling flags will be included during compilation.
 AES_PROF = $(if $(PROFILE_AES), $(PROFILING_FLAGS),)
 CHAOS_PROF = $(if $(PROFILE_CHAOS), $(PROFILING_FLAGS),)
 
