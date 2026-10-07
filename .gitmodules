@@ -1,3 +1,6 @@
 [submodule "aes_default"]
 	path = aes_default
 	url = https://github.com/SimoDesk/tiny-AES-c-for-chaos-injection-tests-.git
+[submodule "nist_suite"]
+	path = nist_suite
+	url = https://github.com/stevenang/randomness_testsuite.git

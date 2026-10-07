@@ -1,11 +1,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <time.h>
 
 #include "../aes_default/aes.h"
 #include "../aes_chaos/aes_chaos.h"
-#include "../tester.h"
+#include "../testBenchmark/tester.h"
 
 // Function to parse the map type from a string
 ChaosMap parseMapType(const char* map_str) {
@@ -63,19 +62,10 @@ int main(int argc, char *argv[])
         AES_GCM_authenticated_encrypt_buffer(&ctx_std, &res_std, TEXT_LENGTH, AES_IVLEN, aad, AAD_LENGTH);
     }
 
-    time_t now;
-    time(&now);
-
-    struct tm *local = localtime(&now);
-
-    char* timestamp = malloc(20 * sizeof(char));
-    strftime(timestamp, 20, "_%d-%m-%Y_%H:%M", local);
-
     char* filename = calloc(100, sizeof(char));
 
-    strcat(filename, "cipher_");
+    strcat(filename, "ciphers/cipher_");
     strcat(filename, argv[1]);
-    strcat(filename, timestamp);
     strcat(filename, ".bin");
 
     FILE *file = fopen(filename, "wb");
@@ -98,7 +88,6 @@ int main(int argc, char *argv[])
     free(iv);
     free(text);
     free(aad);
-    free(timestamp);
     free(filename);
 
     return 0;

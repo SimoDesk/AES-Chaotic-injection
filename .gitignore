@@ -1,18 +1,24 @@
 run_info/
 benchmark/
+ciphers/
+
+# Ignore CSV files generated during the execution of the program.
 *.csv
 
 # Object files
 *.o
 
+# Ignore temporary files created by text editors.
+*.csv#
+
 # Executables
-useAes/extract_bin
+testRandomness/extract_bin
 
 # Binary and text files generated during the execution of the program.
 *.bin
 *.txt
-useAes/*.bin
-useAes/*.txt
+testRandomness/*.bin
+testRandomness/*.txt
 
 # Python cache files
 __pycache__/

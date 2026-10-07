@@ -1,11 +1,11 @@
-#include "aes_default/aes.h"
-#include "aes_chaos/aes_chaos.h"
+#include "../aes_default/aes.h"
+#include "../aes_chaos/aes_chaos.h"
 
-#define TEXT_LENGTH (1024 * 1024 * 5) // MB
+#define TEXT_LENGTH (1024 * 1024 * 2) // MB
 
 #define AAD_LENGTH 128 // Length of the Additional Authenticated Data (AAD) in bytes
 
-#define TEST_NUMBER 50 // Set to 1 for a single test, or any other number for multiple tests
+#define TEST_NUMBER 10 // Set to 1 for a single test, or any other number for multiple tests
 
 #define FILENAME "results.csv" // File to save the results
 

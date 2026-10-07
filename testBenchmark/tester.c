@@ -281,7 +281,7 @@ void benchmark(struct stats* chypherStats, struct stats* decypherStats, const ch
     calcStats(decypherStats, total_time, time_measurements, total_energy);
 
 
-    saveStatsToFile(chypherStats, decypherStats, FILENAME, alg_name, NONE);
+    saveStatsToFile(chypherStats, decypherStats, FILENAME, alg_name, chaos_map);
 
     free(time_measurements); // Free the allocated memory for time measurements
     free(text_buf); // Free the allocated memory for the ciphertext buffer

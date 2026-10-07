@@ -4,8 +4,8 @@
 #include <stdint.h>
 
 
-#include "aes_default/aes.h"
-#include "aes_chaos/aes_chaos.h"
+#include "../aes_default/aes.h"
+#include "../aes_chaos/aes_chaos.h"
 #include "tester.h"
 
 int main(void)
