@@ -11,6 +11,9 @@ ciphers/
 # Ignore temporary files created by text editors.
 *.csv#
 
+# Ignore image files generated during the execution of the program.
+*.png
+
 # Executables
 testRandomness/extract_bin
 

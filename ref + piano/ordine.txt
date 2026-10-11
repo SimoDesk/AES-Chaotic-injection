@@ -1,4 +1,6 @@
-- lettura extra sul tema
+- ricerca mappe caotiche e soluzioni di implementazioni
+	- implementazione della logica del chaos nell'AES [Satell Commun Network - 2025 - Kumar - Advanced Encryption Techniques in Satellite Communications With Chaotic Injection]
+- informazioni sulle mappe caotice
 	- Lorenz system [A_Chaotic_Encryption-Based_Wireless_Secure_Transmission_System_for_Satellite_Communication]
 	- (1) Discrete chaotic and (2) Continuous chaotic [2410.21177v1]
 	- The GCM (Galois Counter Mode) [nistspecialpublication800-38d]
@@ -10,18 +12,23 @@
 	- valori default Logistic and Tent maps [May_Nature_76]
 	- valori default Arnold Cat map [Arnold, V. I., & Avez, A. (1968). "Ergodic Problems of Classical Mechanics". W. A. Benjamin] (mancante)
 	- valore default sine map [BF01020332] (deducibile non esplicito)
+	- valori default chebyshev [Adler-ErgodicMixingProperties-1964]
 - implementazione AES standard in C
 	- tiny AES (https://github.com/kokke/tiny-AES-c.git)
 	- tiny AES come base usata per altri paper [3360774.3368202], [ETASR_12204]
+	- adattamento delle mappe continue usando Runge-Kutta [NumericalRecipesinC]
 - test performance AES
 	- RAPL per energia [3177754]
 	- time.h & CLOCK_MONOTONIC per tempo [A Guide to Experimental Algorithmics -McGeoch] (mancante)
 	- sys/resource.h per RAM (standard POSIX, non ho trovato paper), networkX per l'estrazione dei dati di memoria dai file [Exploring_Network_Structure_Dynamics_and_Function_]
-- ricerca mappe caotiche e soluzioni di implementazioni oltre la s-table
+
 - test di validità crittografica per le mappe
 	- correttezza della randomicità delle implementazioni seguendo [nistspecialpublication800-22r1a] usando la libreria open source [https://github.com/stevenang/randomness_testsuite.git]
+	- usano stevenang per i test [13616_FLiPS_Few_Shot_Fingerpri], [26. ID 27703]
+	- utilizzo della politica cross-key correlation per verificare la correttezza delle implementazioni nei test [nistspecialpublication800-22r1a]
 	TODO:
-	- generare i valori caotici dalla chiave (?)
+	- risviluppare la cross-key test
+	- testare per i vari valori di alpha, beta, gamma e delta
 	- misurazione effetto valanga
 	- misurazione key sensitivity
 - sviluppo in python del sistema machine learning

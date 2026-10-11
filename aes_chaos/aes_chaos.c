@@ -4,6 +4,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#include <openssl/sha.h>
 #include "aes_chaos.h"
 
 /*****************************************************************************/
@@ -58,6 +59,10 @@ static const uint8_t Rcon[11] = {
 /*****************************************************************************/
 /* Private functions:                                                        */
 /*****************************************************************************/
+
+
+/*****************************************************************************/
+/* Chaos map iterations functions:                                           */
 
 // iterate the logistic map following the equation x_{n+1} = p * x_n * (1 - x_n) and return the difference between the new and old value of x
 static double iterateLogisticMap(void* state) {
@@ -129,6 +134,19 @@ static double iterateSineMap(void* state) {
     return map->x - x_old;
 }
 
+// iterate the Chebyshev Map following the equation x_{n+1} = cos(mu * arccos(x_n)) and return the difference between the new and old value of x
+static double iterateChebyshevMap(void* state) {
+    struct ChebyshevMap* map = (struct ChebyshevMap*) state;
+
+    double x_old = map->x;
+
+    // Apply the Chebyshev Map transformation
+    map->x = cos(map->mu * acos(x_old));
+
+    // Return the difference between the new and old value of x, aka DELTA_W
+    return map->x - x_old;
+}
+
 
 // Implementation of the differential equations for the Lorenz, Chen, and Rossler maps
 static void iterateDerivatives(ChaosMap map_type, double* state, double* parameters, double* derivatives) {
@@ -154,7 +172,8 @@ static void iterateDerivatives(ChaosMap map_type, double* state, double* paramet
     }
 }
 
-// Runge-Kutta 4th order method for iterating the Lorenz, Chen, and Rossler maps
+// Runge-Kutta 4th order method for iterating the Lorenz, Chen, and Rossler maps by approximating the solution of the differential equations
+// with an high degree of accuracy. The function takes the current state, parameters, and time step dt, and updates the state in place.
 static void rk4_step(ChaosMap map_type, double* state, double* parameters, double dt) {
     double k1[3], k2[3], k3[3], k4[3];
     double temp_state[3];
@@ -196,7 +215,7 @@ static double iterateLorenzMap(void* state) {
 
     rk4_step(LORENZ_MAP, variables, parameters, map->dt);
 
-    map->x = variables[0];
+    map->x = variables[0]; 
     map->y = variables[1];
     map->z = variables[2];
 
@@ -214,7 +233,7 @@ static double iterateChenMap(void* state) {
 
     rk4_step(CHEN_MAP, variables, parameters, map->dt);
 
-    map->x = variables[0];
+    map->x = variables[0]; 
     map->y = variables[1];
     map->z = variables[2];
 
@@ -232,12 +251,50 @@ static double iterateRosslerMap(void* state) {
 
     rk4_step(ROSSLER_MAP, variables, parameters, map->dt);
 
-    map->x = variables[0];
+    map->x = variables[0]; 
     map->y = variables[1];
     map->z = variables[2];
 
     // Return the difference between the new and old value of x, aka DELTA_W
     return map->x - x_old;
+}
+
+/*****************************************************************************/
+
+// Save the seed extracted from the key and IV into the provided hashDigest buffer.
+// By doing this instead of using a rand function, I can ensure that the result generating from the seed will be deterministic and reproducible
+// regardless of the platform or environment, which is crucial for cryptographic applications where consistency and predictability are required for testing and validation.
+static void extractSeedFromKey(struct AES_CHAOS_ctx* ctx, uint8_t hashDigest[32]) {
+
+    // Create a buffer to hold the concatenated key and IV
+    uint8_t buffer[AES_CHAOS_KEYLEN + AES_CHAOS_BLOCKLEN];
+
+    // Concatenate the key and IV into the buffer
+    memcpy(buffer, ctx->OriginalKey, AES_CHAOS_KEYLEN);
+    memcpy(buffer + AES_CHAOS_KEYLEN, ctx->Iv, AES_CHAOS_BLOCKLEN);
+
+    // Compute the SHA-256 hash of the concatenated buffer and store it in hashDigest
+    SHA256(buffer, AES_CHAOS_KEYLEN + AES_CHAOS_BLOCKLEN, hashDigest);
+}
+
+// Extract a normalized seed value from the provided SHA-256 hash digest wich in range (0, 1) and is not exactly 0, 0.5, or 1 to avoid potential issues with certain chaotic maps.
+static double extractNormalizedSeedFromHash(const uint8_t* hashDigest) {
+
+    // Use the first 8 bytes of the hash digest to create a 64-bit integer
+    uint64_t seedInt = 0;
+    for (int i = 0; i < 8; i++) {
+        seedInt = (seedInt << 8) | hashDigest[i];
+    }
+
+    // Normalize the 64-bit integer to a double in the range (0, 1)
+    double seed = (double)seedInt / (double)UINT64_MAX;
+
+    // Ensure the seed is not exactly 0, 0.5, or 1 to avoid potential issues with certain chaotic maps
+    if(seed == 0.0 || seed == 0.5 || seed == 1.0) {
+        seed += 0.000001;
+    }
+
+    return seed;
 }
 
 // Update the chaotic state and compute the new value of W_t based on the chaotic map and the parameters alpha, beta, gamma, and delta
@@ -261,6 +318,9 @@ static void updateChaos(struct AES_CHAOS_ctx* ctx) {
     case SINE_MAP:
       delta_w = iterateSineMap(ctx->map_state);
       break;
+    case CHEBYSHEV_MAP:
+      delta_w = iterateChebyshevMap(ctx->map_state);
+      break;
     case LORENZ_MAP:
       delta_w = iterateLorenzMap(ctx->map_state);
       break;
@@ -275,34 +335,42 @@ static void updateChaos(struct AES_CHAOS_ctx* ctx) {
       return;
   }
 
-  // Update W_t based on the chaotic map and the parameters alpha, beta, gamma, and delta
+  // Update W_t based on the chaotic map and the parameters alpha, beta, gamma, and delta.
+  // Following the equation W(t+1) = W(t) + alpha * delta_w - beta * |W(t)|
   ctx->W_t = ctx->W_t + (ctx->alpha * delta_w) - (ctx->beta * fabs(ctx->W_t));
 }
 
 // Reset the chaotic state and W_t to their initial values
-static void resetChaos(struct AES_CHAOS_ctx* ctx) {
+static void init_chaos(struct AES_CHAOS_ctx* ctx) {
     ctx->W_t = 0.0;
+
+    uint8_t hashDigest[32];
+    extractSeedFromKey(ctx, hashDigest);
+
+    double extracted_x = extractNormalizedSeedFromHash(hashDigest);
+    double extracted_y = extractNormalizedSeedFromHash(hashDigest + 8);
+    double extracted_z = extractNormalizedSeedFromHash(hashDigest + 16);
 
     switch (ctx->map) {
         case LOGISTIC_MAP:
             if (ctx->map_state != NULL) {
                 struct LogisticMap* map = (struct LogisticMap*)ctx->map_state;
-                map->x = DEFAULT_LOGISTIC_X; // Reset to the default initial value
+                map->x = extracted_x; // Reset to the extracted initial value
                 map->p = DEFAULT_LOGISTIC_P; // Reset to the default parameter value
             }
             break;
         case TENT_MAP:
             if (ctx->map_state != NULL) {
                 struct TentMap* map = (struct TentMap*)ctx->map_state;
-                map->x = DEFAULT_TENT_X; // Reset to the default initial value
+                map->x = extracted_x; // Reset to the extracted initial value
                 map->p = DEFAULT_TENT_P; // Reset to the default parameter value
             }
             break;
         case HENON_MAP:
             if (ctx->map_state != NULL) {
                 struct HenonMap* map = (struct HenonMap*)ctx->map_state;
-                map->x = DEFAULT_HENON_X; // Reset to the default initial value
-                map->y = DEFAULT_HENON_Y; // Reset to the default initial value
+                map->x = extracted_x - 0.5; // Reset to the extracted initial value, shifted to be centered around 0
+                map->y = extracted_y - 0.5; // Reset to the extracted initial value, shifted to be centered around 0
                 map->a = DEFAULT_HENON_A; // Reset to the default parameter value 
                 map->b = DEFAULT_HENON_B; // Reset to the default parameter value
             }
@@ -310,53 +378,83 @@ static void resetChaos(struct AES_CHAOS_ctx* ctx) {
         case ARNOLD_CAT_MAP:
             if (ctx->map_state != NULL) {
                 struct ArnoldCatMap* map = (struct ArnoldCatMap*)ctx->map_state;
-                map->x = DEFAULT_ARNOLD_X; // Reset to the default initial value
-                map->y = DEFAULT_ARNOLD_Y; // Reset to the default initial value
+                map->x = extracted_x; // Reset to the extracted initial value
+                map->y = extracted_y; // Reset to the extracted initial value
             }
             break;
         case SINE_MAP:
             if (ctx->map_state != NULL) {
                 struct SineMap* map = (struct SineMap*)ctx->map_state;
-                map->x = DEFAULT_SINE_X; // Reset to the default initial value
+                map->x = extracted_x; // Reset to the extracted initial value
                 map->mu = DEFAULT_SINE_MU; // Reset to the default parameter value
+            }
+            break;
+        case CHEBYSHEV_MAP:
+            if (ctx->map_state != NULL) {
+                struct ChebyshevMap* map = (struct ChebyshevMap*)ctx->map_state;
+                map->x = (extracted_x * 2.0) - 1.0; // Reset to the extracted initial value, scaled to be in the range [-1, 1]
+                map->mu = DEFAULT_CHEBYSHEV_MU; // Reset to the default parameter value
             }
             break;
         case LORENZ_MAP:
             if (ctx->map_state != NULL) {
                 struct LorenzMap* map = (struct LorenzMap*)ctx->map_state;
-                map->x = DEFAULT_LORENZ_X; // Reset to the default initial value
-                map->y = DEFAULT_LORENZ_Y; // Reset to the default initial value
-                map->z = DEFAULT_LORENZ_Z; // Reset to the default initial value
+                map->x = 0.1 + (extracted_x * 0.1); // Reset to the extracted initial value, scaled to be in the range [0.1, 0.2]
+                map->y = 0.1 + (extracted_y * 0.1); // Reset to the extracted initial value, scaled to be in the range [0.1, 0.2]
+                map->z = 0.1 + (extracted_z * 0.1); // Reset to the extracted initial value, scaled to be in the range [0.1, 0.2]
                 map->sigma = DEFAULT_LORENZ_SIGMA; // Reset to the default parameter value
                 map->rho = DEFAULT_LORENZ_RHO; // Reset to the default parameter value
                 map->beta = DEFAULT_LORENZ_BETA; // Reset to the default parameter value
+
+                map->dt = DEFAULT_DT; // Reset to the default time step value
             }
             break;
         case CHEN_MAP:
             if (ctx->map_state != NULL) {
                 struct ChenMap* map = (struct ChenMap*)ctx->map_state;
-                map->x = DEFAULT_CHEN_X; // Reset to the default initial value
-                map->y = DEFAULT_CHEN_Y; // Reset to the default initial value
-                map->z = DEFAULT_CHEN_Z; // Reset to the default initial value
+                map->x = 0.1 + (extracted_x * 0.1); // Reset to the extracted initial value, scaled to be in the range [0.1, 0.2]
+                map->y = 0.1 + (extracted_y * 0.1); // Reset to the extracted initial value, scaled to be in the range [0.1, 0.2]
+                map->z = 0.1 + (extracted_z * 0.1); // Reset to the extracted initial value, scaled to be in the range [0.1, 0.2]
                 map->a = DEFAULT_CHEN_A; // Reset to the default parameter value
                 map->b = DEFAULT_CHEN_B; // Reset to the default parameter value
                 map->c = DEFAULT_CHEN_C; // Reset to the default parameter value
+
+                map->dt = DEFAULT_DT; // Reset to the default time step value
             }
             break;
         case ROSSLER_MAP:
             if (ctx->map_state != NULL) {
                 struct RosslerMap* map = (struct RosslerMap*)ctx->map_state;
-                map->x = DEFAULT_ROSSLER_X; // Reset to the default initial value
-                map->y = DEFAULT_ROSSLER_Y; // Reset to the default initial value
-                map->z = DEFAULT_ROSSLER_Z; // Reset to the default initial value
+                map->x = 0.1 + (extracted_x * 0.1); // Reset to the extracted initial value, scaled to be in the range [0.1, 0.2]
+                map->y = 0.1 + (extracted_y * 0.1); // Reset to the extracted initial value, scaled to be in the range [0.1, 0.2]
+                map->z = 0.1 + (extracted_z * 0.1); // Reset to the extracted initial value, scaled to be in the range [0.1, 0.2]
                 map->a = DEFAULT_ROSSLER_A; // Reset to the default parameter value
                 map->b = DEFAULT_ROSSLER_B; // Reset to the default parameter value
                 map->c = DEFAULT_ROSSLER_C; // Reset to the default parameter value
+
+                map->dt = DEFAULT_DT; // Reset to the default time step value
             }
             break;
         default:
             // Handle error: unknown chaos map
             break;
+    }
+
+    // Number of iterations to perform before starting the encryption/decryption process,
+    // this is to ensure that the chaotic system has reached a sufficiently chaotic state and is not in a transient phase.
+    int pre_iterations = 500; 
+
+    
+    // For the Lorenz, Chen, and Rossler maps, we can reduce the number of pre-iterations since they are continuous-time systems,
+    // doing too many iterations may lead to numerical instability or overflow issues, so we limit the number of pre-iterations to 10 for these maps.
+    if (ctx->map == LORENZ_MAP || ctx->map == CHEN_MAP || ctx->map == ROSSLER_MAP) {
+        pre_iterations = 10; 
+    }
+    
+
+    // Perform the pre-iterations to allow the chaotic system to reach a sufficiently chaotic state
+    for (int i = 0; i < pre_iterations; i++) {
+        updateChaos(ctx);
     }
 }
 
@@ -453,6 +551,8 @@ static void KeyExpansion(struct AES_CHAOS_ctx* ctx, const uint8_t* Key)
 void AES_CHAOS_init_ctx(struct AES_CHAOS_ctx* ctx, const uint8_t* key, ChaosMap map_type)
 {
   ctx->map = map_type;
+  memcpy(ctx->OriginalKey, key, AES_CHAOS_KEYLEN);
+  memset(ctx->Iv, 0, AES_CHAOS_BLOCKLEN);
   ctx->W_t = 0.0;
   ctx->alpha = DEFAULT_APLHA;
   ctx->beta = DEFAULT_BETA;
@@ -460,123 +560,61 @@ void AES_CHAOS_init_ctx(struct AES_CHAOS_ctx* ctx, const uint8_t* key, ChaosMap 
   ctx->delta = DEFAULT_DELTA;
 
   switch (map_type) {
-    case LOGISTIC_MAP: {
+    case LOGISTIC_MAP:
       ctx->map_state = malloc(sizeof(struct LogisticMap));
-      if (ctx->map_state == NULL) // Handle memory allocation failure
-        return;
-
-      struct LogisticMap* log_map = (struct LogisticMap*)ctx->map_state;
-      log_map->p = DEFAULT_LOGISTIC_P;
-      log_map->x = DEFAULT_LOGISTIC_X;
       break;
-    }
-    case TENT_MAP: {
+    case TENT_MAP:
       ctx->map_state = malloc(sizeof(struct TentMap));
-      if (ctx->map_state == NULL) // Handle memory allocation failure
-        return;
-
-      struct TentMap* tent_map = (struct TentMap*)ctx->map_state;
-      tent_map->p = DEFAULT_TENT_P;
-      tent_map->x = DEFAULT_TENT_X;
       break;
-    }
-    case HENON_MAP: {
+    case HENON_MAP:
       ctx->map_state = malloc(sizeof(struct HenonMap));
-      if (ctx->map_state == NULL) // Handle memory allocation failure
-        return;
-
-      struct HenonMap* henon_map = (struct HenonMap*)ctx->map_state;
-      henon_map->a = DEFAULT_HENON_A;
-      henon_map->b = DEFAULT_HENON_B;
-      henon_map->x = DEFAULT_HENON_X;
-      henon_map->y = DEFAULT_HENON_Y;
       break;
-    }
-    case ARNOLD_CAT_MAP: {
+    case ARNOLD_CAT_MAP:
       ctx->map_state = malloc(sizeof(struct ArnoldCatMap));
-      if (ctx->map_state == NULL) // Handle memory allocation failure
-        return;
-
-      struct ArnoldCatMap* arnold_map = (struct ArnoldCatMap*)ctx->map_state;
-      arnold_map->x = DEFAULT_ARNOLD_X;
-      arnold_map->y = DEFAULT_ARNOLD_Y;
       break;
-    }
-    case SINE_MAP: {
+    case SINE_MAP:
       ctx->map_state = malloc(sizeof(struct SineMap));
-      if (ctx->map_state == NULL) // Handle memory allocation failure
-        return;
-
-      struct SineMap* sine_map = (struct SineMap*)ctx->map_state;
-      sine_map->mu = DEFAULT_SINE_MU;
-      sine_map->x = DEFAULT_SINE_X;
       break;
-    }
-    case LORENZ_MAP: {
+    case CHEBYSHEV_MAP:
+      ctx->map_state = malloc(sizeof(struct ChebyshevMap));
+      break;
+    case LORENZ_MAP:
       ctx->map_state = malloc(sizeof(struct LorenzMap));
-      if (ctx->map_state == NULL) // Handle memory allocation failure
-        return;
-
-      struct LorenzMap* lorenz_map = (struct LorenzMap*)ctx->map_state;
-      lorenz_map->sigma = DEFAULT_LORENZ_SIGMA;
-      lorenz_map->rho = DEFAULT_LORENZ_RHO;
-      lorenz_map->beta = DEFAULT_LORENZ_BETA;
-      lorenz_map->x = DEFAULT_LORENZ_X;
-      lorenz_map->y = DEFAULT_LORENZ_Y;
-      lorenz_map->z = DEFAULT_LORENZ_Z;
-      lorenz_map->dt = DEFAULT_DT;
       break;
-    }
-    case CHEN_MAP: {
+    case CHEN_MAP:
       ctx->map_state = malloc(sizeof(struct ChenMap));
-      if (ctx->map_state == NULL) // Handle memory allocation failure
-        return;
-
-      struct ChenMap* chen_map = (struct ChenMap*)ctx->map_state;
-      chen_map->a = DEFAULT_CHEN_A;
-      chen_map->b = DEFAULT_CHEN_B;
-      chen_map->c = DEFAULT_CHEN_C;
-      chen_map->x = DEFAULT_CHEN_X;
-      chen_map->y = DEFAULT_CHEN_Y;
-      chen_map->z = DEFAULT_CHEN_Z;
-      chen_map->dt = DEFAULT_DT;
       break;
-    }
-    case ROSSLER_MAP: {
+    case ROSSLER_MAP:
       ctx->map_state = malloc(sizeof(struct RosslerMap));
-      if (ctx->map_state == NULL) // Handle memory allocation failure
-        return;
-
-      struct RosslerMap* rossler_map = (struct RosslerMap*)ctx->map_state;
-      rossler_map->a = DEFAULT_ROSSLER_A;
-      rossler_map->b = DEFAULT_ROSSLER_B;
-      rossler_map->c = DEFAULT_ROSSLER_C;
-      rossler_map->x = DEFAULT_ROSSLER_X;
-      rossler_map->y = DEFAULT_ROSSLER_Y;
-      rossler_map->z = DEFAULT_ROSSLER_Z;
-      rossler_map->dt = DEFAULT_DT;
       break;
-    }
     default:
-      // Handle error: unknown chaos map
       ctx->map_state = NULL;
       break;
   }
 
+  init_chaos(ctx);
   KeyExpansion(ctx, key);
 }
 
 void AES_CHAOS_init_ctx_iv(struct AES_CHAOS_ctx* ctx, const uint8_t* key, const uint8_t* iv, ChaosMap map_type)
 {
+  memcpy(ctx->Iv, iv, AES_CHAOS_BLOCKLEN);
   AES_CHAOS_init_ctx(ctx, key, map_type);
   memcpy(ctx->Iv, iv, AES_CHAOS_BLOCKLEN);
+  init_chaos(ctx);
+  KeyExpansion(ctx, key);
 }
 
 void AES_CHAOS_ctx_set_iv(struct AES_CHAOS_ctx* ctx, const uint8_t* iv)
 {
   memcpy (ctx->Iv, iv, AES_CHAOS_BLOCKLEN);
 
-  resetChaos(ctx); // Reset the chaotic state and W_t to their initial values
+  // Initialize the chaotic state and W_t to their initial values based on the key and IV
+  init_chaos(ctx);
+  KeyExpansion(ctx, ctx->OriginalKey);
+
+  // Once the chaotic state is initialized, we can proceed to re-expand the key to ensure that the RoundKey is consistent with the new IV
+  KeyExpansion(ctx, ctx->OriginalKey);
 }
 
 static void AddRoundKey(uint8_t round, state_t* state, const uint8_t* RoundKey)
@@ -701,6 +739,8 @@ size_t AES_CHAOS_get_heap_size(ChaosMap map_type) {
             return sizeof(struct ArnoldCatMap);
         case SINE_MAP:
             return sizeof(struct SineMap);
+        case CHEBYSHEV_MAP:
+            return sizeof(struct ChebyshevMap);
         case LORENZ_MAP:
             return sizeof(struct LorenzMap);
         case CHEN_MAP:

@@ -10,9 +10,16 @@ MAP ?= none
 
 all: build
 
-build: 
-	$(CC) $(CFLAGS) testRandomness.c ../testBenchmark/tester.c ../aes_default/aes.c ../aes_chaos/aes_chaos.c -o extract_bin -lm
+build: aes.o aes_chaos.o
+	$(CC) $(CFLAGS) testRandomness.c ../testBenchmark/tester.c ../aes_default/aes.c ../aes_chaos/aes_chaos.c -o extract_bin -lcrypto -lm
+
+aes.o: ../aes_default/aes.c
+	$(CC) $(CFLAGS) $(MAP_FLAG) $(AES_PROF) -c ../aes_default/aes.c -o aes.o
+
+aes_chaos.o: ../aes_chaos/aes_chaos.c
+	$(CC) $(CFLAGS) $(MAP_FLAG) $(CHAOS_PROF) -c ../aes_chaos/aes_chaos.c -o aes_chaos.o
 
 clear:
 	rm -f extract_bin
-	rm -f cipher/*.bin
+	find ciphers -type f -delete
+	find nist_report -type f -delete

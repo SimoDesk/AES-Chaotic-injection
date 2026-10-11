@@ -62,6 +62,10 @@ int main(void)
         benchmark(&stCypher, &stDecypher, "AES-GCM Sine Map", text, key, iv, aad, SINE_MAP);
     #endif
 
+    #ifdef USE_CHEBYSHEV_MAP
+        benchmark(&stCypher, &stDecypher, "AES-GCM Chebyshev Map", text, key, iv, aad, CHEBYSHEV_MAP);
+    #endif
+
     #ifdef USE_LORENZ_MAP
         benchmark(&stCypher, &stDecypher, "AES-GCM Lorenz Map", text, key, iv, aad, LORENZ_MAP);
     #endif

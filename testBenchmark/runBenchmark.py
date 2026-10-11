@@ -13,6 +13,7 @@ MAPS_CONFIG = {
     "henon": "-DUSE_HENON_MAP",
     "arnold": "-DUSE_ARNOLD_CAT_MAP",
     "sine": "-DUSE_SINE_MAP",
+    "chebyshev": "-DUSE_CHEBYSHEV_MAP",
     "lorenz": "-DUSE_LORENZ_MAP",
     "chen": "-DUSE_CHEN_MAP",
     "rossler": "-DUSE_ROSSLER_MAP"
@@ -60,7 +61,6 @@ def run_benchmarks():
 
 if __name__ == "__main__":
 
-    subprocess.run(["make", "clean"], check=True)
-    subprocess.run(["make", "build"], check=True)
+    subprocess.run(["make", "clear"], check=True)
 
     run_benchmarks()

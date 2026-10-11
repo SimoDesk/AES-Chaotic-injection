@@ -11,13 +11,14 @@ PROFILING_FLAGS = -fstack-usage -fcallgraph-info -dumpdir $(AUX_DIR)
 
 # Auxiliary directory for storing profiling data and other temporary files.
 TARGET_DIR = benchmark
+AUX_DIR = run_info
 TARGET ?= $(TARGET_DIR)/benchmark_engine 
 
 # If the PROFILE_AES or PROFILE_CHAOS variables are set, the corresponding profiling flags will be included during compilation.
 AES_PROF = $(if $(PROFILE_AES), $(PROFILING_FLAGS),)
 CHAOS_PROF = $(if $(PROFILE_CHAOS), $(PROFILING_FLAGS),)
 
-.PHONY: clean directories build
+.PHONY: clear directories build setup
 
 build: directories $(TARGET)
 
@@ -26,7 +27,7 @@ directories:
 	mkdir -p $(AUX_DIR)
 
 $(TARGET): main.o tester.o aes.o aes_chaos.o
-	$(CC) $(CFLAGS) $(MAP_FLAG) main.o tester.o aes.o aes_chaos.o -o $(TARGET) -lm
+	$(CC) $(CFLAGS) $(MAP_FLAG) main.o tester.o aes.o aes_chaos.o -o $(TARGET) -lcrypto -lm
 
 main.o: main.c
 	$(CC) $(CFLAGS) $(MAP_FLAG) -c main.c -o main.o
@@ -40,5 +41,12 @@ aes.o: ../aes_default/aes.c directories
 aes_chaos.o: ../aes_chaos/aes_chaos.c directories
 	$(CC) $(CFLAGS) $(MAP_FLAG) $(CHAOS_PROF) -c ../aes_chaos/aes_chaos.c -o aes_chaos.o
 
-clean:
+clear:
 	rm -f *.o $(TARGET_DIR)/benchmark_*
+
+
+# Let the user know that they can run 'make setup' to install the required Python packages for graph generation and analysis.
+setup:
+	sudo apt update
+	sudo apt-get install libssl-dev
+	sudo apt install -y python3-networkx python3-matplotlib python3-pip graphviz python3-pygraphviz python3-pandas

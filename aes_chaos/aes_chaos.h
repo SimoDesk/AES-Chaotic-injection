@@ -34,9 +34,10 @@ typedef enum {
   HENON_MAP,
   ARNOLD_CAT_MAP,
   SINE_MAP,
+  CHEBYSHEV_MAP,
   LORENZ_MAP,
   CHEN_MAP,
-  ROSSLER_MAP
+  ROSSLER_MAP,
 } ChaosMap;
 
 // Define the structures for the logistic map and its default parameters.
@@ -79,6 +80,13 @@ struct SineMap {
 #define DEFAULT_SINE_X 0.123
 #define DEFAULT_SINE_MU 0.99
 
+struct ChebyshevMap {
+  double x;
+  int mu;
+};
+#define DEFAULT_CHEBYSHEV_X 0.7654
+#define DEFAULT_CHEBYSHEV_MU 4
+
 struct LorenzMap {
   double x, y, z;
   double sigma, rho, beta;
@@ -120,6 +128,7 @@ struct RosslerMap {
 
 struct AES_CHAOS_ctx
 {
+  uint8_t OriginalKey[AES_CHAOS_KEYLEN];
   uint8_t RoundKey[AES_CHAOS_keyExpSize];
   uint8_t Iv[AES_CHAOS_BLOCKLEN];
 
