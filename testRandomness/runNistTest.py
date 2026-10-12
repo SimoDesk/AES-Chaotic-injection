@@ -30,14 +30,22 @@ from RandomExcursions import RandomExcursions as ret
 
 # Define the test types and corresponding functions to be printed in the CSV file
 test_type = [
-    '01. Frequency Test (Monobit)', '02. Frequency Test within a Block', '03. Run Test',
-    '04. Longest Run of Ones in a Block', '05. Binary Matrix Rank Test',
+    '01. Frequency Test (Monobit)', 
+    '02. Frequency Test within a Block', 
+    '03. Run Test',
+    '04. Longest Run of Ones in a Block', 
+    '05. Binary Matrix Rank Test',
     '06. Discrete Fourier Transform (Spectral) Test',
     '07. Non-Overlapping Template Matching Test',
-    '08. Overlapping Template Matching Test', '09. Maurer\'s Universal Statistical test',
-    '10. Linear Complexity Test', '11. Serial test', '12. Approximate Entropy Test',
-    '13. Cumulative Sums (Forward) Test', '14. Cumulative Sums (Reverse) Test',
-    '15. Random Excursions Test', '16. Random Excursions Variant Test'
+    '08. Overlapping Template Matching Test', 
+    '09. Maurer\'s Universal Statistical test',
+    '10. Linear Complexity Test',
+    '11. Serial test', 
+    '12. Approximate Entropy Test',
+    '13. Cumulative Sums (Forward) Test', 
+    '14. Cumulative Sums (Reverse) Test',
+    '15. Random Excursions Test', 
+    '16. Random Excursions Variant Test'
 ]
 
 # Define a mapping of test indices to their corresponding functions
@@ -85,7 +93,7 @@ def run_single_test(args):
         return i, nome_test, f"Errore: {e}"
 
 # Define the list of maps to be tested and the output CSV file path
-MAPPE = ["standard", "logistic", "henon", "sine", "tent", "arnold", "chebyshev", "lorenz", "chen", "rossler"]
+MAPPE = ["standard",'logistic','tent','henon','arnold','sine','chebyshev','lorenz','chen','rossler']
 OUTPUT_CSV = os.path.join(current_dir, "nist_results.csv")
 
 N_TESTS = 55

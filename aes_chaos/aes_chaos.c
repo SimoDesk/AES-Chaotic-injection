@@ -756,7 +756,7 @@ size_t AES_CHAOS_get_heap_size(ChaosMap map_type) {
 /* Public functions:                                                         */
 /*****************************************************************************/
 
-static void AES_CHAOS_ECB_encrypt(struct AES_CHAOS_ctx* ctx, uint8_t* buf)
+void AES_CHAOS_ECB_encrypt(struct AES_CHAOS_ctx* ctx, uint8_t* buf)
 {
   Cipher(ctx, (state_t*)buf, ctx->RoundKey);
 }

@@ -27,10 +27,8 @@
 	- usano stevenang per i test [13616_FLiPS_Few_Shot_Fingerpri], [26. ID 27703]
 	- utilizzo della politica cross-key correlation per verificare la correttezza delle implementazioni nei test [nistspecialpublication800-22r1a]
 	TODO:
-	- risviluppare la cross-key test
-	- testare per i vari valori di alpha, beta, gamma e delta
-	- misurazione effetto valanga
-	- misurazione key sensitivity
+	- testare per i vari valori di alpha, beta, gamma e delta. Per ogni ALFA e BETA testare avalanche e key sensitivity
+
 - sviluppo in python del sistema machine learning
 - implementazione e verifica del machine unlearning
 - studio caratteristiche anti-quantum
