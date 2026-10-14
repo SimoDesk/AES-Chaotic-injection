@@ -23,6 +23,7 @@
 	- sys/resource.h per RAM (standard POSIX, non ho trovato paper), networkX per l'estrazione dei dati di memoria dai file [Exploring_Network_Structure_Dynamics_and_Function_]
 
 - test di validità crittografica per le mappe
+	- condivisione dei valori caotici usando la chiave come seed senza rand [A_Normalized_Exponential_Piecewise_Chaotic_System_NEPCS_and_DNA_Image_Cryptography_Using_SHA-256]
 	- correttezza della randomicità delle implementazioni seguendo [nistspecialpublication800-22r1a] usando la libreria open source [https://github.com/stevenang/randomness_testsuite.git]
 	- usano stevenang per i test [13616_FLiPS_Few_Shot_Fingerpri], [26. ID 27703]
 	- utilizzo della politica cross-key correlation per verificare la correttezza delle implementazioni nei test [nistspecialpublication800-22r1a]
