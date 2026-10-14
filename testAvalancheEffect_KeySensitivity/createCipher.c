@@ -28,11 +28,12 @@ void hex_to_bytes(const char* hex_str, uint8_t* byte_array, size_t num_bytes) {
 
 int main(int argc, char *argv[])
 {
-    if (argc != 6) {
+    if (argc < 6) {
         printf("Uso: %s <Plaintext 16b> <IV 12b> <Key 32b>\n", argv[0]);
         return EXIT_FAILURE;
     }
 
+    // Convert input hex strings to byte arrays
     uint8_t text[16];
     uint8_t iv[12];
     uint8_t key[32];
@@ -59,6 +60,9 @@ int main(int argc, char *argv[])
     struct AES_GCM_result res_std = {.buf = text};
     struct AES_CHAOS_GCM_result res_chaos = {.buf = text};
 
+    if (argc == 8) {
+        AES_CHAOS_ctx_set_params(&ctx_chaos, atof(argv[6]), atof(argv[7]));
+    }
 
     if (map_type != NONE) {
         AES_CHAOS_ECB_encrypt(&ctx_chaos, text);

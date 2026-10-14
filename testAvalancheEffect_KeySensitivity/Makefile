@@ -14,10 +14,10 @@ build: aes.o aes_chaos.o
 	$(CC) $(CFLAGS) createCipher.c ../testBenchmark/tester.c ../aes_default/aes.c ../aes_chaos/aes_chaos.c -o test_avalanche_keySens -lcrypto -lm
 
 aes.o: ../aes_default/aes.c
-	$(CC) $(CFLAGS) $(MAP_FLAG) $(AES_PROF) -c ../aes_default/aes.c -o aes.o
+	$(CC) $(CFLAGS) $(MAP_FLAG) -c ../aes_default/aes.c -o aes.o
 
 aes_chaos.o: ../aes_chaos/aes_chaos.c
-	$(CC) $(CFLAGS) $(MAP_FLAG) $(CHAOS_PROF) -c ../aes_chaos/aes_chaos.c -o aes_chaos.o
+	$(CC) $(CFLAGS) $(MAP_FLAG) -c ../aes_chaos/aes_chaos.c -o aes_chaos.o
 
 clear:
 	rm -f test_avalanche_keySens

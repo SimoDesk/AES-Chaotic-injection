@@ -554,38 +554,54 @@ void AES_CHAOS_init_ctx(struct AES_CHAOS_ctx* ctx, const uint8_t* key, ChaosMap 
   memcpy(ctx->OriginalKey, key, AES_CHAOS_KEYLEN);
   memset(ctx->Iv, 0, AES_CHAOS_BLOCKLEN);
   ctx->W_t = 0.0;
-  ctx->alpha = DEFAULT_APLHA;
-  ctx->beta = DEFAULT_BETA;
   ctx->gamma = DEFAULT_GAMMA;
   ctx->delta = DEFAULT_DELTA;
 
   switch (map_type) {
     case LOGISTIC_MAP:
       ctx->map_state = malloc(sizeof(struct LogisticMap));
+      ctx->alpha = DEFAULT_CHAOS_LOGISTIC_ALPHA;
+      ctx->beta = DEFAULT_CHAOS_LOGISTIC_BETA;
       break;
     case TENT_MAP:
       ctx->map_state = malloc(sizeof(struct TentMap));
+      ctx->alpha = DEFAULT_CHAOS_TENT_ALPHA;
+      ctx->beta = DEFAULT_CHAOS_TENT_BETA;
       break;
     case HENON_MAP:
       ctx->map_state = malloc(sizeof(struct HenonMap));
+      ctx->alpha = DEFAULT_CHAOS_HENON_ALPHA;
+      ctx->beta = DEFAULT_CHAOS_HENON_BETA;
       break;
     case ARNOLD_CAT_MAP:
       ctx->map_state = malloc(sizeof(struct ArnoldCatMap));
+      ctx->alpha = DEFAULT_CHAOS_ARNOLD_ALPHA;
+      ctx->beta = DEFAULT_CHAOS_ARNOLD_BETA;
       break;
     case SINE_MAP:
       ctx->map_state = malloc(sizeof(struct SineMap));
+      ctx->alpha = DEFAULT_CHAOS_SINE_ALPHA;
+      ctx->beta = DEFAULT_CHAOS_SINE_BETA;
       break;
     case CHEBYSHEV_MAP:
       ctx->map_state = malloc(sizeof(struct ChebyshevMap));
+      ctx->alpha = DEFAULT_CHAOS_CHEBYSHEV_ALPHA;
+      ctx->beta = DEFAULT_CHAOS_CHEBYSHEV_BETA;
       break;
     case LORENZ_MAP:
       ctx->map_state = malloc(sizeof(struct LorenzMap));
+      ctx->alpha = DEFAULT_CHAOS_LORENZ_ALPHA;
+      ctx->beta = DEFAULT_CHAOS_LORENZ_BETA;
       break;
     case CHEN_MAP:
       ctx->map_state = malloc(sizeof(struct ChenMap));
+      ctx->alpha = DEFAULT_CHAOS_CHEN_ALPHA;
+      ctx->beta = DEFAULT_CHAOS_CHEN_BETA;
       break;
     case ROSSLER_MAP:
       ctx->map_state = malloc(sizeof(struct RosslerMap));
+      ctx->alpha = DEFAULT_CHAOS_ROSSLER_ALPHA;
+      ctx->beta = DEFAULT_CHAOS_ROSSLER_BETA;
       break;
     default:
       ctx->map_state = NULL;
@@ -615,6 +631,11 @@ void AES_CHAOS_ctx_set_iv(struct AES_CHAOS_ctx* ctx, const uint8_t* iv)
 
   // Once the chaotic state is initialized, we can proceed to re-expand the key to ensure that the RoundKey is consistent with the new IV
   KeyExpansion(ctx, ctx->OriginalKey);
+}
+
+void AES_CHAOS_ctx_set_params(struct AES_CHAOS_ctx* ctx, double alfa, double beta) {
+  ctx->alpha = alfa;
+  ctx->beta = beta;
 }
 
 static void AddRoundKey(uint8_t round, state_t* state, const uint8_t* RoundKey)

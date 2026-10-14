@@ -96,9 +96,11 @@ def run_avalanche_effect(plaintext_hex, iv_hex, key_hex, map_output_dir, map):
 # Define a function to run the tests for either avalanche effect or key sensitivity
 def run_test(test_type):
     if test_type == TestType.AVALANCHE_EFFECT:
-        writer = csv.writer(open(avalanche_csv, mode='w', newline=''))
+        file = open(avalanche_csv, mode='w', newline='')
+        writer = csv.writer(file)
     elif test_type == TestType.KEY_SENSITIVITY:
-        writer = csv.writer(open(key_sensitivity_csv, mode='w', newline=''))
+        file = open(key_sensitivity_csv, mode='w', newline='')
+        writer = csv.writer(file)
         
     writer.writerow(["Mappa", "Average Hamming Distance", "Distance from perfection", "Average of Differing Bits (%)"])
 
@@ -142,6 +144,7 @@ def run_test(test_type):
         
         # Write the results to the CSV file
         writer.writerow([map, avg_dist_str, abs_diff_str, avg_perc_str])
+
 
 if __name__ == "__main__":
     subprocess.run(["make", "clear"])  # Clean previous builds and outputs
