@@ -16,12 +16,12 @@ ciphers/
 
 # Executables
 testRandomness/extract_bin
+testChaoticParams/test_params
+testAvalancheEffect_KeySensitivity/test_avalanche_keySens
 
 # Binary and text files generated during the execution of the program.
 *.bin
 *.txt
-testRandomness/*.bin
-testRandomness/*.txt
 
 # Python cache files
 __pycache__/
@@ -29,3 +29,4 @@ __pycache__/
 
 # Ignore the order file in the piano directory, but track all other files.
 !ordine.txt
+
