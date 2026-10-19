@@ -14,10 +14,14 @@ ciphers/
 # Ignore image files generated during the execution of the program.
 *.png
 
+# Ignore response files containing the GCM correctness test vectors.
+*.rsp
+
 # Executables
 testRandomness/extract_bin
 testChaoticParams/test_params
 testAvalancheEffect_KeySensitivity/test_avalanche_keySens
+checkGCMcorrectness/test_correctness
 
 # Binary and text files generated during the execution of the program.
 *.bin

@@ -63,4 +63,6 @@ if __name__ == "__main__":
 
     subprocess.run(["make", "clear"], check=True)
 
+    subprocess.run(["sudo", "make", "clear"], check=True)
+
     run_benchmarks()

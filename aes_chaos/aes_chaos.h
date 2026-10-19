@@ -7,7 +7,7 @@
 #define AES256 1
 
 #define AES_CHAOS_BLOCKLEN 16 // Block length in bytes - AES is 128b block only
-#define AES_CHAOS_GCM_TAGLEN 16 // Tag length in bytes - GCM is 128b tag only
+#define AES_CHAOS_GCM_TAGLEN AES_CHAOS_BLOCKLEN
 
 #if defined(AES256) && (AES256 == 1)
     #define AES_CHAOS_KEYLEN 32
@@ -155,7 +155,6 @@ struct AES_CHAOS_ctx
 {
   uint8_t OriginalKey[AES_CHAOS_KEYLEN];
   uint8_t RoundKey[AES_CHAOS_keyExpSize];
-  uint8_t Iv[AES_CHAOS_BLOCKLEN];
 
   ChaosMap map;
   void* map_state;
@@ -165,24 +164,38 @@ struct AES_CHAOS_ctx
   double beta;
   double gamma;
   double delta;
+
+  // Track the current S-box shift value behaving as a cache for the current S-box shift value, which is updated during the encryption process.
+  // This allows for efficient retrieval of the current S-box shift value without recalculating it each time.
+  uint8_t current_sbox_shift;
+};
+
+struct AES_CHAOS_GCM_ctx {
+  struct AES_CHAOS_ctx aes;
+  uint8_t* Iv;
+  size_t IvLen;
 };
 
 struct AES_CHAOS_GCM_result {
   uint8_t* buf;
-  uint8_t tag[AES_CHAOS_GCM_TAGLEN];
+  // The caller owns this buffer and must allocate at least tag_length bytes.
+  uint8_t* tag;
 };
 
 size_t AES_CHAOS_get_heap_size(ChaosMap map_type);
 
 void AES_CHAOS_init_ctx(struct AES_CHAOS_ctx* ctx, const uint8_t* key, ChaosMap map_type);
-void AES_CHAOS_init_ctx_iv(struct AES_CHAOS_ctx* ctx, const uint8_t* key, const uint8_t* iv, ChaosMap map_type);
-void AES_CHAOS_ctx_set_iv(struct AES_CHAOS_ctx* ctx, const uint8_t* iv);
+void AES_CHAOS_free_ctx(struct AES_CHAOS_ctx* ctx);
+
 void AES_CHAOS_ctx_set_params(struct AES_CHAOS_ctx* ctx, double alfa, double beta);
 
 void AES_CHAOS_ECB_encrypt(struct AES_CHAOS_ctx* ctx, uint8_t* buf);
 
-void AES_CHAOS_GCM_authenticated_encrypt_buffer(struct AES_CHAOS_ctx* ctx, struct AES_CHAOS_GCM_result* res, size_t length, size_t iv_len, uint8_t* aad, size_t aad_length);
+void AES_CHAOS_GCM_init_ctx(struct AES_CHAOS_GCM_ctx* ctx, const uint8_t* key, ChaosMap map_type);
+int AES_CHAOS_GCM_set_iv(struct AES_CHAOS_GCM_ctx* ctx, const uint8_t* iv, size_t iv_len);
+void AES_CHAOS_GCM_free_ctx(struct AES_CHAOS_GCM_ctx* ctx);
+void AES_CHAOS_GCM_authenticated_encrypt_buffer(struct AES_CHAOS_GCM_ctx* ctx, struct AES_CHAOS_GCM_result* res, size_t length, uint8_t* aad, size_t aad_length, size_t tag_length);
 
-int AES_CHAOS_GCM_authenticated_decrypt_buffer(struct AES_CHAOS_ctx* ctx, struct AES_CHAOS_GCM_result* res, const uint8_t* tag, size_t length, size_t iv_len, uint8_t* aad, size_t aad_length);
+int AES_CHAOS_GCM_authenticated_decrypt_buffer(struct AES_CHAOS_GCM_ctx* ctx, struct AES_CHAOS_GCM_result* res, size_t length, const uint8_t* tag, size_t tag_length, uint8_t* aad, size_t aad_length);
 
 #endif // _AES_CHAOS_H_

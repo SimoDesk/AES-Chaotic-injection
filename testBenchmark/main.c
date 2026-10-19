@@ -33,7 +33,7 @@ int main(void)
     FILE *file = fopen("results.csv", "a");
     if (file != NULL) {
         if (ftell(file) == 0) {
-            fprintf(file, "Map,Fase,Iterations,Total_Time_s,Average_Time_s,Time_Standard_Deviation_s,Energy_uJ,Power_W,StackUsage_B,HeapUsage_B\n");
+            fprintf(file, "Map,Fase,Iterations,Data_Size_MB,Total_Time_s,Average_Time_s,Time_Standard_Deviation_s,Throughput_MB_s,Energy_uJ,Power_W,StackUsage_B,HeapUsage_B\n");
         }
         fclose(file);
     }

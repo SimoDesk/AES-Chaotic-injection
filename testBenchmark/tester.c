@@ -67,6 +67,14 @@ void calcStats(struct stats* st, double total_time, double* time_mesurements, ui
     }
     st->time_standard_deviation = sqrt(sum_squared_diff / TEST_NUMBER);
 
+    // Calculate throughput in MB/s using the formula: Throughput (MB/s) = Data Size (MB) / Average Time (s)
+    double data_size_mb = (double)TEXT_LENGTH / (1024.0 * 1024.0);
+    if (st->average_time > 0) {
+        st->throughput_mb_s = data_size_mb / st->average_time;
+    } else {
+        st->throughput_mb_s = 0.0;
+    }
+
     st->elapsed_time = total_time;
     st->energy_consumed = total_energy;
     st->power_consumed = power_consumed;
@@ -81,13 +89,15 @@ void saveStatsToFile(struct stats* stEnc, struct stats* stDec, char* filename, c
 
     size_t heap_consumed = (mapUsed != NONE) ? AES_CHAOS_get_heap_size(mapUsed) : 0;
 
-    fprintf(file, "%s,%s,%d,%f,%f,%f,%lu,%f,!,%zu\n",
-            alg_name, "Cifratura", TEST_NUMBER, 
-            stEnc->elapsed_time, stEnc->average_time, stEnc->time_standard_deviation, stEnc->energy_consumed, stEnc->power_consumed,heap_consumed);
+    double data_size_mb = (double)TEXT_LENGTH / (1024.0 * 1024.0);
 
-    fprintf(file, "%s,%s,%d,%f,%f,%f,%lu,%f,!,%zu\n",
-            alg_name, "Decifratura", TEST_NUMBER, 
-            stDec->elapsed_time, stDec->average_time, stDec->time_standard_deviation, stDec->energy_consumed, stDec->power_consumed, heap_consumed);
+    fprintf(file, "%s,%s,%d,%.2f,%f,%f,%f,%f,%lu,%f,!,%zu\n",
+            alg_name, "Cifratura", TEST_NUMBER, data_size_mb, 
+            stEnc->elapsed_time, stEnc->average_time, stEnc->time_standard_deviation, stEnc->throughput_mb_s, stEnc->energy_consumed, stEnc->power_consumed, heap_consumed);
+
+    fprintf(file, "%s,%s,%d,%.2f,%f,%f,%f,%f,%lu,%f,!,%zu\n",
+            alg_name, "Decifratura", TEST_NUMBER, data_size_mb, 
+            stDec->elapsed_time, stDec->average_time, stDec->time_standard_deviation, stDec->throughput_mb_s, stDec->energy_consumed, stDec->power_consumed, heap_consumed);
 
     
 
@@ -96,14 +106,21 @@ void saveStatsToFile(struct stats* stEnc, struct stats* stDec, char* filename, c
 
 void benchmark(struct stats* chypherStats, struct stats* decypherStats, const char* alg_name, uint8_t* text, uint8_t* key, uint8_t* iv, uint8_t* aad, ChaosMap chaos_map) {
 
+    // This dummy loop is used to warm up the CPU and ensure that the measurements are not affected by any initial overhead.
+    volatile int dummy = 0;
+    for(int w = 0; w < 10000000; w++) { dummy += w; }
+
     // Inizialization of AES context for GCM mode
-    struct AES_ctx ctx_gcm;
-    struct AES_CHAOS_ctx ctx_chaos_gcm;
+    struct AES_GCM_ctx ctx_gcm;
+    struct AES_CHAOS_GCM_ctx ctx_chaos_gcm;
 
     if (chaos_map != NONE) {
-        AES_CHAOS_init_ctx_iv(&ctx_chaos_gcm, key, iv, chaos_map);
+
+        AES_CHAOS_GCM_init_ctx(&ctx_chaos_gcm, key, chaos_map);
+        AES_CHAOS_GCM_set_iv(&ctx_chaos_gcm, iv, 12);
     } else {
-        AES_init_ctx_iv(&ctx_gcm, key, iv);
+        AES_GCM_init_ctx(&ctx_gcm, key);
+        AES_GCM_set_iv(&ctx_gcm, iv, 12);
     }
 
     // Prepare the result structure for GCM encryption
@@ -111,6 +128,10 @@ void benchmark(struct stats* chypherStats, struct stats* decypherStats, const ch
 
     struct AES_GCM_result buffer_std = {.buf = text_buf};
     struct AES_CHAOS_GCM_result buffer_chaos = {.buf = text_buf};
+    uint8_t standard_tag[GCM_TAGLEN];
+    uint8_t chaos_tag[AES_CHAOS_GCM_TAGLEN];
+    buffer_std.tag = standard_tag;
+    buffer_chaos.tag = chaos_tag;
 
     memcpy(text_buf, text, TEXT_LENGTH);
 
@@ -138,9 +159,9 @@ void benchmark(struct stats* chypherStats, struct stats* decypherStats, const ch
         // Reset the AES context and IV for each iteration
         memcpy(text_buf, text, TEXT_LENGTH);
         if (chaos_map != NONE) {
-            AES_CHAOS_ctx_set_iv(&ctx_chaos_gcm, iv);
+            AES_CHAOS_GCM_set_iv(&ctx_chaos_gcm, iv, 12);
         } else {
-            AES_ctx_set_iv(&ctx_gcm, iv);
+            AES_GCM_set_iv(&ctx_gcm, iv, 12);
         }
 
 
@@ -154,10 +175,10 @@ void benchmark(struct stats* chypherStats, struct stats* decypherStats, const ch
         // so we can use a single function to benchmark both AES-GCM standard and AES-GCM with chaos.
         if (chaos_map != NONE) {
             // Encryption and authentication using AES-GCM with chaos
-            AES_CHAOS_GCM_authenticated_encrypt_buffer(&ctx_chaos_gcm, &buffer_chaos, TEXT_LENGTH, 12, aad, AAD_LENGTH);
+            AES_CHAOS_GCM_authenticated_encrypt_buffer(&ctx_chaos_gcm, &buffer_chaos, TEXT_LENGTH, aad, AAD_LENGTH, GCM_TAGLEN);
         } else {
             // Encryption and authentication using AES-GCM standard
-            AES_GCM_authenticated_encrypt_buffer(&ctx_gcm, &buffer_std, TEXT_LENGTH, 12, aad, AAD_LENGTH);
+            AES_GCM_authenticated_encrypt_buffer(&ctx_gcm, &buffer_std, TEXT_LENGTH, aad, AAD_LENGTH, GCM_TAGLEN);
         }
 
         // Measure the end time for encryption and authentication
@@ -218,9 +239,9 @@ void benchmark(struct stats* chypherStats, struct stats* decypherStats, const ch
         // Reset the AES context and IV for each iteration
         memcpy(text_buf, text, TEXT_LENGTH);
         if (chaos_map != NONE) {
-            AES_CHAOS_ctx_set_iv(&ctx_chaos_gcm, iv);
+            AES_CHAOS_GCM_set_iv(&ctx_chaos_gcm, iv, 12);
         } else {
-            AES_ctx_set_iv(&ctx_gcm, iv);
+            AES_GCM_set_iv(&ctx_gcm, iv, 12);
         }
 
         // Measure the energy consumption before decryption and authentication
@@ -235,10 +256,10 @@ void benchmark(struct stats* chypherStats, struct stats* decypherStats, const ch
         // so we can use a single function to benchmark both AES-GCM standard and AES-GCM with chaos.
         if (chaos_map != NONE) {
             // Decryption and authentication using AES-GCM with chaos
-            is_valid = AES_CHAOS_GCM_authenticated_decrypt_buffer(&ctx_chaos_gcm, &buffer_chaos, buffer_chaos.tag, TEXT_LENGTH, 12, aad, AAD_LENGTH);
+            is_valid = AES_CHAOS_GCM_authenticated_decrypt_buffer(&ctx_chaos_gcm, &buffer_chaos, TEXT_LENGTH, buffer_chaos.tag, GCM_TAGLEN, aad, AAD_LENGTH);
         } else {
             // Decryption and authentication using AES-GCM standard
-            is_valid = AES_GCM_authenticated_decrypt_buffer(&ctx_gcm, &buffer_std, buffer_std.tag, TEXT_LENGTH, 12, aad, AAD_LENGTH);
+            is_valid = AES_GCM_authenticated_decrypt_buffer(&ctx_gcm, &buffer_std, TEXT_LENGTH, buffer_std.tag, GCM_TAGLEN, aad, AAD_LENGTH);
         }
 
         // Measure the end time for decryption and authentication
@@ -286,7 +307,9 @@ void benchmark(struct stats* chypherStats, struct stats* decypherStats, const ch
     free(time_measurements); // Free the allocated memory for time measurements
     free(text_buf); // Free the allocated memory for the ciphertext buffer
 
-    if (chaos_map != NONE && ctx_chaos_gcm.map_state != NULL) {
-        free(ctx_chaos_gcm.map_state); // Free the allocated memory for the chaotic map state
+    if (chaos_map != NONE) {
+        AES_CHAOS_GCM_free_ctx(&ctx_chaos_gcm);
+    } else {
+        AES_GCM_free_ctx(&ctx_gcm);
     }
 }

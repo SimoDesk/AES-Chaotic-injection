@@ -54,23 +54,29 @@ int main(int argc, char *argv[])
     uint8_t* aad = malloc(AAD_LENGTH * sizeof(uint8_t));
     getRandomValue(aad, AAD_LENGTH);
 
-    struct AES_ctx ctx_std;
-    struct AES_CHAOS_ctx ctx_chaos;
+    struct AES_GCM_ctx ctx_std;
+    struct AES_CHAOS_GCM_ctx ctx_chaos;
 
     if (map_type != NONE) {
-        AES_CHAOS_init_ctx_iv(&ctx_chaos, key, iv, map_type);
+        AES_CHAOS_GCM_init_ctx(&ctx_chaos, key, map_type);
+        AES_CHAOS_GCM_set_iv(&ctx_chaos, iv, AES_IVLEN);
     } else {
-        AES_init_ctx_iv(&ctx_std, key, iv);
+        AES_GCM_init_ctx(&ctx_std, key);
+        AES_GCM_set_iv(&ctx_std, iv, AES_IVLEN);
     }
 
     struct AES_GCM_result res_std = {.buf = text};
     struct AES_CHAOS_GCM_result res_chaos = {.buf = text};
+    uint8_t standard_tag[GCM_TAGLEN];
+    uint8_t chaos_tag[AES_CHAOS_GCM_TAGLEN];
+    res_std.tag = standard_tag;
+    res_chaos.tag = chaos_tag;
 
 
     if (map_type != NONE) {
-        AES_CHAOS_GCM_authenticated_encrypt_buffer(&ctx_chaos, &res_chaos, text_length, AES_IVLEN, aad, AAD_LENGTH);
+        AES_CHAOS_GCM_authenticated_encrypt_buffer(&ctx_chaos, &res_chaos, text_length, aad, AAD_LENGTH, GCM_TAGLEN);
     } else {
-        AES_GCM_authenticated_encrypt_buffer(&ctx_std, &res_std, text_length, AES_IVLEN, aad, AAD_LENGTH);
+        AES_GCM_authenticated_encrypt_buffer(&ctx_std, &res_std, text_length, aad, AAD_LENGTH, GCM_TAGLEN);
     }
 
     char filename[256];
@@ -81,6 +87,11 @@ int main(int argc, char *argv[])
         free(iv);
         free(text);
         free(aad);
+        if (map_type != NONE) {
+            AES_CHAOS_GCM_free_ctx(&ctx_chaos);
+        } else {
+            AES_GCM_free_ctx(&ctx_std);
+        }
         return EXIT_FAILURE;
     }
 

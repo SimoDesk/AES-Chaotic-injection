@@ -8,8 +8,8 @@ def calc_overhead():
     dataFrame = pd.read_csv(fileName)
 
     # Define the metrics for which the overhead will be calculated
-    metrics = ['Total_Time_s','Energy_uJ','Power_W','StackUsage_B','HeapUsage_B']
-
+    metrics = ['Total_Time_s', 'Throughput_MB_s', 'Energy_uJ', 'Power_W', 'StackUsage_B', 'HeapUsage_B']
+    
     # base_df is a filtered version of dataFrame that only includes rows where the 'Map' column is 'AES-GCM standard'. 
     # It is indexed by the 'Fase' column and only includes the specified metrics.
     base_df = dataFrame[dataFrame['Map'] == 'AES-GCM standard'].set_index('Fase')[metrics]

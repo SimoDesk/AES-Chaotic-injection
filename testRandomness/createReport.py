@@ -28,6 +28,19 @@ TARGET_PROPORTION = 1 - ALPHA
 UNIFORMITY_ALPHA = 0.0001
 MINIMUM_SEQUENCES = 55
 
+MAP_ORDER = (
+    "standard",
+    "logistic",
+    "tent",
+    "henon",
+    "arnold",
+    "sine",
+    "chebyshev",
+    "lorenz",
+    "chen",
+    "rossler",
+)
+
 
 # parse_result takes a serialized string representation of a Python object and returns the corresponding Python object.
 def parse_result(string_in):
@@ -268,7 +281,8 @@ def write_csv(path, rows):
 # 6. A bar chart showing the proportion of PASS, FAIL, and INSUFFICIENT verdicts for each map based on the NIST overall assessment.
 def create_plots(details, component_summary, uniformity_summary):
     # Heatmap of success percentages by map and test --------------------------------
-    maps = sorted({row["Map"] for row in component_summary})
+    available_maps = {row["Map"] for row in component_summary}
+    maps = [map_name for map_name in MAP_ORDER if map_name in available_maps]
     tests = sorted({row["Test"] for row in component_summary})
     
     grouped_rates = defaultdict(list)
@@ -337,8 +351,6 @@ def create_plots(details, component_summary, uniformity_summary):
     # -----------------------------------------------------------------------------
 
     # Proportion verdicts and average success rates --------------------------------
-    maps = sorted({row["Map"] for row in component_summary})
-
     proportion_counts = {
         map_name: {verdict: sum(row["Map"] == map_name and row["NIST proportion assessment"] == verdict for row in component_summary)for verdict in ("PASS", "FAIL")}
         for map_name in maps
@@ -371,12 +383,11 @@ def create_plots(details, component_summary, uniformity_summary):
         for map_name in maps
     }
 
-    ordered_maps = sorted(maps, key=average_rates.get, reverse=True)
-    ordered_rates = [average_rates[map_name] for map_name in ordered_maps]
+    ordered_rates = [average_rates[map_name] for map_name in maps]
     baseline = average_rates["standard"]
 
     fig, ax = plt.subplots(figsize=(12, 6))
-    bars = ax.bar(ordered_maps, ordered_rates, color="#4c78a8")
+    bars = ax.bar(maps, ordered_rates, color="#4c78a8")
     ax.axhline(
         baseline,
         color="#d62728",

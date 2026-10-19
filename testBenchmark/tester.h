@@ -1,11 +1,11 @@
 #include "../aes_default/aes.h"
 #include "../aes_chaos/aes_chaos.h"
 
-#define TEXT_LENGTH (1024 * 1024 * 2) // MB
+#define TEXT_LENGTH (1024 * 1024 * 5) // MB
 
 #define AAD_LENGTH 128 // Length of the Additional Authenticated Data (AAD) in bytes
 
-#define TEST_NUMBER 10 // Set to 1 for a single test, or any other number for multiple tests
+#define TEST_NUMBER 100 // Set to 1 for a single test, or any other number for multiple tests
 
 #define FILENAME "results.csv" // File to save the results
 
@@ -16,6 +16,7 @@ struct stats {
     double elapsed_time;
     uint64_t energy_consumed;
     double power_consumed;
+    double throughput_mb_s;
 };
 
 // Function to create a random key based on a seed value. The key is filled with random bytes generated using the standard rand() function, which is seeded with the provided seed value. The size of the key is specified by the key_size parameter.

@@ -158,7 +158,7 @@ static void iterateDerivatives(ChaosMap map_type, double* state, double* paramet
             break;
         case CHEN_MAP:
             derivatives[0] = parameters[0] * (state[1] - state[0]); // dx/dt = a * (y - x)
-            derivatives[1] = (parameters[2] - parameters[0]) * state[0] - state[0] * state[2] + parameters[1] * state[1]; // dy/dt = (c - a) * x - x * z + b * y
+            derivatives[1] = (parameters[2] - parameters[0]) * state[0] - state[0] * state[2] + parameters[2] * state[1]; // dy/dt = (c - a) * x - x * z + c * y
             derivatives[2] = state[0] * state[1] - parameters[1] * state[2]; // dz/dt = x * y - b * z
             break;
         case ROSSLER_MAP:
@@ -264,37 +264,65 @@ static double iterateRosslerMap(void* state) {
 // Save the seed extracted from the key and IV into the provided hashDigest buffer.
 // By doing this instead of using a rand function, I can ensure that the result generating from the seed will be deterministic and reproducible
 // regardless of the platform or environment, which is crucial for cryptographic applications where consistency and predictability are required for testing and validation.
-static void extractSeedFromKey(struct AES_CHAOS_ctx* ctx, uint8_t hashDigest[32]) {
+static void extractSeedFromKey(struct AES_CHAOS_ctx* ctx, const uint8_t* iv, size_t iv_len, uint8_t hashDigest[32]) {
 
-    // Create a buffer to hold the concatenated key and IV
-    uint8_t buffer[AES_CHAOS_KEYLEN + AES_CHAOS_BLOCKLEN];
+  // iv_len_bytes is a byte array that will hold the length of the IV in bytes, represented as a 64-bit unsigned integer.
+  // This is necessary because the IV length can vary, and we need to include it in the seed extraction process to ensure that different IV lengths produce different seeds.
+  uint8_t iv_len_bytes[sizeof(uint64_t)];
+  uint64_t iv_len_value = (uint64_t)iv_len;
+  if (iv_len > SIZE_MAX - AES_CHAOS_KEYLEN - sizeof(iv_len_bytes)) {
+      memset(hashDigest, 0, 32);
+      return;
+  }
 
-    // Concatenate the key and IV into the buffer
-    memcpy(buffer, ctx->OriginalKey, AES_CHAOS_KEYLEN);
-    memcpy(buffer + AES_CHAOS_KEYLEN, ctx->Iv, AES_CHAOS_BLOCKLEN);
+  // The input buffer will hold the concatenation of the original key, the IV length in bytes, and the IV itself.
+  size_t input_len = AES_CHAOS_KEYLEN + sizeof(iv_len_bytes) + iv_len;
+  uint8_t* input = malloc(input_len);
 
-    // Compute the SHA-256 hash of the concatenated buffer and store it in hashDigest
-    SHA256(buffer, AES_CHAOS_KEYLEN + AES_CHAOS_BLOCKLEN, hashDigest);
+  // If the input buffer allocation fails, we set the hashDigest to zero and return early to avoid dereferencing a NULL pointer.
+  if (input == NULL) {
+      memset(hashDigest, 0, 32);
+      return;
+  }
+
+  // Convert the IV length to a byte array in big-endian order, so that it can be concatenated with the key and IV for hashing.
+  for (size_t i = 0; i < sizeof(iv_len_bytes); ++i) {
+      iv_len_bytes[sizeof(iv_len_bytes) - 1 - i] = (uint8_t)(iv_len_value >> (i * 8));
+  }
+
+  // Concatenate the original key, the IV length in bytes, and the IV itself into the input buffer for hashing.
+  memcpy(input, ctx->OriginalKey, AES_CHAOS_KEYLEN);
+  memcpy(input + AES_CHAOS_KEYLEN, iv_len_bytes, sizeof(iv_len_bytes));
+
+  // If the IV length is greater than zero, we copy the IV into the input buffer after the key and IV length bytes.
+  if (iv_len > 0) {
+      memcpy(input + AES_CHAOS_KEYLEN + sizeof(iv_len_bytes), iv, iv_len);
+  }
+
+  // Compute the SHA-256 hash of the concatenated input buffer and store the result in hashDigest.
+  SHA256(input, input_len, hashDigest);
+
+  free(input);
 }
 
 // Extract a normalized seed value from the provided SHA-256 hash digest wich in range (0, 1) and is not exactly 0, 0.5, or 1 to avoid potential issues with certain chaotic maps.
 static double extractNormalizedSeedFromHash(const uint8_t* hashDigest) {
 
-    // Use the first 8 bytes of the hash digest to create a 64-bit integer
-    uint64_t seedInt = 0;
-    for (int i = 0; i < 8; i++) {
-        seedInt = (seedInt << 8) | hashDigest[i];
-    }
+  // Use the first 8 bytes of the hash digest to create a 64-bit integer
+  uint64_t seedInt = 0;
+  for (int i = 0; i < 8; i++) {
+      seedInt = (seedInt << 8) | hashDigest[i];
+  }
 
-    // Normalize the 64-bit integer to a double in the range (0, 1)
-    double seed = (double)seedInt / (double)UINT64_MAX;
+  // Normalize the 64-bit integer to a double in the range (0, 1)
+  double seed = (double)seedInt / (double)UINT64_MAX;
 
-    // Ensure the seed is not exactly 0, 0.5, or 1 to avoid potential issues with certain chaotic maps
-    if(seed == 0.0 || seed == 0.5 || seed == 1.0) {
-        seed += 0.000001;
-    }
+  // Ensure the seed is not exactly 0, 0.5, or 1 to avoid potential issues with certain chaotic maps
+  if(seed == 0.0 || seed == 0.5 || seed == 1.0) {
+      seed += 0.000001;
+  }
 
-    return seed;
+  return seed;
 }
 
 // Update the chaotic state and compute the new value of W_t based on the chaotic map and the parameters alpha, beta, gamma, and delta
@@ -338,14 +366,19 @@ static void updateChaos(struct AES_CHAOS_ctx* ctx) {
   // Update W_t based on the chaotic map and the parameters alpha, beta, gamma, and delta.
   // Following the equation W(t+1) = W(t) + alpha * delta_w - beta * |W(t)|
   ctx->W_t = ctx->W_t + (ctx->alpha * delta_w) - (ctx->beta * fabs(ctx->W_t));
+
+
+  // Compute the chaos modifier using the updated W_t and the parameters gamma and delta, and update the current S-box shift value accordingly.
+  double chaos_modifier = ctx->gamma * tanh(ctx->delta * ctx->W_t);
+  ctx->current_sbox_shift = (uint8_t)(int)chaos_modifier;
 }
 
 // Reset the chaotic state and W_t to their initial values
-static void init_chaos(struct AES_CHAOS_ctx* ctx) {
+static void init_chaos(struct AES_CHAOS_ctx* ctx, const uint8_t* iv, size_t iv_len) {
     ctx->W_t = 0.0;
 
     uint8_t hashDigest[32];
-    extractSeedFromKey(ctx, hashDigest);
+    extractSeedFromKey(ctx, iv, iv_len, hashDigest);
 
     double extracted_x = extractNormalizedSeedFromHash(hashDigest);
     double extracted_y = extractNormalizedSeedFromHash(hashDigest + 8);
@@ -465,26 +498,14 @@ static uint8_t getChaoticSBoxValue_update(struct AES_CHAOS_ctx* ctx, uint8_t x) 
 
   // By using the standard construction of the S-Box, which is based on the multiplicative inverse in GF(2^8) followed by an affine transformation,
   // I can use it to calculate A * x^-1 (XOR) C without the need to compute the multiplicative inverse, which is a costly operation.
-  uint8_t base_value = sbox[x];
-
-  // Calculate the chaotic perturbation: gamma * tanh(delta * W(t))
-  double chaos_modifier = ctx->gamma * tanh(ctx->delta * ctx->W_t);
-
-  // Return the S-box value perturbed by the chaotic modifier, ensuring it is cast to uint8_t
-  return (uint8_t) (base_value + (int)chaos_modifier);
+  // Then, I can use the current_sbox_shift value to perturb the S-box value, which corresponds to the chaotic perturbation: gamma * tanh(delta * W(t)).
+  // Combined together, the formula is A * x^-1 (XOR) C + gamma * tanh(delta * W(t)) wich is what alters the S-box value based on the chaotic state.
+  return (uint8_t) (sbox[x] + ctx->current_sbox_shift);
 }
 
 // Compute the chaotic S-box value based on the current chaotic state and the input byte x without updating the chaotic state
 static uint8_t getChaoticSBoxValue_static(struct AES_CHAOS_ctx* ctx, uint8_t x) {
-  // By using the standard construction of the S-Box, which is based on the multiplicative inverse in GF(2^8) followed by an affine transformation,
-  // I can use it to calculate A * x^-1 (XOR) C without the need to compute the multiplicative inverse, which is a costly operation.
-  uint8_t base_value = sbox[x];
-
-  // Calculate the chaotic perturbation: gamma * tanh(delta * W(t))
-  double chaos_modifier = ctx->gamma * tanh(ctx->delta * ctx->W_t);
-
-  // Return the S-box value perturbed by the chaotic modifier, ensuring it is cast to uint8_t
-  return (uint8_t) (base_value + (int)chaos_modifier);
+  return (uint8_t) (sbox[x] + ctx->current_sbox_shift);
 }
 
 static void KeyExpansion(struct AES_CHAOS_ctx* ctx, const uint8_t* Key)
@@ -552,10 +573,11 @@ void AES_CHAOS_init_ctx(struct AES_CHAOS_ctx* ctx, const uint8_t* key, ChaosMap 
 {
   ctx->map = map_type;
   memcpy(ctx->OriginalKey, key, AES_CHAOS_KEYLEN);
-  memset(ctx->Iv, 0, AES_CHAOS_BLOCKLEN);
   ctx->W_t = 0.0;
   ctx->gamma = DEFAULT_GAMMA;
   ctx->delta = DEFAULT_DELTA;
+
+  ctx->current_sbox_shift = 0;
 
   switch (map_type) {
     case LOGISTIC_MAP:
@@ -608,34 +630,74 @@ void AES_CHAOS_init_ctx(struct AES_CHAOS_ctx* ctx, const uint8_t* key, ChaosMap 
       break;
   }
 
-  init_chaos(ctx);
+  init_chaos(ctx, NULL, 0);
   KeyExpansion(ctx, key);
 }
 
-void AES_CHAOS_init_ctx_iv(struct AES_CHAOS_ctx* ctx, const uint8_t* key, const uint8_t* iv, ChaosMap map_type)
-{
-  memcpy(ctx->Iv, iv, AES_CHAOS_BLOCKLEN);
-  AES_CHAOS_init_ctx(ctx, key, map_type);
-  memcpy(ctx->Iv, iv, AES_CHAOS_BLOCKLEN);
-  init_chaos(ctx);
-  KeyExpansion(ctx, key);
-}
-
-void AES_CHAOS_ctx_set_iv(struct AES_CHAOS_ctx* ctx, const uint8_t* iv)
-{
-  memcpy (ctx->Iv, iv, AES_CHAOS_BLOCKLEN);
-
-  // Initialize the chaotic state and W_t to their initial values based on the key and IV
-  init_chaos(ctx);
-  KeyExpansion(ctx, ctx->OriginalKey);
-
-  // Once the chaotic state is initialized, we can proceed to re-expand the key to ensure that the RoundKey is consistent with the new IV
-  KeyExpansion(ctx, ctx->OriginalKey);
-}
-
+// Set the parameters alpha and beta for the chaotic map in the AES_CHAOS context. These parameters control the influence of the chaotic map on the encryption process.
 void AES_CHAOS_ctx_set_params(struct AES_CHAOS_ctx* ctx, double alfa, double beta) {
   ctx->alpha = alfa;
   ctx->beta = beta;
+}
+
+// Set the iv and iv_len for the AES_CHAOS_GCM context.
+int AES_CHAOS_GCM_set_iv(struct AES_CHAOS_GCM_ctx* ctx, const uint8_t* iv, size_t iv_len) {
+
+  // Allocate memory for the new IV and copy the provided IV into it. If iv_len is greater than 0, we need to allocate memory for the new IV.
+  uint8_t* new_iv = NULL;
+
+  // Check for invalid input: if ctx is NULL or if iv_len is greater than 0 but iv is NULL, return 0 to indicate failure.
+  if (ctx == NULL || (iv_len > 0 && iv == NULL)) {
+    return 0;
+  }
+
+  // If iv_len is greater than 0, allocate memory for the new IV and copy the provided IV into it. If memory allocation fails, return 0 to indicate failure.
+  if (iv_len > 0) {
+    new_iv = malloc(iv_len);
+    if (new_iv == NULL) {
+      return 0;
+    }
+    memcpy(new_iv, iv, iv_len);
+  }
+
+  // Free the old IV if it exists to avoid memory leaks.
+  free(ctx->Iv);
+
+  // Update the context with the new IV and its length.
+  ctx->Iv = new_iv;
+  ctx->IvLen = iv_len;
+
+  init_chaos(&ctx->aes, ctx->Iv, ctx->IvLen);
+
+  KeyExpansion(&ctx->aes, ctx->aes.OriginalKey);
+
+  return 1;
+}
+
+// Initialize the AES_CHAOS_GCM context with the provided key and chaotic map type. The IV is set to NULL and its length to 0.
+void AES_CHAOS_GCM_init_ctx(struct AES_CHAOS_GCM_ctx* ctx, const uint8_t* key, ChaosMap map_type) {
+  ctx->Iv = NULL;
+  ctx->IvLen = 0;
+  AES_CHAOS_init_ctx(&ctx->aes, key, map_type);
+}
+
+// Free the memory allocated for the chaotic map state in the AES_CHAOS context. 
+void AES_CHAOS_free_ctx(struct AES_CHAOS_ctx* ctx) {
+  if (ctx != NULL) {
+    free(ctx->map_state);
+
+    ctx->map_state = NULL;
+  }
+}
+
+// Free the memory allocated for the IV in the AES_CHAOS_GCM context and free the AES_CHAOS context.
+void AES_CHAOS_GCM_free_ctx(struct AES_CHAOS_GCM_ctx* ctx) {
+  if (ctx != NULL) {
+    free(ctx->Iv);
+    ctx->Iv = NULL;
+    ctx->IvLen = 0;
+    AES_CHAOS_free_ctx(&ctx->aes);
+  }
 }
 
 static void AddRoundKey(uint8_t round, state_t* state, const uint8_t* RoundKey)
@@ -737,6 +799,8 @@ static void Cipher(struct AES_CHAOS_ctx* ctx, state_t* state, const uint8_t* Rou
 
   for (round = 1; ; ++round)
   {
+    // updateChaos(ctx);
+
     SubBytes(ctx, state);
     ShiftRows(state);
     if (round == Nr) {
@@ -828,7 +892,7 @@ static void counterInc32(uint8_t* counter) {
   }
 }
 
-void AES_CHAOS_GCM_xcrypt_buffer(struct AES_CHAOS_ctx* ctx, uint8_t* buf, size_t length)
+static void AES_CHAOS_GCM_xcrypt_buffer(struct AES_CHAOS_GCM_ctx* ctx, uint8_t* counter, uint8_t* buf, size_t length)
 {
   uint8_t buffer[AES_CHAOS_BLOCKLEN];
   
@@ -838,17 +902,17 @@ void AES_CHAOS_GCM_xcrypt_buffer(struct AES_CHAOS_ctx* ctx, uint8_t* buf, size_t
   {
     if (bi == AES_CHAOS_BLOCKLEN)
     {
-      memcpy(buffer, ctx->Iv, AES_CHAOS_BLOCKLEN);
-      Cipher(ctx, (state_t*)buffer, ctx->RoundKey);
+      memcpy(buffer, counter, AES_CHAOS_BLOCKLEN);
+      Cipher(&ctx->aes, (state_t*)buffer, ctx->aes.RoundKey);
 
       for (bi = (AES_CHAOS_BLOCKLEN - 1); bi >= (AES_CHAOS_BLOCKLEN - 4); --bi)
       {
-        if (ctx->Iv[bi] == 255)
+        if (counter[bi] == 255)
 	      {
-          ctx->Iv[bi] = 0;
+          counter[bi] = 0;
           continue;
         } 
-        ctx->Iv[bi] += 1;
+        counter[bi] += 1;
         break;   
       }
       bi = 0;
@@ -858,14 +922,21 @@ void AES_CHAOS_GCM_xcrypt_buffer(struct AES_CHAOS_ctx* ctx, uint8_t* buf, size_t
   }
 }
 
-void AES_CHAOS_GCM_authenticated_encrypt_buffer(struct AES_CHAOS_ctx* ctx, struct AES_CHAOS_GCM_result* res, size_t length, size_t iv_len, uint8_t* aad, size_t aad_length) {
+void AES_CHAOS_GCM_authenticated_encrypt_buffer(struct AES_CHAOS_GCM_ctx* ctx, struct AES_CHAOS_GCM_result* res, size_t length, uint8_t* aad, size_t aad_length, size_t tag_length) {
+  const uint8_t* iv = ctx != NULL ? ctx->Iv : NULL;
+  size_t iv_len = ctx != NULL ? ctx->IvLen : 0;
+  if (ctx == NULL || res == NULL || res->buf == NULL || res->tag == NULL ||
+      (iv_len > 0 && iv == NULL) ||
+      tag_length == 0 || tag_length > AES_CHAOS_GCM_TAGLEN) {
+    return;
+  }
 
   uint8_t H[AES_CHAOS_BLOCKLEN] = {0};
-  AES_CHAOS_ECB_encrypt(ctx, H);
+  Cipher(&ctx->aes, (state_t*)H, ctx->aes.RoundKey);
   
   uint8_t J[AES_CHAOS_BLOCKLEN] = {0};
   if(iv_len == 12) {
-    memcpy(J, ctx->Iv, 12);
+    memcpy(J, iv, 12);
     J[12] = 0x00;
     J[13] = 0x00;
     J[14] = 0x00;
@@ -874,7 +945,7 @@ void AES_CHAOS_GCM_authenticated_encrypt_buffer(struct AES_CHAOS_ctx* ctx, struc
     for (size_t i = 0; i < iv_len; i += AES_CHAOS_BLOCKLEN) {
       for (size_t j = 0; j < AES_CHAOS_BLOCKLEN; j++) {
         if (i + j < iv_len)
-          J[j] ^= ctx->Iv[i + j];
+          J[j] ^= iv[i + j];
       }
       AES_CHAOS_galoisMoltiplication(J, H, J); 
     }    
@@ -901,13 +972,7 @@ void AES_CHAOS_GCM_authenticated_encrypt_buffer(struct AES_CHAOS_ctx* ctx, struc
   memcpy(Jinc, J, AES_CHAOS_BLOCKLEN);
   counterInc32(Jinc); 
 
-  uint8_t saved_iv_payload[AES_CHAOS_BLOCKLEN];
-  memcpy(saved_iv_payload, ctx->Iv, AES_CHAOS_BLOCKLEN);
-
-  memcpy(ctx->Iv, Jinc, AES_CHAOS_BLOCKLEN);
-  AES_CHAOS_GCM_xcrypt_buffer(ctx, res->buf, length);
-
-  memcpy(ctx->Iv, saved_iv_payload, AES_CHAOS_BLOCKLEN);
+  AES_CHAOS_GCM_xcrypt_buffer(ctx, Jinc, res->buf, length);
 
   uint8_t S[AES_CHAOS_BLOCKLEN] = {0};
 
@@ -953,31 +1018,34 @@ void AES_CHAOS_GCM_authenticated_encrypt_buffer(struct AES_CHAOS_ctx* ctx, struc
   }
   AES_CHAOS_galoisMoltiplication(S, H, S);
 
-  uint8_t saved_iv_tag[AES_CHAOS_BLOCKLEN];
-  memcpy(saved_iv_tag, ctx->Iv, AES_CHAOS_BLOCKLEN);
+  uint8_t Jtag[AES_CHAOS_BLOCKLEN];
+  memcpy(Jtag, J, AES_CHAOS_BLOCKLEN);
+  AES_CHAOS_GCM_xcrypt_buffer(ctx, Jtag, S, AES_CHAOS_BLOCKLEN);
 
-  memcpy(ctx->Iv, J, AES_CHAOS_BLOCKLEN);
-  AES_CHAOS_GCM_xcrypt_buffer(ctx, S, AES_CHAOS_BLOCKLEN);
-
-  memcpy(ctx->Iv, saved_iv_tag, AES_CHAOS_BLOCKLEN);
-
-  memcpy(res->tag, S, AES_CHAOS_GCM_TAGLEN);
+  memcpy(res->tag, S, tag_length);
 }
 
-int AES_CHAOS_GCM_authenticated_decrypt_buffer(struct AES_CHAOS_ctx* ctx, struct AES_CHAOS_GCM_result* res, const uint8_t* tag, size_t length, size_t iv_len, uint8_t* aad, size_t aad_length) {
+int AES_CHAOS_GCM_authenticated_decrypt_buffer(struct AES_CHAOS_GCM_ctx* ctx, struct AES_CHAOS_GCM_result* res, size_t length, const uint8_t* tag, size_t tag_length, uint8_t* aad, size_t aad_length) {
+  const uint8_t* iv = ctx != NULL ? ctx->Iv : NULL;
+  size_t iv_len = ctx != NULL ? ctx->IvLen : 0;
+  if (ctx == NULL || res == NULL || res->buf == NULL ||
+      (iv_len > 0 && iv == NULL) || tag == NULL ||
+      tag_length == 0 || tag_length > AES_CHAOS_GCM_TAGLEN) {
+    return 0;
+  }
   
   uint8_t H[AES_CHAOS_BLOCKLEN] = {0};
-  AES_CHAOS_ECB_encrypt(ctx, H);
+  Cipher(&ctx->aes, (state_t*)H, ctx->aes.RoundKey);
 
   uint8_t J[AES_CHAOS_BLOCKLEN] = {0};
   if(iv_len == 12) {
-    memcpy(J, ctx->Iv, 12);
+    memcpy(J, iv, 12);
     J[12] = 0x00; J[13] = 0x00; J[14] = 0x00; J[15] = 0x01;
   } else {
     for (size_t i = 0; i < iv_len; i += AES_CHAOS_BLOCKLEN) {
       for (size_t j = 0; j < AES_CHAOS_BLOCKLEN; j++) {
         if (i + j < iv_len)
-          J[j] ^= ctx->Iv[i + j];
+          J[j] ^= iv[i + j];
       }
       AES_CHAOS_galoisMoltiplication(J, H, J); 
     }    
@@ -1040,27 +1108,15 @@ int AES_CHAOS_GCM_authenticated_decrypt_buffer(struct AES_CHAOS_ctx* ctx, struct
   memcpy(Jinc, J, AES_CHAOS_BLOCKLEN);
   counterInc32(Jinc); 
 
-  uint8_t saved_iv_payload[AES_CHAOS_BLOCKLEN];
-  memcpy(saved_iv_payload, ctx->Iv, AES_CHAOS_BLOCKLEN);
-
-  memcpy(ctx->Iv, Jinc, AES_CHAOS_BLOCKLEN);
-  AES_CHAOS_GCM_xcrypt_buffer(ctx, res->buf, length);
-
-  memcpy(ctx->Iv, saved_iv_payload, AES_CHAOS_BLOCKLEN);
+  AES_CHAOS_GCM_xcrypt_buffer(ctx, Jinc, res->buf, length);
 
   // In the chaotic imlpementation of the decryption, the tag is computed after the decryption of the ciphertext, because the chaotic state is updated during the decryption process.
   // This means that the tag is computed based on the decrypted plaintext, which is consistent with the GCM specification.
   // The tag is then compared to the provided tag to verify the authenticity of the message.
-  uint8_t saved_iv_tag[AES_CHAOS_BLOCKLEN];
-  memcpy(saved_iv_tag, ctx->Iv, AES_CHAOS_BLOCKLEN);
-
-  memcpy(ctx->Iv, J, AES_CHAOS_BLOCKLEN);
-  AES_CHAOS_GCM_xcrypt_buffer(ctx, S, AES_CHAOS_BLOCKLEN);
-
-  memcpy(ctx->Iv, saved_iv_tag, AES_CHAOS_BLOCKLEN);
+  AES_CHAOS_GCM_xcrypt_buffer(ctx, J, S, AES_CHAOS_BLOCKLEN);
 
   uint8_t diff = 0;
-  for (int i = 0; i < AES_CHAOS_GCM_TAGLEN; i++) {
+  for (size_t i = 0; i < tag_length; i++) {
     diff |= (S[i] ^ tag[i]);
   }
   

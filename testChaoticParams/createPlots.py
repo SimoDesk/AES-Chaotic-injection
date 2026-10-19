@@ -23,6 +23,18 @@ TEST_FILES = {
     "Key sensitivity": SCRIPT_DIR / "keySensitivity_results.csv",
 }
 
+MAP_ORDER = (
+    "logistic",
+    "tent",
+    "henon",
+    "arnold",
+    "sine",
+    "chebyshev",
+    "lorenz",
+    "chen",
+    "rossler",
+)
+
 # Define a function to load the CSV files into pandas DataFrames
 def load_df(path, col_name):
     df = pd.read_csv(path, decimal=",")
@@ -51,7 +63,10 @@ def createPlots():
     vmax = max(1.0, max((df[col] - ideal).abs().max() for df in dfs.values()))
 
     # Create plots for each unique map in the data
-    for m in sorted(dfs["Avalanche effect"]["Mappa"].unique()):
+    available_maps = set(dfs["Avalanche effect"]["Mappa"])
+    maps = [map_name for map_name in MAP_ORDER if map_name in available_maps]
+
+    for m in maps:
 
         # Create a figure with two subplots for the two test types
         fig, axes = plt.subplots(1, 2, figsize=(15, 6), constrained_layout=True)

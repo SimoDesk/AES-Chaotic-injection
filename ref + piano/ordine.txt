@@ -27,8 +27,13 @@
 	- correttezza della randomicità delle implementazioni seguendo [nistspecialpublication800-22r1a] usando la libreria open source [https://github.com/stevenang/randomness_testsuite.git]
 	- usano stevenang per i test [13616_FLiPS_Few_Shot_Fingerpri], [26. ID 27703]
 	- utilizzo della politica cross-key correlation per verificare la correttezza delle implementazioni nei test [nistspecialpublication800-22r1a]
-	TODO:
-	- testare per i vari valori di alpha, beta, gamma e delta. Per ogni ALFA e BETA testare avalanche e key sensitivity
+
+
+TODO:
+- benchmark differenziati tra GCM e ECB (???)
+- parallelismo?
+
+AGGIORNAMENTO CAOTICO OGNI ROUND O OGNI BLOCCO (!?!?!?)
 
 - sviluppo in python del sistema machine learning
 - implementazione e verifica del machine unlearning

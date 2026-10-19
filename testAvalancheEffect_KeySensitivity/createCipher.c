@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
     struct AES_CHAOS_ctx ctx_chaos;
 
     if (map_type != NONE) {
-        AES_CHAOS_init_ctx_iv(&ctx_chaos, key, iv, map_type);
+        AES_CHAOS_init_ctx(&ctx_chaos, key, map_type);
     } else {
         AES_init_ctx_iv(&ctx_std, key, iv);
     }
@@ -66,6 +66,8 @@ int main(int argc, char *argv[])
 
     if (map_type != NONE) {
         AES_CHAOS_ECB_encrypt(&ctx_chaos, text);
+        AES_CHAOS_free_ctx(&ctx_chaos);
+        AES_CHAOS_free_ctx(&ctx_chaos);
     } else {
         AES_ECB_encrypt(&ctx_std, text);
     }
