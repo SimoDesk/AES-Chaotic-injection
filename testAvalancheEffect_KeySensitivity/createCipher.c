@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
     }
 
     char filename[256];
-    int path_length = snprintf(filename, sizeof(filename), "ciphers/%s/cipher_%i.bin", argv[1], n_test);
+    int path_length = snprintf(filename, sizeof(filename), "cipher_%i.bin", n_test);
     if (path_length < 0 || (size_t)path_length >= sizeof(filename)) {
         fprintf(stderr, "Percorso del file di output troppo lungo\n");
 

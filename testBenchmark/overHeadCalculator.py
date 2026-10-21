@@ -1,8 +1,6 @@
 import pandas as pd
 
-def calc_overhead():
-    # fileName stores the name of the CSV file to be read 
-    fileName = 'results.csv'
+def calc_overhead(fileName = 'results.csv'):   
 
     # Read the CSV file into a DataFrame and store it in the variable dataFrame
     dataFrame = pd.read_csv(fileName)
@@ -24,7 +22,8 @@ def calc_overhead():
         dataFrame[column_name] = ((dataFrame[met] - base_val) / base_val) * 100
 
     # After calculating the overhead percentages for all specified metrics, round the values in dataFrame to two decimal places.
-    dataFrame = dataFrame.round(2)
+    cols_to_round = [col for col in dataFrame.columns if col != 'Bit_Entropy']
+    dataFrame[cols_to_round] = dataFrame[cols_to_round].round(2)
 
     # Finally, write the updated DataFrame back to the 'results.csv' file, overwriting it with the new data that includes the overhead calculations.
     dataFrame.to_csv('results.csv', index=False)

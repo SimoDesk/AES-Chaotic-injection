@@ -5,7 +5,7 @@
 
 #define AAD_LENGTH 128 // Length of the Additional Authenticated Data (AAD) in bytes
 
-#define TEST_NUMBER 100 // Set to 1 for a single test, or any other number for multiple tests
+#define TEST_NUMBER 10 // Set to 1 for a single test, or any other number for multiple tests
 
 #define FILENAME "results.csv" // File to save the results
 
@@ -17,6 +17,7 @@ struct stats {
     uint64_t energy_consumed;
     double power_consumed;
     double throughput_mb_s;
+    double bit_entropy;
 };
 
 // Function to create a random key based on a seed value. The key is filled with random bytes generated using the standard rand() function, which is seeded with the provided seed value. The size of the key is specified by the key_size parameter.

@@ -261,6 +261,10 @@ static double iterateRosslerMap(void* state) {
 
 /*****************************************************************************/
 
+
+/*****************************************************************************/
+/* Key as seed functions:                                                    */
+
 // Save the seed extracted from the key and IV into the provided hashDigest buffer.
 // By doing this instead of using a rand function, I can ensure that the result generating from the seed will be deterministic and reproducible
 // regardless of the platform or environment, which is crucial for cryptographic applications where consistency and predictability are required for testing and validation.
@@ -324,6 +328,12 @@ static double extractNormalizedSeedFromHash(const uint8_t* hashDigest) {
 
   return seed;
 }
+
+/*****************************************************************************/
+
+
+/*****************************************************************************/
+/* Chaos handler functions:                                                  */
 
 // Update the chaotic state and compute the new value of W_t based on the chaotic map and the parameters alpha, beta, gamma, and delta
 static void updateChaos(struct AES_CHAOS_ctx* ctx) {
@@ -508,6 +518,15 @@ static uint8_t getChaoticSBoxValue_static(struct AES_CHAOS_ctx* ctx, uint8_t x) 
   return (uint8_t) (sbox[x] + ctx->current_sbox_shift);
 }
 
+// Set the parameters alpha and beta for the chaotic map in the AES_CHAOS context. These parameters control the influence of the chaotic map on the encryption process.
+void AES_CHAOS_ctx_set_params(struct AES_CHAOS_ctx* ctx, double alfa, double beta) {
+  ctx->alpha = alfa;
+  ctx->beta = beta;
+}
+
+/*****************************************************************************/
+
+
 static void KeyExpansion(struct AES_CHAOS_ctx* ctx, const uint8_t* Key)
 {
   unsigned i, j, k;
@@ -568,6 +587,10 @@ static void KeyExpansion(struct AES_CHAOS_ctx* ctx, const uint8_t* Key)
     ctx->RoundKey[j + 3] = ctx->RoundKey[k + 3] ^ tempa[3];
   }
 }
+
+
+/*****************************************************************************/
+/* Chaos initialization functions:                                           */
 
 void AES_CHAOS_init_ctx(struct AES_CHAOS_ctx* ctx, const uint8_t* key, ChaosMap map_type)
 {
@@ -634,10 +657,26 @@ void AES_CHAOS_init_ctx(struct AES_CHAOS_ctx* ctx, const uint8_t* key, ChaosMap 
   KeyExpansion(ctx, key);
 }
 
-// Set the parameters alpha and beta for the chaotic map in the AES_CHAOS context. These parameters control the influence of the chaotic map on the encryption process.
-void AES_CHAOS_ctx_set_params(struct AES_CHAOS_ctx* ctx, double alfa, double beta) {
-  ctx->alpha = alfa;
-  ctx->beta = beta;
+// Free the memory allocated for the chaotic map state in the AES_CHAOS context. 
+void AES_CHAOS_free_ctx(struct AES_CHAOS_ctx* ctx) {
+  if (ctx != NULL) {
+    free(ctx->map_state);
+
+    ctx->map_state = NULL;
+  }
+}
+
+/*****************************************************************************/
+
+
+/*****************************************************************************/
+/* GCM initialization functions:                                             */
+
+// Initialize the AES_CHAOS_GCM context with the provided key and chaotic map type. The IV is set to NULL and its length to 0.
+void AES_CHAOS_GCM_init_ctx(struct AES_CHAOS_GCM_ctx* ctx, const uint8_t* key, ChaosMap map_type) {
+  ctx->Iv = NULL;
+  ctx->IvLen = 0;
+  AES_CHAOS_init_ctx(&ctx->aes, key, map_type);
 }
 
 // Set the iv and iv_len for the AES_CHAOS_GCM context.
@@ -674,22 +713,6 @@ int AES_CHAOS_GCM_set_iv(struct AES_CHAOS_GCM_ctx* ctx, const uint8_t* iv, size_
   return 1;
 }
 
-// Initialize the AES_CHAOS_GCM context with the provided key and chaotic map type. The IV is set to NULL and its length to 0.
-void AES_CHAOS_GCM_init_ctx(struct AES_CHAOS_GCM_ctx* ctx, const uint8_t* key, ChaosMap map_type) {
-  ctx->Iv = NULL;
-  ctx->IvLen = 0;
-  AES_CHAOS_init_ctx(&ctx->aes, key, map_type);
-}
-
-// Free the memory allocated for the chaotic map state in the AES_CHAOS context. 
-void AES_CHAOS_free_ctx(struct AES_CHAOS_ctx* ctx) {
-  if (ctx != NULL) {
-    free(ctx->map_state);
-
-    ctx->map_state = NULL;
-  }
-}
-
 // Free the memory allocated for the IV in the AES_CHAOS_GCM context and free the AES_CHAOS context.
 void AES_CHAOS_GCM_free_ctx(struct AES_CHAOS_GCM_ctx* ctx) {
   if (ctx != NULL) {
@@ -699,6 +722,9 @@ void AES_CHAOS_GCM_free_ctx(struct AES_CHAOS_GCM_ctx* ctx) {
     AES_CHAOS_free_ctx(&ctx->aes);
   }
 }
+
+/*****************************************************************************/
+
 
 static void AddRoundKey(uint8_t round, state_t* state, const uint8_t* RoundKey)
 {
@@ -791,6 +817,7 @@ static uint8_t Multiply(uint8_t x, uint8_t y)
 // Cipher function that performs the AES encryption process using the chaotic S-box and other transformations
 static void Cipher(struct AES_CHAOS_ctx* ctx, state_t* state, const uint8_t* RoundKey)
 {
+  // Once per block chaos update
   updateChaos(ctx);
 
   uint8_t round = 0;
@@ -799,6 +826,7 @@ static void Cipher(struct AES_CHAOS_ctx* ctx, state_t* state, const uint8_t* Rou
 
   for (round = 1; ; ++round)
   {
+    // Once per round chaos update
     // updateChaos(ctx);
 
     SubBytes(ctx, state);

@@ -43,10 +43,12 @@ aes_chaos.o: ../aes_chaos/aes_chaos.c directories
 
 clear:
 	rm -f *.o $(TARGET_DIR)/benchmark_*
+	rm -f plots/*.png
+	rm -rf $(AUX_DIR)
 
 
 # Let the user know that they can run 'make setup' to install the required Python packages for graph generation and analysis.
 setup:
 	sudo apt update
 	sudo apt-get install libssl-dev
-	sudo apt install -y python3-networkx python3-matplotlib python3-pip graphviz python3-pygraphviz python3-pandas
+	sudo apt install -y python3-networkx python3-matplotlib python3-pip graphviz python3-pygraphviz python3-pandas python3-seaborn

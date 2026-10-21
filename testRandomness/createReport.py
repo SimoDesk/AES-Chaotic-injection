@@ -228,7 +228,8 @@ def build_uniformity_summary(details):
 
         # Every formula is taken from the NIST SP 800-22 Rev. 1a, Section 3.2.2, "Uniformity of P-values", and the chi-square test is used to assess the uniformity of the p-values.
         sample_size = len(p_values)
-        counts = [sum(index / 10 <= p_value < (index + 1) / 10 for p_value in p_values) for index in range(10)]
+        counts = [sum(index / 10 <= p_value < (index + 1) / 10 for p_value in p_values) for index in range(9)]
+        counts.append(sum(0.9 <= p_value <= 1 for p_value in p_values))        
         expected = sample_size / 10
         chi_square = sum((count - expected) ** 2 / expected for count in counts)
         uniformity_p_value = float(gammaincc(9 / 2, chi_square / 2))
@@ -367,7 +368,7 @@ def create_plots(details, component_summary, uniformity_summary):
     ax.set_xticks(list(x_values), maps, rotation=45, ha="right")
     ax.set_ylabel("Number of components")
     ax.set_ylim(0, max(41, max(p + f for p, f in zip(passed, failed))) + 1)
-    ax.set_title("NIST verdicts on sequence proportions")
+    ax.set_title("Numbero of components with PASS and FAIL verdicts according to the NIST criterion")
 
     ax.legend()
     fig.tight_layout()

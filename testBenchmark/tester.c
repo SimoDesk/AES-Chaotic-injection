@@ -48,6 +48,28 @@ uint64_t read_energy() {
     return energy;
 }
 
+// Calculate the Shannon entropy of a given buffer.
+double calcEntropy(const uint8_t* buffer, size_t length) {
+    if (length == 0) return 0.0;
+
+    // Frequency array to count occurrences of each byte value (0-255)
+    size_t freq[256] = {0};
+    for (size_t i = 0; i < length; i++) {
+        freq[buffer[i]]++;
+    }
+
+    // Calculate the Shannon entropy using the formula: H(X) = -Σ(p(x) * log2(p(x)))
+    double entropy = 0.0;
+    for (size_t i = 0; i < 256; i++) {
+        if (freq[i] > 0) {
+            double p = (double)freq[i] / length;
+            entropy -= p * log2(p);
+        }
+    }
+
+    return entropy;
+}
+
 void calcStats(struct stats* st, double total_time, double* time_mesurements, uint64_t total_energy) {
 
     // Calculate power consumed in watts (W) using the formula: Power (W) = Energy (J) / Time (s)
@@ -91,13 +113,15 @@ void saveStatsToFile(struct stats* stEnc, struct stats* stDec, char* filename, c
 
     double data_size_mb = (double)TEXT_LENGTH / (1024.0 * 1024.0);
 
-    fprintf(file, "%s,%s,%d,%.2f,%f,%f,%f,%f,%lu,%f,!,%zu\n",
-            alg_name, "Cifratura", TEST_NUMBER, data_size_mb, 
-            stEnc->elapsed_time, stEnc->average_time, stEnc->time_standard_deviation, stEnc->throughput_mb_s, stEnc->energy_consumed, stEnc->power_consumed, heap_consumed);
+    fprintf(file, "%s,%s,%d,%.2f,%f,%f,%f,%f,%.12f,%lu,%f,!,%zu\n",
+            alg_name, "Encryption", TEST_NUMBER, data_size_mb, 
+            stEnc->elapsed_time, stEnc->average_time, stEnc->time_standard_deviation, stEnc->throughput_mb_s, stEnc->bit_entropy,
+            stEnc->energy_consumed, stEnc->power_consumed, heap_consumed);
 
-    fprintf(file, "%s,%s,%d,%.2f,%f,%f,%f,%f,%lu,%f,!,%zu\n",
-            alg_name, "Decifratura", TEST_NUMBER, data_size_mb, 
-            stDec->elapsed_time, stDec->average_time, stDec->time_standard_deviation, stDec->throughput_mb_s, stDec->energy_consumed, stDec->power_consumed, heap_consumed);
+    fprintf(file, "%s,%s,%d,%.2f,%f,%f,%f,%f,%.12f,%lu,%f,!,%zu\n",
+            alg_name, "Decryption", TEST_NUMBER, data_size_mb, 
+            stDec->elapsed_time, stDec->average_time, stDec->time_standard_deviation, stDec->throughput_mb_s, stDec->bit_entropy,
+            stDec->energy_consumed, stDec->power_consumed, heap_consumed);
 
     
 
@@ -211,6 +235,8 @@ void benchmark(struct stats* chypherStats, struct stats* decypherStats, const ch
 
     calcStats(chypherStats, total_time, time_measurements, total_energy);
 
+    chypherStats->bit_entropy = calcEntropy(text_buf, TEXT_LENGTH);
+
 
     /*****************************************************************************/
     /* Decrypt Start mesurements                                                 */
@@ -300,6 +326,8 @@ void benchmark(struct stats* chypherStats, struct stats* decypherStats, const ch
     /*****************************************************************************/
     
     calcStats(decypherStats, total_time, time_measurements, total_energy);
+
+    decypherStats->bit_entropy = 0.0; // Set bit entropy to 0 for decryption, as it is not relevant
 
 
     saveStatsToFile(chypherStats, decypherStats, FILENAME, alg_name, chaos_map);

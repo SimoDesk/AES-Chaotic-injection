@@ -16,7 +16,7 @@
     #define AES_CHAOS_KEYLEN 24
     #define AES_CHAOS_keyExpSize 208
 #else
-    #define AES_CHAOS_KEYLEN 16   // Key length in bytes
+    #define AES_CHAOS_KEYLEN 16
     #define AES_CHAOS_keyExpSize 176
 #endif
 

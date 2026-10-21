@@ -4,6 +4,9 @@ import sys
 
 from memoryCalculator import calc_memory
 from overHeadCalculator import calc_overhead
+from createPlots import create_plots
+
+RESULTS_CSV = "results.csv"
 
 # Define the mapping of map names to their corresponding compilation flags
 MAPS_CONFIG = {
@@ -19,14 +22,14 @@ MAPS_CONFIG = {
     "rossler": "-DUSE_ROSSLER_MAP"
 }
 
-def run_benchmarks():
+def run_benchmarks(fileName = RESULTS_CSV):
 
     # Check if the script is run in time-only mode
     time_only_mode = "--time-only" in sys.argv
     
     # If the results.csv file exists, remove it to start fresh
-    if os.path.exists("results.csv"):
-        os.remove("results.csv")
+    if os.path.exists(fileName):
+        os.remove(fileName)
 
     for map_name, base_macro in MAPS_CONFIG.items():
 
@@ -55,14 +58,15 @@ def run_benchmarks():
         # Run the benchmark executable for the current map
         subprocess.run([target_exe], check=True)
 
-    # Calculate memory usage and overhead after running all benchmarks
-    calc_memory()
-    calc_overhead()
-
 if __name__ == "__main__":
 
     subprocess.run(["make", "clear"], check=True)
 
-    subprocess.run(["sudo", "make", "clear"], check=True)
+    run_benchmarks(RESULTS_CSV)
 
-    run_benchmarks()
+    # Calculate memory usage and overhead after running all benchmarks
+    calc_memory(RESULTS_CSV)
+    calc_overhead(RESULTS_CSV)
+
+    create_plots(RESULTS_CSV)
+

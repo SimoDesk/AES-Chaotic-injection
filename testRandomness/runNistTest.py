@@ -2,6 +2,7 @@ import os
 import sys
 import subprocess
 import csv
+import tempfile
 import concurrent.futures
 
 from createReport import create_report 
@@ -101,49 +102,59 @@ N_TESTS = 55
 # Define the main function to run the automation of tests
 def run_automation():
 
+    # Determine if a RAM-based temporary directory is available for improved performance, otherwise use the default temporary directory
+    ram_based_dir = "/dev/shm" if os.path.exists("/dev/shm") else None
+
     # Create or overwrite the output CSV file and write the header row
     with open(OUTPUT_CSV, mode='w', newline='') as csv_file:
         writer = csv.writer(csv_file)
         writer.writerow(["Mappa", "Seed", "Test", "Risultato (P-Value, Status)"])
 
-        # For each map in the list of maps, generate the ciphertext and run the NIST tests in parallel
-        for mappa in MAPPE:
+        # Use a temporary directory in RAM to store the generated ciphertexts and run the tests in order
+        # to ensure that the tests are run in a clean environment and to improve performance by avoiding disk I/O
+        with tempfile.TemporaryDirectory(dir=ram_based_dir) as temp_dir:
 
-            map_output_dir = os.path.join(current_dir, "ciphers", mappa)
-            os.makedirs(map_output_dir, exist_ok=True)
+            # For each map in the list of maps, generate the ciphertext and run the NIST tests in parallel
+            for mappa in MAPPE:
 
-            # For each seed from 0 to 99, run the extract_bin executable to generate ciphertexts with different seeds, ensuring that the tests are run on a variety of inputs
-            # This follow the NIST recommendation to test the randomness of outputs across different keys and initial conditions, which is crucial for evaluating the security and robustness of the chaotic maps used in the AES encryption process
-            for seed in range(0, 0 + N_TESTS):
-                subprocess.run(["./extract_bin", mappa, str(seed)], cwd=current_dir, check=True)
+                map_output_dir = os.path.join(temp_dir, "ciphers", mappa)
+                os.makedirs(map_output_dir, exist_ok=True)
 
-                bin_filename = os.path.join(map_output_dir, f"cipher_{seed}.bin")
+                # For each seed from 0 to 99, run the extract_bin executable to generate ciphertexts with different seeds, ensuring that the tests are run on a variety of inputs
+                # This follow the NIST recommendation to test the randomness of outputs across different keys and initial conditions, which is crucial for evaluating the security and robustness of the chaotic maps used in the AES encryption process
+                for seed in range(0, 0 + N_TESTS):
+                    subprocess.run(["./extract_bin", mappa, str(seed)], cwd=current_dir, check=True)
 
-                # Prepare the list of arguments for parallel execution, where each argument is a tuple of the test index and the binary filename
-                args_list = [(i, bin_filename) for i in range(len(test_function))]
+                    bin_filename = os.path.join(map_output_dir, f"cipher_{seed}.bin")
 
-                # Initialize a dictionary to store the results of the tests
-                results = {}
+                    # Prepare the list of arguments for parallel execution, where each argument is a tuple of the test index and the binary filename
+                    args_list = [(i, bin_filename) for i in range(len(test_function))]
 
-                # Use a ProcessPoolExecutor to run the tests in parallel, submitting each test to the executor and collecting the results as they complete
-                print(f"[{mappa.upper()} - {seed}] Test NIST avviati in parallelo...")
+                    # Initialize a dictionary to store the results of the tests
+                    results = {}
 
-                with concurrent.futures.ProcessPoolExecutor() as executor:
-                    # Submit the tests to the executor and store the futures in a dictionary, mapping each future to its corresponding argument 
-                    # in a dictionary comprehension, allowing us to track which test corresponds to which future as they complete
-                    futures = {executor.submit(run_single_test, arg): arg for arg in args_list}
+                    # Use a ProcessPoolExecutor to run the tests in parallel, submitting each test to the executor and collecting the results as they complete
+                    print(f"[{mappa.upper()} - {seed}] Test NIST avviati in parallelo...")
 
-                    # As each future completes, retrieve the result and print the completion message, storing the results in the results dictionary
-                    for future in concurrent.futures.as_completed(futures):
-                        i, nome_test, risultato = future.result()
-                        print(f"  [COMPLETATO] -> {nome_test}")
-                        results[i] = (nome_test, risultato)
-                
-                # After all tests for the current map and seed are completed, write the results to the CSV file
-                for i in range(len(test_function)):
-                    nome, res = results[i]
-                    writer.writerow([mappa, seed, nome, str(res)])
+                    with concurrent.futures.ProcessPoolExecutor() as executor:
+                        # Submit the tests to the executor and store the futures in a dictionary, mapping each future to its corresponding argument 
+                        # in a dictionary comprehension, allowing us to track which test corresponds to which future as they complete
+                        futures = {executor.submit(run_single_test, arg): arg for arg in args_list}
 
+                        # As each future completes, retrieve the result and print the completion message, storing the results in the results dictionary
+                        for future in concurrent.futures.as_completed(futures):
+                            i, nome_test, risultato = future.result()
+                            print(f"  [COMPLETATO] -> {nome_test}")
+                            results[i] = (nome_test, risultato)
+                    
+                    # After all tests for the current map and seed are completed, write the results to the CSV file
+                    for i in range(len(test_function)):
+                        nome, res = results[i]
+                        writer.writerow([mappa, seed, nome, str(res)])
+
+                    # Clean up the generated binary file after testing
+                    if os.path.exists(bin_filename):
+                        os.remove(bin_filename)  
 if __name__ == "__main__":
 
     subprocess.run(["make", "clear"], cwd=current_dir, check=True)
