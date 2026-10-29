@@ -22,6 +22,9 @@ testRandomness/extract_bin
 testChaoticParams/test_params
 testAvalancheEffect_KeySensitivity/test_avalanche_keySens
 checkGCMcorrectness/test_correctness
+side-channel_attack/executables/create_ciphers
+side-channel_attack/executables/quick_check
+side-channel_attack/executables/brute_force
 
 # Binary and text files generated during the execution of the program.
 *.bin

@@ -33,24 +33,62 @@
 	- mostra che modalità avanzate come il GCM non proteggono dai SIDE CHANNEL ATTACK [Side-Channel_Analysis_of_Multiplications_in_GF2_12]
 	- anche se legato alle reti tor, mostra come usare il ML usando Random Forset o reti neutrali su meta-dati permetta di identificare al 90% il tipo di contenuto del ciphertext [sec16_paper_hayes]
 
+====================================================
+
 AGGIORNAMENTO CAOTICO OGNI ROUND O OGNI BLOCCO (!?!?!?)
 
-====================================================
-La pericolosità della classificazione (Traffic Analysis), Immagina un satellite di osservazione. Se un attaccante, analizzando le tracce di potenza, la dimensione o la temporizzazione dei pacchetti cifrati, riesce a istruire un classificatore ML per distinguere un messaggio di "Telemetria di routine" (Classe 0) da un "Comando di attivazione fotocamera" (Classe 1), ottiene un vantaggio tattico immenso:
-	- Inferenza di intelligence: Scopre esattamente quando e dove il satellite sta scattando foto o eseguendo manovre, deducendo gli obiettivi della missione.
-	- Jamming mirato: Invece di disturbare il segnale 24 ore su 24 (consumando energia e rivelando la propria posizione), l'attaccante attiva i jammer (disturbatori di frequenza) esclusivamente nei millisecondi in cui 										il classificatore ML rileva l'invio di un comando critico, paralizzando il satellite senza decifrare un singolo bit.
+[!] Aggiornamento per round VS aggiornamento per blocco: 
+In dubbio sull'utilizzo della FPGA o no, mi sono cimentato nel tentativo di ottimizzare un po' il codice C dell'AES caotico e ci sono riuscito creando una "cache" simulata nel contesto che salva 
+il valore (𝛾 ⋅ tanh(𝛿 ⋅ W (t))) dopo averlo calcolato nell'aggiornamento del chaos, in quanto è l'unico momento in cui questo può cambiare. In precedenza questo valore veniva calcolato ad ogni fetch del peso caotico, anche quando questo non doveva essere aggiornato => il calcolo di tanh() è molto intensivo in quanto in virgola mobile e calcolarlo decine di volte in meno ha effettivamente ottimizzato il codice parecchio.
+
+Il miglioramento era decisamente eccessivo però, in quanto l'AES chaotico finiva per performare alle volte anche poco meglio dell'AES standard, approfondendo quindi ho trovato un "errore" nella mia implementazione:
+nel paper di kumar l'aggiornamento del chaos non avveniva una volta per blocco, ma una volta per round, ossia 10 volte per blocco. Tant'è che spostando l'aggiornamento del chaos nella posizione corretta, i risultati dei benchmark prevedibilmente mostrano un aumento del tempo necessario in proporzione alla complessità della mappa caotica implementata.
+
+Tuttavia penso che il mio non sia in tutto e per tutto un errore, in quanto tutte le misurazioni fatte fin'ora sono state fatte con questa implementazione è possibile che la mia versione possa mantenere i pregi descritti nel paper pur ottenendo prestazioni migliori di quelle descritte nel paper.
 
 
-- Opzione 1 (La via Software / Algoritmica): Usa l'ECB sui byte grezzi. Se dai in pasto al Machine Learning i byte del ciphertext, il GCM è invulnerabile ($50\%$). Per far funzionare l'esperimento, devi forzare l'uso dell'ECB. In questo modo l'IA impara i pattern dei blocchi ripetuti (arrivando al $90\%$), e tu dimostri che riattivando il caos l'accuratezza crolla al $50\%$. È la strada più facile e veloce da programmare in Python.
+[!] Gamma e Delta non devono cambiare per il machine unlearning. Il machine unlearning è un termine usato per descrivere il fatto che un modello ML non è in grado sin da subito analizzando più unità in input di rilevare dei pattern.
 
-- Opzione 2 (La via Hardware / Side-Channel): Mantieni il GCM e attacca l'energia. È quello che suggerisce la Figura 8 del paper. Mantieni il tuo robustissimo GCM, ma non dai in pasto all'IA i byte cifrati. Le passi i vettori con i consumi di potenza, i tempi o il Peso di Hamming dei registri interni. L'IA troverà correlazioni fisiche ($93\%$). Il caos distruggerà queste correlazioni fisiche ($55\%$). È una strada molto più complessa da implementare, perché richiede di estrarre tracce di consumo simulato.
 
-- sviluppo in python del sistema machine learning
-- implementazione e verifica del machine unlearning
-- studio caratteristiche anti-quantum
+[!] L'implementazione nel paper di Kumar non usa il GCM, inoltre a differentemente da quanto avevo pensato l'aggiornamento del chaos è costante nel tempo (non è chiaro se quantomeno si resetto ad ogni comunicazione o no).
+Questo personalmente potrebbe rappresentare dei problemi di sincronizzazione, quindi la mia implementazione con il chaos che si resetta ad ogni cifratura potrebbe comunque rimanere valida in quanto non richiede alcuna sincronizzazione. Questa scelta è stata fatta da parte degli autori del paper in quanto a quel punto diventa evidente come, nel cambiare dei messaggi, diventa impossibile trovare dei pattern in quanto il chaos non smette mai di aggiornarsi, evidenziando il successo del machine unlearning che nasce dando in pasto i chipertext ad un modello ML che passa da riconoscere i pattern al 90% ad un 55%.
 
-====================================================
+Tuttavia questa scelta forza l'uso di modi d'uso dell'AES come l'ECB che è notoriamente il peggiore, tant'è che loro stessi evidenziano come questa combinazione sia estremamente vulnerabile al rumore atmosferico che è inaccettabile per sistemi satellitari che gestiscono sistemi critici.
+
+Per questo la mia implementazione sceglie di usare il GCM che da solo garantisce il rigetto di messaggi alterati in quanto si tratta di un'implementazione di authenticated encryption.
+Tuttavia questa scelta rende inutile il test fatto nel paper, dare in pasto al ML migliaia di ciphertext in GCM cifrati seguendo la buona pratica di cambiare IV ad ogni messaggio gli renderebbe già sa solo impossibile riconoscere i pattern portandolo teoricamente su una probabilità del 50% sin da subito. (Ad evidenziare di come la conclusione del paper non sia poi così rivoluzionaria.)
+
+La scelta che vorrei intraprendere sarebbe perciò comunque di implementare l'attacco ML proposto nel paper che simula un ambiente altamente insicuro e irrealstico, implementerei anche un test più reale e attuale che si basa sulla simulazione di un side-channel attack, 
+
+Implementerei un test pratico basato sulla simulazione di un attacco Side-Channel, mirato a dedurre la chiave segreta misurando la potenza consumata dalla CPU. L'attacco sfrutta l'operazione non-lineare SubBytes (la S-Box) del primo round dell'AES. Poiché la potenza richiesta dai transistor è direttamente proporzionale al numero di bit a '1' (Hamming Weight) del byte in elaborazione, l'assorbimento elettrico crea una firma riconoscibile.
+L'obiettivo è fornire le tracce di questi consumi a un modello di Machine Learning per fargli predire l'esatto byte in uscita dalla S-Box. Una volta che l'IA ha indovinato questo valore, basta applicare la tabella S-Box inversa per ottenere il valore intermedio R. Sapendo che R è il risultato dello XOR tra la Chiave e il Contatore pubblico (R = C xor K), ricavare la chiave diventa una banale operazione algebrica: K = R xor C. Dimostrerò poi come l'iniezione del caos nella S-Box renda le predizioni dell'IA completamente inaffidabili, neutralizzando l'attacco.
+
+
+nello specifico nella misurazione degli scambi che dovrebbero avvenire nella s-box attraverso le misurazioni della potenza consumata dai componenti che se ne occupano, potendo così dedurre l'hamming weight (quanti 1 ci sono nel ciphertext), informazine dalla quale è possibile dedurre un pattern e la classe del messaggio.
+
+Un attacco di questo tipo sarebbe possibile:
+	- in ambienti di prova come OPS-SAT della ESA che mette a disposizione il satellite nello spazio per test (pratica di affitto sempre più comune) che lascerebbe modo ad un attaccante che affitta di fare le misuraizoni
+	- a monte attacchi alla supply chain che possono inserire dei Trojan negli hardware con lo scopo di fare un attacco side-channel
+	
+=> 
+
+Perciò gli step sarebbero:
+
+- implementare nell'AES caotico la decifratura tramite ECB per l'attacco ML via software / algoritmico come descritto nel paper di Kumar.
+
+- sempre per mantenere una coerenza con il paper di Kumar, implementare nell'AES caotico la possibilità di aggiornare il ctx senza resettare l'avanzamento del chaos sempre al fine dell'attacco ECB
+
+- creare script python che genera ~20.000 (diverse migliaia) di messaggi fittizi salvando in un .csv  "Messaggio, Blocco, IV pubblico, WH0, ..., HW15, Target value (la verità)"
+	
+- implementare il sistema di ML per l'attacco nel paper di Kumar che prende in pasto i ciphertext e verificarne il miglioramento usando l'implementazione con iniezione caotica
+
+- implementare il sistema di ML per il side-channel attack che legge gli hamming weight simulando il rilevamento della potenza consumata del componente che si occupa della s-box e verificarne il il miglioramento usando l'implementazione con iniezione caotica
+
+
+
 - differential uniformity & nonlinearity
+
+- studio caratteristiche anti-quantum (?)
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -62,20 +100,20 @@ La pericolosità della classificazione (Traffic Analysis), Immagina un satellite
 	- Selezione: Per ogni mappa caotica, isola le 2 o 3 coppie di alpha e beta che si avvicinano di più all'ideale del $50\%$ di bit modificati. Scarta tutto il resto.
 	
 {2 VOLTE! UNA CON UPDATE PER BLOCK E UNA CON UPDATE PER ROUND}
-2. La Validazione Architetturale (Entropia e SWaP)
-	- Strumento: Il benchmark hardware tester.c (chiamato da runBenchmark.py).
-	- Azione: Inserisci hardcoded i parametri vincitori della Fase 1 ed esegui la cifratura su payload da 5 MB.
-	- Selezione: Leggi il results.csv. Conferma che l'Entropia di Shannon per quei parametri rimanga inchiodata a circa 7.9999 e che l'uso di CPU/Memoria non subisca picchi anomali. Eleggi il parametro definitivo per ogni mappa.
-	
-3. La Certificazione Statistica (NIST SP 800-22)
-	- Strumento: Suite ufficiale NIST.
-	- Azione: Usando il candidato perfetto per ogni mappa, genera file binari di grandi dimensioni (solitamente tra i 10 MB e i 100 MB, a seconda del setup della suite).
-	- Selezione: Ottenere la prova matematica formale che la tua variante, con quegli specifici alpha e beta, supera i 15 test di casualità (p-value > 0.01).
-	
-4. Il Test Pratico (Machine Unlearning)
-	- Strumento: Script Python ML.
-	- Azione: Genera il dataset di traffico di rete cifrato usando esclusivamente le configurazioni certificate al passaggio precedente.
-	- Selezione: Addestrare il classificatore per dimostrare empiricamente il blocco della traffic analysis, costituendo il capitolo finale e più innovativo del tuo lavoro.
+	2. La Validazione Architetturale (Entropia e SWaP)
+		- Strumento: Il benchmark hardware tester.c (chiamato da runBenchmark.py).
+		- Azione: Inserisci hardcoded i parametri vincitori della Fase 1 ed esegui la cifratura su payload da 5 MB.
+		- Selezione: Leggi il results.csv. Conferma che l'Entropia di Shannon per quei parametri rimanga inchiodata a circa 7.9999 e che l'uso di CPU/Memoria non subisca picchi anomali. Eleggi il parametro definitivo per ogni mappa.
+		
+	3. La Certificazione Statistica (NIST SP 800-22)
+		- Strumento: Suite ufficiale NIST.
+		- Azione: Usando il candidato perfetto per ogni mappa, genera file binari di grandi dimensioni (solitamente tra i 10 MB e i 100 MB, a seconda del setup della suite).
+		- Selezione: Ottenere la prova matematica formale che la tua variante, con quegli specifici alpha e beta, supera i 15 test di casualità (p-value > 0.01).
+		
+	4. Il Test Pratico (Machine Unlearning)
+		- Strumento: Script Python ML.
+		- Azione: Genera il dataset di traffico di rete cifrato usando esclusivamente le configurazioni certificate al passaggio precedente.
+		- Selezione: Addestrare il classificatore per dimostrare empiricamente il blocco della traffic analysis, costituendo il capitolo finale e più innovativo del tuo lavoro.
 
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

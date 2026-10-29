@@ -3,8 +3,6 @@
 
 #define TEXT_LENGTH (1024 * 1024 * 5) // MB
 
-#define AAD_LENGTH 128 // Length of the Additional Authenticated Data (AAD) in bytes
-
 #define TEST_NUMBER 10 // Set to 1 for a single test, or any other number for multiple tests
 
 #define FILENAME "results.csv" // File to save the results

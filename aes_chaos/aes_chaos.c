@@ -814,6 +814,44 @@ static uint8_t Multiply(uint8_t x, uint8_t y)
 
 #endif
 
+/*****************************************************************************/
+/* Attack simulation functions:                                              */
+
+#if defined(SIMULATE_ATTACK_CHAOS) && (SIMULATE_ATTACK_CHAOS == 1)
+
+static struct AES_CHAOS_GCM_attack_result attack_result;
+
+static int attack_scan_enabled = 0;
+
+struct AES_CHAOS_GCM_attack_result* get_chaos_attack_result(void) {
+  return &attack_result;
+}
+
+void set_chaos_attack_simulation(int enable) {
+  attack_scan_enabled = enable;
+}
+
+void restart_chaos_attack_simulation(void) {
+  attack_scan_enabled = 0;
+}
+
+// This function calculates the Hamming weight of a given value.
+static uint8_t getHammingWeight(uint8_t value) {
+  uint8_t weight = 0;
+
+  // Count the number of set bits in the value using Brian Kernighan's algorithm
+  while (value) {
+    value &= (value - 1);
+    weight++;
+  }
+
+  return weight;
+}
+
+#endif
+
+/*****************************************************************************/
+
 // Cipher function that performs the AES encryption process using the chaotic S-box and other transformations
 static void Cipher(struct AES_CHAOS_ctx* ctx, state_t* state, const uint8_t* RoundKey)
 {
@@ -830,6 +868,32 @@ static void Cipher(struct AES_CHAOS_ctx* ctx, state_t* state, const uint8_t* Rou
     // updateChaos(ctx);
 
     SubBytes(ctx, state);
+
+    #if defined(SIMULATE_ATTACK_CHAOS) && (SIMULATE_ATTACK_CHAOS == 1)
+      // Simulate a side-channel attack by calculating the Hamming weight of the state after Sub
+      if (round == 1 && attack_scan_enabled == 1) {
+        uint8_t* state_ptr = (uint8_t*)state;
+
+        for (int i = 0; i < 16; ++i) {
+          attack_result.target_bytes_p1[i] = state_ptr[i];
+          attack_result.hamming_weight_p1[i] = getHammingWeight(state_ptr[i]);
+        }
+
+        attack_scan_enabled++;
+      }
+
+      if (round == 2 && attack_scan_enabled == 2) {
+        uint8_t* state_ptr = (uint8_t*)state;
+
+        for (int i = 0; i < 16; ++i) {
+          attack_result.target_bytes_p2[i] = state_ptr[i];
+          attack_result.hamming_weight_p2[i] = getHammingWeight(state_ptr[i]);
+        }
+
+        attack_scan_enabled++;
+      }
+    #endif
+
     ShiftRows(state);
     if (round == Nr) {
       break;
@@ -999,6 +1063,10 @@ void AES_CHAOS_GCM_authenticated_encrypt_buffer(struct AES_CHAOS_GCM_ctx* ctx, s
   uint8_t Jinc[AES_CHAOS_BLOCKLEN];
   memcpy(Jinc, J, AES_CHAOS_BLOCKLEN);
   counterInc32(Jinc); 
+
+  #if defined(SIMULATE_ATTACK_CHAOS) && (SIMULATE_ATTACK_CHAOS == 1)
+    set_chaos_attack_simulation(1); // Enable the attack simulation for the encryption process
+  #endif
 
   AES_CHAOS_GCM_xcrypt_buffer(ctx, Jinc, res->buf, length);
 

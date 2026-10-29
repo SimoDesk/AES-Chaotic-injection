@@ -26,10 +26,12 @@ void hex_to_bytes(const char* hex_str, uint8_t* byte_array, size_t num_bytes) {
     }
 }
 
+#define TEXT_LENGTH 16 // Length of the plaintext in bytes
+
 int main(int argc, char *argv[])
 {
     if (argc < 6) {
-        printf("Uso: %s <Plaintext 16b> <IV 12b> <Key 32b>\n", argv[0]);
+        printf("Args error");
         return EXIT_FAILURE;
     }
 
@@ -45,8 +47,6 @@ int main(int argc, char *argv[])
     hex_to_bytes(argv[3], iv, 12);
     hex_to_bytes(argv[4], key, 32);
     int n_test = atoi(argv[5]);
-
-    int text_length = 16;
 
     struct AES_ctx ctx_std;
     struct AES_CHAOS_ctx ctx_chaos;
@@ -66,7 +66,6 @@ int main(int argc, char *argv[])
 
     if (map_type != NONE) {
         AES_CHAOS_ECB_encrypt(&ctx_chaos, text);
-        AES_CHAOS_free_ctx(&ctx_chaos);
         AES_CHAOS_free_ctx(&ctx_chaos);
     } else {
         AES_ECB_encrypt(&ctx_std, text);
@@ -88,8 +87,8 @@ int main(int argc, char *argv[])
     }
 
     // Write the ciphertext to the file
-    size_t written = (map_type != NONE) ? fwrite(res_chaos.buf, sizeof(uint8_t), text_length, file) : fwrite(res_std.buf, sizeof(uint8_t), text_length, file);
-    if (written != (size_t)text_length) {
+    size_t written = (map_type != NONE) ? fwrite(res_chaos.buf, sizeof(uint8_t), TEXT_LENGTH, file) : fwrite(res_std.buf, sizeof(uint8_t), TEXT_LENGTH, file);
+    if (written != (size_t)TEXT_LENGTH) {
         perror("Errore nella scrittura del file");
         fclose(file);
 

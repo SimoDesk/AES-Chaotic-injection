@@ -182,6 +182,38 @@ struct AES_CHAOS_GCM_result {
   uint8_t* tag;
 };
 
+// Flag to simulate a side-channel attack. If set to 1, the AES_GCM_authenticated_encrypt_buffer function will store the result of the first application of the 
+// S-box to the Xor of the key and the IV in the target_bytes buffer, and the hamming weight of each byte of the target_bytes in the hamming_weight buffer.
+// This can be used to simulate a side-channel attack on the AES implementation.
+#ifndef SIMULATE_ATTACK_CHAOS
+  #define SIMULATE_ATTACK_CHAOS 1
+#endif
+
+// If it is desired to simulate a side-channel attack, the caller must allocate at least 16 bytes for this buffer, and set the SIMULATEATTACK macro to 1.
+#if defined(SIMULATE_ATTACK_CHAOS) && (SIMULATE_ATTACK_CHAOS == 1)
+
+  struct AES_CHAOS_GCM_attack_result {
+    // target_bytes will store the result of the first application of the S-box to the Xor of the first 16 bytes of the key and the IV
+    uint8_t target_bytes_p1[16];
+
+    // hamming_weight will store the hamming weight of each byte of the target_bytes (first half of the key and the IV)
+    uint8_t hamming_weight_p1[16];
+
+    // target_bytes will store the result of the first application of the S-box to the Xor of the second 16 bytes of the key and the IV
+    uint8_t target_bytes_p2[16];
+
+    // hamming_weight will store the hamming weight of each byte of the target_bytes (second half of the key and the IV)
+    uint8_t hamming_weight_p2[16];
+  };
+
+  struct AES_CHAOS_GCM_attack_result* get_chaos_attack_result(void);
+
+  void restart_chaos_attack_simulation(void);
+
+  void set_chaos_attack_simulation(int enable);
+
+#endif
+
 size_t AES_CHAOS_get_heap_size(ChaosMap map_type);
 
 void AES_CHAOS_init_ctx(struct AES_CHAOS_ctx* ctx, const uint8_t* key, ChaosMap map_type);
