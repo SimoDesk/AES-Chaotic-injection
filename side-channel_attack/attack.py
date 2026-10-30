@@ -10,6 +10,8 @@ import struct
 
 from sklearn.ensemble import RandomForestClassifier
 
+import createPlots as plotMaker
+
 TRAINING_CSV = "data/training_data.csv"
 
 ATTACK_CSV = "data/attack_data.csv"
@@ -147,10 +149,15 @@ def phase_1_attack():
     # Load the attack data from the CSV file into a pandas DataFrame. This data contains only the Hamming weights of the attack samples, which will be used to predict the first 12 bytes of the AES key.
     attack_df = pd.read_csv(ATTACK_CSV)
 
-    
+    # Plot the Hamming weight analysis for the attack samples, which provides a visual representation of an example of the training data and the attack data, 
+    # showing the Hamming weights for both rounds of AES-GCM encryption for the first packet in the attack dataset.
+    plotMaker.plot_hamming_weight_analysis(attack_df)
 
     # Initialize a list to store the recovered key bytes
     recovered_key_bytes = []
+
+    # all_key_scores will hold the predicted scores for each possible byte value (0-255) for each of the first 12 bytes of the AES key.
+    all_key_scores = []
 
     # For each byte of the IV (Initialization Vector), perform the training and attack phases to recover the corresponding byte of the AES key.
     for byte_idx in range(12):
@@ -164,6 +171,12 @@ def phase_1_attack():
         # Each entry in the matrix represents the probability that the corresponding attack sample has the corresponding byte
         probabilities = models[byte_idx].predict_proba(X_attack)
 
+        # For the first byte of the key, we generate a plot showing the predicted probabilities for each possible byte value (0-255) for the first attack sample (pkt_idx=0).
+        # This plot helps justify the need of the Maximum Likelihood Estimation (MLE) approach, as it shows that the predicted probabilities for the correct byte value may not be the highest,
+        # and the MLE approach is needed to accumulate evidence across multiple attack samples to make a more accurate prediction of the key byte.
+        if byte_idx == 0:
+            plotMaker.plot_ml_probabilities(models, [probabilities], byte_idx, pkt_idx=0)
+
         # After calling rf,fit inside the trainModels function, each model contains a classes_ attribute that holds the unique class labels (byte values) that the model was trained on.
         # Even if it's highly unlikely, it's possible that not all byte values (0-255) were present in the training data for a specific byte index, so the classes_ attribute may not contain all 256 possible byte values.
         # To handle this, we create a mapping from each class label (byte value) to its corresponding index in the probability array returned by predict_proba.
@@ -171,7 +184,7 @@ def phase_1_attack():
 
         # Initialize an array to hold the scores for each possible key byte value (0-255). Each index in this array corresponds to a possible byte value.
         key_scores = np.zeros(256)
-        
+
         # In order to accumulate the scores, for each attack sample, compute the likelihood of each possible key byte value (0-255) based on the predicted probabilities from 
         # the Random Forest model. Then sum the log probabilities for each possible byte value across all attack samples to get a final score for each possible byte value of the key.
         for pkt_idx in range(len(attack_df)):
@@ -209,8 +222,13 @@ def phase_1_attack():
         # Append the best key guess for the current byte index to the recovered_key_bytes list, which will hold the recovered bytes of the AES key.
         recovered_key_bytes.append(best_key_guess)
 
+        all_key_scores.append(key_scores)
+
         print(f" -> Found: {hex(best_key_guess)[2:].zfill(2)}")
-        
+
+
+    # After recovering all 12 bytes of the AES key, plot the final key scores for each byte to visualize the confidence of the predictions made by the Random Forest models.
+    plotMaker.plot_all_final_key_scores(all_key_scores, REAL_KEY)
 
     # Convert the recovered key bytes to a hexadecimal string representation, where each byte is represented as a two-character hex string, and concatenate them to form the final recovered key.
     hex_key = "".join([hex(b)[2:].zfill(2) for b in recovered_key_bytes])
@@ -340,6 +358,8 @@ def phase_2_attack(known_k1_12bytes):
 
 EXE_WD = "executables/"
 
+REAL_KEY = ""
+
 if __name__ == "__main__":
     subprocess.run(["make", "clear"], check=True)
 
@@ -353,6 +373,8 @@ if __name__ == "__main__":
         os.makedirs("executables")
     if not os.path.exists("data"):
         os.makedirs("data")
+    if not os.path.exists("plots"):
+        os.makedirs("plots")
 
     # Set up command-line argument parsing to allow the user to specify the type of mapping to use for the attack and whether to run a quick check to verify the attack's success.
     parser = argparse.ArgumentParser(description="Side-channel attack on AES-GCM using Random Forest models.")
@@ -367,7 +389,6 @@ if __name__ == "__main__":
     res = subprocess.run([f"./{EXE_WD}create_ciphers", map_type], check=True, capture_output=True, text=True)
 
     # Extract the necessary variables from the output of the create_ciphers program, which include the target IV, ciphertext, AAD, tag, and the original key used for encryption.
-    keyUsed = ""
     target_iv_hex = ""
     target_cipher_hex = ""
     target_aad_hex = ""
@@ -383,25 +404,25 @@ if __name__ == "__main__":
         elif line.startswith("TARGET_TAG="):
             target_tag_hex = line.split("=")[1].strip()
         elif line.startswith("KEY="):
-            keyUsed = line.split("=")[1].strip()
+            REAL_KEY = line.split("=")[1].strip()
         elif len(line) == 64 and "=" not in line:
             # Fallback nel caso in cui tu abbia lasciato anche il vecchio printf all'inizio
-            keyUsed = line.strip()
+            REAL_KEY = line.strip()
 
-    if not all([keyUsed, target_iv_hex, target_cipher_hex, target_aad_hex, target_tag_hex]):
+    if not all([REAL_KEY, target_iv_hex, target_cipher_hex, target_aad_hex, target_tag_hex]):
         print("Error: Missing required output from create_ciphers. Please check the output format.")
         sys.exit(1)
 
     # Perform the first phase of the attack to recover the first 12 bytes of the AES key using the trained Random Forest models and the attack data.
     first12Found = phase_1_attack()
 
-    if first12Found == keyUsed[:24]:
+    if first12Found == REAL_KEY[:24]:
         print("\nSUCCESS: Found the first 12 bytes of the AES key correctly!")
-        print(f"Original key : {keyUsed}")
+        print(f"Original key : {REAL_KEY}")
         print(f"Found portion: {first12Found}")
     else:
         print("\nERROR: The first 12 bytes of the AES key were not found correctly.")
-        print(f"Original key : {keyUsed}")
+        print(f"Original key : {REAL_KEY}")
         print(f"Found portion: {first12Found}")
 
     # Perform the second phase of the attack to recover the remaining 4 bytes of the AES key using an algebraic approach and the hypotheses generated in the first phase.
@@ -412,7 +433,7 @@ if __name__ == "__main__":
     # If the --quick flag is provided, run a quick check to verify the success of the attack by executing the quick_check program with the found first 12 bytes of the key and the original key used for encryption.
     if args.quick:
         print("\n[*] Running quick check to verify the attack's success...")
-        subprocess.run([f"./{EXE_WD}quick_check", first12Found, keyUsed], check=True)
+        subprocess.run([f"./{EXE_WD}quick_check", first12Found, REAL_KEY], check=True)
         sys.exit()
     
     # If the --quick flag is not provided, run the brute_force program to search for the correct combination of K1 and K2 bytes by using the hypotheses generated in the second phase of the attack 

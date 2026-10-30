@@ -33,7 +33,7 @@ clear:
 	rm -f create_ciphers
 	rm -f brute_force
 	rm -f *.csv
-	rm -f *.png
+	rm -f plots/*.png
 
 setup:
 	sudo apt update

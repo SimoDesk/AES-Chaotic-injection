@@ -62,6 +62,8 @@ int main(int argc, char *argv[])
         int packet_quantity = 15000;
 
         if (phase == 0) {
+            // Only if we are in the profiling phase, we create the training data file containing the hamming weights and target bytes for both rounds of AES-GCM encryption.
+
             file = fopen("data/training_data.csv", "w");
             if (file != NULL) {
                 fprintf(file, "Map,IV,");
@@ -75,6 +77,8 @@ int main(int argc, char *argv[])
                 fprintf(file, "\n");
             }
         } else {
+            // If we are in the attack phase, we create a separate file to store only the hamming weights and target bytes for both rounds of AES-GCM encryption, which will be used for the attack.
+
             if (file != NULL) {
                 fclose(file);
             }
@@ -94,7 +98,7 @@ int main(int argc, char *argv[])
 
             getRandomValue(key, AES_KEYLEN);
 
-            packet_quantity = 50;
+            packet_quantity = 100;
 
         }
 
@@ -111,6 +115,9 @@ int main(int argc, char *argv[])
             struct AES_GCM_result res_std;
             struct AES_CHAOS_GCM_result res_chaos;
 
+            // Depending on the specified chaos map type, initialize the appropriate AES-GCM context (standard or chaotic)
+            // and perform the authenticated encryption of the plaintext with the given key, IV, AAD, and tag length. 
+            // The results will be stored in the corresponding result structures.
             if (map_type == NONE) {
                 struct AES_GCM_ctx ctx_std;
 
@@ -142,6 +149,7 @@ int main(int argc, char *argv[])
                 AES_CHAOS_GCM_free_ctx(&ctx_chaos);
             }
 
+            // Save all the relevant information (map type, IV, hamming weights, and target bytes) to the CSV depending on the phase (profiling or attack).
             if (file != NULL && attack_res != NULL) {
                 fprintf(file, "%s,", map_type == NONE ? "std" : argv[1]);
 
@@ -177,6 +185,7 @@ int main(int argc, char *argv[])
             else
                 restart_chaos_attack_simulation();
 
+            // Print the key, IV, ciphertext, AAD, and tag for the first packet in the attack phase for verification purposes.
             if (packet_index == 0 && phase == 1) {
                 printf("KEY="); for(int j=0; j<AES_KEYLEN; j++) printf("%02x", key[j]); printf("\n");
                 printf("TARGET_IV="); for(int j=0; j<AES_IVLEN; j++) printf("%02x", iv[j]); printf("\n");

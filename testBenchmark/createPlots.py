@@ -21,7 +21,6 @@ def create_plots(fileName = "results.csv"):
         exit()
 
     df_enc = df[df['Fase'] == 'Encryption'].copy()
-    df_dec = df[df['Fase'] == 'Decryption'].copy()
 
     # Filter the DataFrame to only include rows where 'Fase' is either 'Encryption' or 'Decryption'
     baseline_enc = df[(df['Map'] == 'AES-GCM standard') & (df['Fase'] == 'Encryption')]
@@ -30,7 +29,9 @@ def create_plots(fileName = "results.csv"):
     # Retrieve baseline values for average time and energy consumption for both encryption and decryption phases
     time_enc_base = baseline_enc['Average_Time_s'].values[0] if not baseline_enc.empty else None
     time_dec_base = baseline_dec['Average_Time_s'].values[0] if not baseline_dec.empty else None
-    energy_enc_base = baseline_enc['Energy_uJ'].values[0] if not baseline_enc.empty else None
+
+    throughput_enc_base = baseline_enc['Throughput_MB_s'].values[0] if not baseline_enc.empty else None
+    throughput_dec_base = baseline_dec['Throughput_MB_s'].values[0] if not baseline_dec.empty else None
 
 
     # ---------------------------------------------------------
@@ -52,6 +53,27 @@ def create_plots(fileName = "results.csv"):
     plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.40), ncol=2)
     plt.tight_layout()
     plt.savefig(f'{OUTPUT_DIR}/Time.png', dpi=300, bbox_inches='tight')
+    plt.close()
+
+    # ---------------------------------------------------------
+    # 1.2. Bar Plot: Average Throughput for Encryption and Decryption
+    # ---------------------------------------------------------
+    plt.figure(figsize=(12, 6))
+    ax = sns.barplot(data=df, x='Map_Short', y='Throughput_MB_s', hue='Fase', palette=['#32aaff', '#ff9f4b'])
+
+    if throughput_enc_base:
+        plt.axhline(y=throughput_enc_base, color="#32aaff", linestyle='--', alpha=0.8, label='Baseline Encryption')
+    if throughput_dec_base:
+        plt.axhline(y=throughput_dec_base, color="#ff9f4b", linestyle='--', alpha=0.8, label='Baseline Decryption')
+
+    plt.title('Average Throughput for Encryption and Decryption Phases')
+    plt.xlabel('Algorithm')
+    plt.ylabel('Throughput (MB/s)')
+    plt.xticks(rotation=45, ha='right')
+
+    plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.40), ncol=2)
+    plt.tight_layout()
+    plt.savefig(f'{OUTPUT_DIR}/Throughput.png', dpi=300, bbox_inches='tight')
     plt.close()
 
 
