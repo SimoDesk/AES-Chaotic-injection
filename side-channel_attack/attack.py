@@ -151,7 +151,7 @@ def phase_1_attack():
 
     # Plot the Hamming weight analysis for the attack samples, which provides a visual representation of an example of the training data and the attack data, 
     # showing the Hamming weights for both rounds of AES-GCM encryption for the first packet in the attack dataset.
-    plotMaker.plot_hamming_weight_analysis(attack_df)
+    plotMaker.plot_hamming_weight_analysis(attack_df, MAP_TYPE)
 
     # Initialize a list to store the recovered key bytes
     recovered_key_bytes = []
@@ -175,7 +175,7 @@ def phase_1_attack():
         # This plot helps justify the need of the Maximum Likelihood Estimation (MLE) approach, as it shows that the predicted probabilities for the correct byte value may not be the highest,
         # and the MLE approach is needed to accumulate evidence across multiple attack samples to make a more accurate prediction of the key byte.
         if byte_idx == 0:
-            plotMaker.plot_ml_probabilities(models, [probabilities], byte_idx, pkt_idx=0)
+            plotMaker.plot_ml_probabilities(models, [probabilities], byte_idx, MAP_TYPE, pkt_idx=0)
 
         # After calling rf,fit inside the trainModels function, each model contains a classes_ attribute that holds the unique class labels (byte values) that the model was trained on.
         # Even if it's highly unlikely, it's possible that not all byte values (0-255) were present in the training data for a specific byte index, so the classes_ attribute may not contain all 256 possible byte values.
@@ -228,7 +228,22 @@ def phase_1_attack():
 
 
     # After recovering all 12 bytes of the AES key, plot the final key scores for each byte to visualize the confidence of the predictions made by the Random Forest models.
-    plotMaker.plot_all_final_key_scores(all_key_scores, REAL_KEY)
+    plotMaker.plot_all_final_key_scores(all_key_scores, REAL_KEY, MAP_TYPE)
+
+    # --- CALCOLO SUCCESS RATE POST-MLE ---
+    correct_bytes = 0
+    for i in range(12):
+        real_byte = int(REAL_KEY[i*2 : i*2+2], 16)
+        if recovered_key_bytes[i] == real_byte:
+            correct_bytes += 1
+            
+    success_rate = (correct_bytes / 12) * 100
+    
+    print(f"\n==================================================")
+    print(f"[*] SUCCESS RATE POST-MLE: {success_rate:.2f}%")
+    print(f"[*] Correctly recovered bytes: {correct_bytes} out of 12")
+    print(f"==================================================\n")
+    # -------------------------------------
 
     # Convert the recovered key bytes to a hexadecimal string representation, where each byte is represented as a two-character hex string, and concatenate them to form the final recovered key.
     hex_key = "".join([hex(b)[2:].zfill(2) for b in recovered_key_bytes])
@@ -360,6 +375,8 @@ EXE_WD = "executables/"
 
 REAL_KEY = ""
 
+MAP_TYPE = "standard"
+
 if __name__ == "__main__":
     subprocess.run(["make", "clear"], check=True)
 
@@ -384,9 +401,9 @@ if __name__ == "__main__":
     # Determine the type of mapping to use for the attack based on command-line arguments. 
     # The default mapping type is "standard", but it can be overridden by providing an argument when running the script.
     args = parser.parse_args()
-    map_type = args.map
+    MAP_TYPE = args.map
 
-    res = subprocess.run([f"./{EXE_WD}create_ciphers", map_type], check=True, capture_output=True, text=True)
+    res = subprocess.run([f"./{EXE_WD}create_ciphers", MAP_TYPE], check=True, capture_output=True, text=True)
 
     # Extract the necessary variables from the output of the create_ciphers program, which include the target IV, ciphertext, AAD, tag, and the original key used for encryption.
     target_iv_hex = ""
@@ -406,7 +423,6 @@ if __name__ == "__main__":
         elif line.startswith("KEY="):
             REAL_KEY = line.split("=")[1].strip()
         elif len(line) == 64 and "=" not in line:
-            # Fallback nel caso in cui tu abbia lasciato anche il vecchio printf all'inizio
             REAL_KEY = line.strip()
 
     if not all([REAL_KEY, target_iv_hex, target_cipher_hex, target_aad_hex, target_tag_hex]):
@@ -442,7 +458,7 @@ if __name__ == "__main__":
         [
             f"./{EXE_WD}brute_force", 
             first12Found, 
-            map_type,
+            MAP_TYPE,
             target_iv_hex,
             target_cipher_hex,
             target_aad_hex,

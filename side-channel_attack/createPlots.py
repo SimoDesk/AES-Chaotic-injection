@@ -4,7 +4,7 @@ import numpy as np
 PLOT_FLODER = "plots/"
 
 # Plot the Hamming weight analysis for the first packet in the attack dataset, showing the Hamming weights for both rounds of AES-GCM encryption.
-def plot_hamming_weight_analysis(attack_df):
+def plot_hamming_weight_analysis(attack_df, map="standard"):
     
     # Extract the Hamming weights for the first packet (index 0) for both rounds of AES-GCM encryption. 
     # Each round has 16 bytes, so we create two lists of Hamming weights, one for each round.
@@ -15,7 +15,7 @@ def plot_hamming_weight_analysis(attack_df):
     plt.plot(range(16), pkt_hw_p1 , marker='o', linestyle='-', color='b', label='Hamming Weight (Round 1)')
     plt.plot(range(16), pkt_hw_p2, marker='s', linestyle='--', color='orange', label='Hamming Weight (Round 2)')
     
-    plt.title("Hamming Weight Analysis in the Attack Dataset (sample packet #0)", fontsize=16)
+    plt.title(f"Hamming Weight Analysis in the Attack Dataset (sample packet #0) [AES {map}]", fontsize=16)
     plt.xlabel("Byte Index (0-15)")
     plt.ylabel("Hamming Weight")
     plt.xticks(range(16))
@@ -30,10 +30,10 @@ def plot_hamming_weight_analysis(attack_df):
 
 # Plot the final key scores for each of the first 12 bytes of the AES key, showing the distribution of scores for each possible byte value (0-255)
 # and highlighting the best guess and the real key byte if provided.
-def plot_all_final_key_scores(all_key_scores, real_key_hex = None):
+def plot_all_final_key_scores(all_key_scores, real_key_hex = None, map="standard"):
     
     fig, axes = plt.subplots(nrows=4, ncols=3, figsize=(18, 16))
-    fig.suptitle("Confidence Scores for the First 12 Bytes of the AES Key (Random Forest Predictions)", fontsize=18, fontweight='bold')
+    fig.suptitle(f"Confidence Scores for the First 12 Bytes of the AES Key (Random Forest Predictions) [AES {map}]", fontsize=18, fontweight='bold')
     
     for byte_idx in range(12):
         row = byte_idx // 3
@@ -89,7 +89,7 @@ def plot_all_final_key_scores(all_key_scores, real_key_hex = None):
 # Plot the predicted probabilities for each possible byte value (0-255) for a specific byte index and packet index, highlighting the best guess and its probability.
 # This plot helps justify the need for the Maximum Likelihood Estimation (MLE) approach, as it shows that the predicted probabilities for the correct byte value may not be the highest,
 # and the MLE approach is needed to accumulate evidence across multiple attack samples to make a more accurate prediction of the key byte.
-def plot_ml_probabilities(models, probabilities, byte_idx, pkt_idx = 0):
+def plot_ml_probabilities(models, probabilities, byte_idx, map="standard", pkt_idx = 0):
     
     # Get the full probability array for all 256 possible byte values, initializing it with zeros.
     full_prob_array = np.zeros(256)
@@ -121,7 +121,7 @@ def plot_ml_probabilities(models, probabilities, byte_idx, pkt_idx = 0):
     plt.gca().text(0.98, 0.95, box, transform=plt.gca().transAxes, fontsize=11,
                    verticalalignment='top', horizontalalignment='right', bbox=props_riquadro)
     
-    plt.title(f"Predicted Probabilities for Byte {byte_idx} (Sample Packet #{pkt_idx}, byte {byte_idx})", fontsize=16, fontweight='bold')
+    plt.title(f"Predicted Probabilities for Byte {byte_idx} (Sample Packet #{pkt_idx}, byte {byte_idx}) [AES {map}]", fontsize=16, fontweight='bold')
     plt.xlabel("S-box Output Byte Value (0-255)")
     plt.ylabel("Predicted Probability")
     plt.xlim(-1, 256)

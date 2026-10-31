@@ -157,7 +157,6 @@ def create_plots(fileName = "results.csv"):
         plt.ylabel('Bit Entropy (bit/byte)')
         plt.xticks(rotation=45, ha='right')
         
-        # Legenda in basso
         plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.60), ncol=2)
         plt.subplots_adjust(bottom=0.3)
         
