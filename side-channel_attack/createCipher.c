@@ -37,8 +37,27 @@ int main(int argc, char *argv[])
     if (argc > 1) {
         map_type = parseMapType(argv[1]);
     }
-    
+
     unsigned int seed = 391356;
+
+    if (argc > 2) {
+        // If a seed is provided as a command-line argument, use it to seed the random number generator for reproducibility.
+        seed = (unsigned int) strtoul(argv[2], NULL, 10);
+    }
+
+    // Set the default output directory for storing the generated data files.
+    const char* out_dir = "data";
+    // If a specific output directory is provided as a command-line argument, use it instead of the default.
+    if (argc > 3) {
+        out_dir = argv[3];
+    }
+
+    // Compose the paths for the training and attack data files based on the specified output directory.
+    char training_path[256];
+    snprintf(training_path, sizeof(training_path), "%s/training_data.csv", out_dir);
+    char attack_path[256];
+    snprintf(attack_path, sizeof(attack_path), "%s/attack_data.csv", out_dir);
+
     srand(seed); // Set the initial seed for rand() function
 
     uint8_t* key = malloc(AES_KEYLEN * sizeof(uint8_t));
@@ -64,7 +83,7 @@ int main(int argc, char *argv[])
         if (phase == 0) {
             // Only if we are in the profiling phase, we create the training data file containing the hamming weights and target bytes for both rounds of AES-GCM encryption.
 
-            file = fopen("data/training_data.csv", "w");
+            file = fopen(training_path, "w");
             if (file != NULL) {
                 fprintf(file, "Map,IV,");
                 // Round 1
@@ -82,7 +101,7 @@ int main(int argc, char *argv[])
             if (file != NULL) {
                 fclose(file);
             }
-            file = fopen("data/attack_data.csv", "w");
+            file = fopen(attack_path, "w");
             if (file != NULL) {
                 fprintf(file, "Map,IV,");
                 // Round 1

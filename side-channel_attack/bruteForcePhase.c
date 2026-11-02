@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include <omp.h>
 
-// Importiamo le tue implementazioni
+// Import the AES and AES-Chaos headers to access the necessary functions and structures for AES-GCM encryption and decryption, as well as chaotic mapping.
 #include "../aes_default/aes.h"
 #include "../aes_chaos/aes_chaos.h"
 

@@ -137,8 +137,8 @@ def aseColumnSimulation(IV, known_k1_12bytes, guess_k1, col):
 # 1st phase attack uses the trained Random Forest models to predict the first 12 bytes of the AES key based on the Hamming weights of the attack samples.
 # The other 4 bytes of the key are not recovered in this phase, because of the way the last 4 bytes of AES-GCM IV are. 
 # (For an IV of 12, which is standard, the last 4 bytes are fixed to 0x00000002, so they don't provide any information about the key bytes.)
-def phase_1_attack():
-    print("\n--- Start key extraction for the first 12 bytes of the AES key ---")
+def phase_1_attack(collect_data=True):
+    if collect_data: print("\n--- Start key extraction for the first 12 bytes of the AES key ---")
 
     # Load the profiling data from the CSV file into a pandas DataFrame. This data contains the Hamming weights and target byte values for training the Random Forest models.
     train_df = pd.read_csv(TRAINING_CSV)
@@ -151,7 +151,7 @@ def phase_1_attack():
 
     # Plot the Hamming weight analysis for the attack samples, which provides a visual representation of an example of the training data and the attack data, 
     # showing the Hamming weights for both rounds of AES-GCM encryption for the first packet in the attack dataset.
-    plotMaker.plot_hamming_weight_analysis(attack_df, MAP_TYPE)
+    if collect_data: plotMaker.plot_hamming_weight_analysis(attack_df, MAP_TYPE)
 
     # Initialize a list to store the recovered key bytes
     recovered_key_bytes = []
@@ -161,7 +161,7 @@ def phase_1_attack():
 
     # For each byte of the IV (Initialization Vector), perform the training and attack phases to recover the corresponding byte of the AES key.
     for byte_idx in range(12):
-        print(f"\nByte {byte_idx} under analysis...")        
+        if collect_data: print(f"\nByte {byte_idx} under analysis...")        
         
         # Give the trained model the Hamming weights of the current byte from the attack samples to predict the probabilities of each possible byte value (0-255) for each sample.
         X_attack = attack_df[[f'HW_P1_{byte_idx}']].values
@@ -174,7 +174,7 @@ def phase_1_attack():
         # For the first byte of the key, we generate a plot showing the predicted probabilities for each possible byte value (0-255) for the first attack sample (pkt_idx=0).
         # This plot helps justify the need of the Maximum Likelihood Estimation (MLE) approach, as it shows that the predicted probabilities for the correct byte value may not be the highest,
         # and the MLE approach is needed to accumulate evidence across multiple attack samples to make a more accurate prediction of the key byte.
-        if byte_idx == 0:
+        if byte_idx == 0 and collect_data:
             plotMaker.plot_ml_probabilities(models, [probabilities], byte_idx, MAP_TYPE, pkt_idx=0)
 
         # After calling rf,fit inside the trainModels function, each model contains a classes_ attribute that holds the unique class labels (byte values) that the model was trained on.
@@ -224,11 +224,11 @@ def phase_1_attack():
 
         all_key_scores.append(key_scores)
 
-        print(f" -> Found: {hex(best_key_guess)[2:].zfill(2)}")
+        if collect_data: print(f" -> Found: {hex(best_key_guess)[2:].zfill(2)}")
 
 
     # After recovering all 12 bytes of the AES key, plot the final key scores for each byte to visualize the confidence of the predictions made by the Random Forest models.
-    plotMaker.plot_all_final_key_scores(all_key_scores, REAL_KEY, MAP_TYPE)
+    if collect_data: plotMaker.plot_all_final_key_scores(all_key_scores, REAL_KEY, MAP_TYPE)
 
     # --- CALCOLO SUCCESS RATE POST-MLE ---
     correct_bytes = 0
@@ -238,17 +238,18 @@ def phase_1_attack():
             correct_bytes += 1
             
     success_rate = (correct_bytes / 12) * 100
-    
-    print(f"\n==================================================")
-    print(f"[*] SUCCESS RATE POST-MLE: {success_rate:.2f}%")
-    print(f"[*] Correctly recovered bytes: {correct_bytes} out of 12")
-    print(f"==================================================\n")
-    # -------------------------------------
+
+    if collect_data:
+        print(f"\n==================================================")
+        print(f"[*] SUCCESS RATE POST-MLE: {success_rate:.2f}%")
+        print(f"[*] Correctly recovered bytes: {correct_bytes} out of 12")
+        print(f"==================================================\n")
+        # -------------------------------------
 
     # Convert the recovered key bytes to a hexadecimal string representation, where each byte is represented as a two-character hex string, and concatenate them to form the final recovered key.
     hex_key = "".join([hex(b)[2:].zfill(2) for b in recovered_key_bytes])
 
-    return hex_key
+    return hex_key, success_rate
 
 
 # For the 2nd phase the attack shifts to a more complex algebraic approach, where the first 12 bytes of the key are known and, thanks for the indipencency of the 4 columns of AES, 
@@ -430,7 +431,7 @@ if __name__ == "__main__":
         sys.exit(1)
 
     # Perform the first phase of the attack to recover the first 12 bytes of the AES key using the trained Random Forest models and the attack data.
-    first12Found = phase_1_attack()
+    first12Found, _ = phase_1_attack()
 
     if first12Found == REAL_KEY[:24]:
         print("\nSUCCESS: Found the first 12 bytes of the AES key correctly!")

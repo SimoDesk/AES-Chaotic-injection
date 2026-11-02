@@ -108,7 +108,7 @@ def run_automation():
     # Create or overwrite the output CSV file and write the header row
     with open(OUTPUT_CSV, mode='w', newline='') as csv_file:
         writer = csv.writer(csv_file)
-        writer.writerow(["Mappa", "Seed", "Test", "Risultato (P-Value, Status)"])
+        writer.writerow(["Mappa", "Seed", "Test", "Result (P-Value, Status)"])
 
         # Use a temporary directory in RAM to store the generated ciphertexts and run the tests in order
         # to ensure that the tests are run in a clean environment and to improve performance by avoiding disk I/O
@@ -143,9 +143,9 @@ def run_automation():
 
                         # As each future completes, retrieve the result and print the completion message, storing the results in the results dictionary
                         for future in concurrent.futures.as_completed(futures):
-                            i, nome_test, risultato = future.result()
-                            print(f"  [COMPLETATO] -> {nome_test}")
-                            results[i] = (nome_test, risultato)
+                            i, test_name, curr_esult = future.result()
+                            print(f"  [COMPLETATO] -> {test_name}")
+                            results[i] = (test_name, curr_esult)
                     
                     # After all tests for the current map and seed are completed, write the results to the CSV file
                     for i in range(len(test_function)):

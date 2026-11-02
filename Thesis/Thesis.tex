@@ -1,0 +1,163 @@
+\documentclass[12pt,a4paper]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{changepage}
+
+\usepackage{xcolor}
+\definecolor{sapienzaRed}{HTML}{802433}
+
+% Italian language settings
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[italian,english]{babel}
+
+% Set the font to Times New Roman (or a similar serif font)
+\usepackage{mathptmx}
+
+% Set the page margins to 3 cm on all sides
+\usepackage[top=3cm, bottom=3cm, left=3cm, right=3cm]{geometry}
+
+% Set line spacing to 1.5
+\usepackage{setspace}
+\onehalfspacing
+
+% Load packages for mathematical symbols and environments
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+
+% Load package for including graphics such as images and figures
+\usepackage{graphicx}
+
+% Load package for adjusting the width of text blocks
+\usepackage{fancyhdr}
+
+% Configuration for the page header in a chapter page
+\pagestyle{fancy}
+\fancyhf{}                              % Clear all header and footer fields
+\fancyhead[L]{\nouppercase{\rightmark}} % Chapter title in the header on the left
+\fancyhead[R]{\textbf{\thepage}}        % Page number in the header on the right
+\renewcommand{\headrulewidth}{0.4pt}    % Set the thickness of the horizontal line in the header
+
+% Configuration for the page header in a plain page (e.g., chapter start)
+\fancypagestyle{plain}{
+    \fancyhf{}                          % Clear all header and footer fields
+    \fancyhead[R]{\textbf{\thepage}}    % Only the page number in the header on the right
+    \renewcommand{\headrulewidth}{0pt}  % No horizontal line in the header
+}
+
+% ----------------------------------------------------------------------------------------
+\begin{document}
+
+% Title page configuration
+\begin{titlepage}
+    % No page number on the title page
+    \thispagestyle{empty}
+
+    % Logo of Sapienza aligned to the left
+    \begin{flushleft}
+        \includegraphics[width=6cm]{images/sapienza_logo.png}
+    \end{flushleft}
+
+    \vspace{2cm}
+
+    % Content of the title page with adjusted width and no automatic indentation
+    \begin{adjustwidth}{1.5cm}{0cm}
+
+        % Set the paragraph indentation to zero for the title page content
+        \setlength{\parindent}{0pt}
+
+        % Thesis title
+        {\LARGE \color{sapienzaRed}
+        Secure Satellite Communication: \\
+        Performance and cryptographic analysis of \\
+        chaotic injected AES resistant to side-channel attacks targeting the S-box via \\
+        machine unlearning.
+        \par}
+
+        \vspace{4cm}
+
+        % Faculty and degree information
+        {\small \color{sapienzaRed}
+        Faculty of Information Engineering, Computer Science and Statistics \\
+        Bachelor's Degree in Computer Science
+        \par}
+
+        \vspace{0.8cm}
+
+        % My name and ID number
+        {\normalsize
+        \textbf{Simone Descontus} \\
+        ID number 2116496
+        \par}
+
+        \vspace{0.8cm}
+
+        % Advisor information
+        {\normalsize
+        Advisor \\
+        Prof. Emiliano Casalicchio
+        \par}
+
+        \vfill
+        Academic Year 2025/2026
+
+    \end{adjustwidth}
+\end{titlepage}
+
+% New page for the copyright and contact information
+{\newpage
+
+% Set the paragraph indentation to zero for the title page content
+\setlength{\parindent}{0pt}
+
+% No page number on this page
+\thispagestyle{empty} 
+
+% Add vertical space to center the content vertically on the page
+\vspace*{\fill}
+
+% Add a horizontal line across the width of the page
+\rule{\textwidth}{0.4pt}
+
+\vspace{0.3cm}
+
+{\textbf{Secure Satellite Communication: Performance and cryptographic analysis of chaotic injected AES resistant to side-channel attacks targeting the S-box via machine unlearning.}} \\
+Sapienza University of Rome
+
+\vspace{0.4cm}
+
+\copyright\ 2026 Simone Descontus. All rights reserved.
+
+\vspace{0.4cm}
+
+This thesis has been typeset by \LaTeX.
+
+\vspace{0.4cm}
+
+Author's email: \texttt{simo.desk04@gmail.com}
+
+\vspace{1cm} % Margine finale rispetto al bordo inferiore della pagina
+}
+
+
+% Contents page
+\newpage
+\tableofcontents 
+
+\newpage
+
+\chapter{Introduction}
+Questo è il mio primo capitolo in locale.
+
+Ecco una formula matematica di prova, perfettamente allineata:
+\begin{equation}
+    f(x) = \int_{a}^{b} x^2 \,dx
+\end{equation}
+
+
+\end{document}

@@ -17,7 +17,7 @@ def create_plots(fileName = "results.csv"):
         df = pd.read_csv(fileName)
         df['Map_Short'] = df['Map'].str.replace('AES-GCM ', '').str.replace(' Map', '')
     except FileNotFoundError:
-        print("Errore: file " + fileName + " non trovato.")
+        print("Error: The file " + fileName + " was not found. Please ensure the file exists in the current directory.")
         exit()
 
     df_enc = df[df['Fase'] == 'Encryption'].copy()

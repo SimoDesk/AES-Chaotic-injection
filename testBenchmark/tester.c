@@ -105,7 +105,7 @@ void calcStats(struct stats* st, double total_time, double* time_mesurements, ui
 void saveStatsToFile(struct stats* stEnc, struct stats* stDec, char* filename, const char* alg_name, ChaosMap mapUsed) {
     FILE* file = fopen(filename, "a");
     if (file == NULL) {
-        perror("Errore nell'apertura del file");
+        perror("Error opening file for writing");
         return;
     }
 

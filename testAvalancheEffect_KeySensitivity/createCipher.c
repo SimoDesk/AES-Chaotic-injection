@@ -74,14 +74,14 @@ int main(int argc, char *argv[])
     char filename[256];
     int path_length = snprintf(filename, sizeof(filename), "cipher_%i.bin", n_test);
     if (path_length < 0 || (size_t)path_length >= sizeof(filename)) {
-        fprintf(stderr, "Percorso del file di output troppo lungo\n");
+        fprintf(stderr, "Error: Filename is too long or an encoding error occurred.\n");
 
         return EXIT_FAILURE;
     }
 
     FILE *file = fopen(filename, "wb");
     if (file == NULL) {
-        perror("Errore nell'apertura del file");
+        perror("Error: Unable to open file for writing");
 
         return EXIT_FAILURE;
     }
@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
     // Write the ciphertext to the file
     size_t written = (map_type != NONE) ? fwrite(res_chaos.buf, sizeof(uint8_t), TEXT_LENGTH, file) : fwrite(res_std.buf, sizeof(uint8_t), TEXT_LENGTH, file);
     if (written != (size_t)TEXT_LENGTH) {
-        perror("Errore nella scrittura del file");
+        perror("Error: Failed to write the complete ciphertext to the file");
         fclose(file);
 
         return EXIT_FAILURE;

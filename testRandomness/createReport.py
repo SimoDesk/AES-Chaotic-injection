@@ -109,10 +109,10 @@ def load_results():
     details = []
     with INPUT_CSV.open(newline="", encoding="utf-8") as input_file:
         for row_number, row in enumerate(csv.DictReader(input_file), start=2):
-            # Extract components from the "Test" and "Risultato (P-Value, Status)" columns
+            # Extract components from the "Test" and "Result (P-Value, Status)" columns
             # If the row is malformed, raise a ValueError with the row number
             try:
-                components = extract_components(row["Test"], row["Risultato (P-Value, Status)"])
+                components = extract_components(row["Test"], row["Result (P-Value, Status)"])
             except (KeyError, ValueError, SyntaxError) as error:
                 raise ValueError(f"Impossibile interpretare la riga {row_number}") from error
 
@@ -480,7 +480,7 @@ def create_plots(details, component_summary, uniformity_summary):
 def create_report():
     # Check if the input CSV file exists
     if not INPUT_CSV.exists():
-        raise FileNotFoundError(f"File di input non trovato: {INPUT_CSV}")
+        raise FileNotFoundError(f"Error: The input CSV file '{INPUT_CSV}' was not found. Please ensure the file exists in the specified path.")
 
     # Create the report directory if it doesn't exist
     REPORT_DIR.mkdir(exist_ok=True)
