@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
         map_type = parseMapType(argv[1]);
     }
 
-    unsigned int seed = 391356;
+    unsigned int seed = 69852546;
 
     if (argc > 2) {
         // If a seed is provided as a command-line argument, use it to seed the random number generator for reproducibility.

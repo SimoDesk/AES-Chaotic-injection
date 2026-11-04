@@ -18,12 +18,15 @@ typedef struct {
 } CandidateTuple;
 
 // loadCandidates function to read candidate tuples from a binary file and populate the array of CandidateTuple structures. Each tuple consists of one byte for K1 and four bytes for K2.
-void loadCandidates(const char *filename, CandidateTuple *list) {
+int loadCandidates(const char *filename, CandidateTuple *list) {
     FILE *file = fopen(filename, "rb");
     if (!file) {
         printf("Error: Unable to open %s\n", filename);
         exit(1);
     }
+
+    // Counts the number of candidate tuples read from the file. Each tuple consists of 5 bytes (1 byte for K1 and 4 bytes for K2).
+    int count = 0;
 
     // For each of the 256 possible guesses for K1, read 5 bytes from the file: 1 byte for K1 and 4 bytes for K2. Store these bytes in the corresponding fields of the CandidateTuple structure.
     for (int i = 0; i < 256; i++) {
@@ -39,8 +42,12 @@ void loadCandidates(const char *filename, CandidateTuple *list) {
         list[i].k2_1 = buf[2];
         list[i].k2_2 = buf[3];
         list[i].k2_3 = buf[4];
+
+        count++;
     }
     fclose(file);
+
+    return count;
 }
 
 // Function to convert a hexadecimal string to a byte array
@@ -95,12 +102,15 @@ int main(int argc, char *argv[]) {
 
     // Load the candidate tuples for K1 and K2 from the binary files. Each file contains 256 candidate tuples.
     CandidateTuple col0[256], col1[256], col2[256], col3[256];
-    loadCandidates("guesses/col0_candidates.bin", col0);
-    loadCandidates("guesses/col1_candidates.bin", col1);
-    loadCandidates("guesses/col2_candidates.bin", col2);
-    loadCandidates("guesses/col3_candidates.bin", col3);
+    int c0 = loadCandidates("guesses/col0_candidates.bin", col0);
+    int c1 = loadCandidates("guesses/col1_candidates.bin", col1);
+    int c2 = loadCandidates("guesses/col2_candidates.bin", col2);
+    int c3 = loadCandidates("guesses/col3_candidates.bin", col3);
 
-    printf("Starting brute-force search on 4,294,967,296 possible keys...\n");
+    // Calculate the total number of possible key combinations based on the number of candidate tuples for each column. This is used to track progress during the brute-force search.
+    unsigned long long total_candidates = (unsigned long long) c0 * c1 * c2 * c3;
+
+    printf("Starting brute-force search on %lld possible keys...\n", total_candidates);
 
     volatile bool key_found = false;
     unsigned long long keys_tested = 0;
@@ -122,7 +132,7 @@ int main(int argc, char *argv[]) {
         // Compared with a full AES-256 brute-force search of 2^256 keys, this is a significantly reduced search space due to the information gained from the side-channel attack.
 
         // For each guess of K1_12, K2_0, K2_1, K2_2, and K2_3...
-        for (int i = 0; i < 256; i++) {
+        for (int i = 0; i < c0; i++) {
             if (key_found) continue;
 
             assembled_key[15] = col0[i].k1;
@@ -130,7 +140,7 @@ int main(int argc, char *argv[]) {
             assembled_key[18] = col0[i].k2_2; assembled_key[19] = col0[i].k2_3;
 
             // For each guess of K1_13, K2_4, K2_5, K2_6, and K2_7...
-            for (int j = 0; j < 256; j++) {
+            for (int j = 0; j < c1; j++) {
                 if (key_found) break;
 
                 assembled_key[14] = col1[j].k1;
@@ -138,7 +148,7 @@ int main(int argc, char *argv[]) {
                 assembled_key[22] = col1[j].k2_2; assembled_key[23] = col1[j].k2_3;
 
                 // For each guess of K1_14, K2_8, K2_9, K2_10, and K2_11...
-                for (int k = 0; k < 256; k++) {
+                for (int k = 0; k < c2; k++) {
                     if (key_found) break;
 
                     assembled_key[13] = col2[k].k1;
@@ -146,7 +156,7 @@ int main(int argc, char *argv[]) {
                     assembled_key[26] = col2[k].k2_2; assembled_key[27] = col2[k].k2_3;
 
                     // For each guess of K1_15, K2_12, K2_13, K2_14, and K2_15...
-                    for (int l = 0; l < 256; l++) {
+                    for (int l = 0; l < c3; l++) {
                         if (key_found) break;
 
                         assembled_key[12] = col3[l].k1;
@@ -187,7 +197,7 @@ int main(int argc, char *argv[]) {
                             key_found = true;
                             #pragma omp critical
                             {
-                                printf("\n[!!!] MASTER KEY FOUND [!!!]\n");
+                                printf("\n\n[!!!] MASTER KEY FOUND [!!!]\n");
                                 printf("Tested Keys: %lld\n", keys_tested);
                                 printf("Key: ");
 
@@ -200,12 +210,12 @@ int main(int argc, char *argv[]) {
 
                 // Update the count of keys tested and print the progress to the terminal. Use atomic capture to safely update the shared keys_tested variable across threads.
                 #pragma omp atomic
-                keys_tested += 65536;
+                keys_tested += ((unsigned long long)c2 * c3);
 
                 // Print the progress to the terminal in a critical section to avoid interleaved output from multiple threads.
                 #pragma omp critical
                 {
-                    printf("\rProgress: %lld/4294967296 keys tested", keys_tested);
+                    printf("\rProgress: %lld/%lld keys tested", keys_tested, total_candidates);
                     fflush(stdout);
                 }
             }

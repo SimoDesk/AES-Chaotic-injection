@@ -82,11 +82,7 @@ def galoisDouble(x):
 # 2. Apply the S-Box to the result of the AddRoundKey operation.
 # 3. Apply the MixColumns operation to the result of the S-Box operation.
 # The output of this function is the result of the MixColumns operation, which will be used as input for the second round of AES.
-def aseColumnSimulation(IV, known_k1_12bytes, guess_k1, col):
-
-    # Considering an AES block of 16 bytes, before the ShiftRows operation, the unknown byte of K1 are in the forth column of the AES state, which holds the indices 12, 13, 14, and 15.
-    # So, for each column of AES, the unknown byte of K1 is at index 15 - the current column index.
-    unknown_k1_idx = 15 - col
+def aseColumnSimulation(IV, known_k1_12bytes, unknown_k1_idx, guess_k1, col):
 
     # shift_rows_map is a dictionary that defines the column where each unknown byte of K1 is located in the AES state after the ShiftRows operation.
     shift_rows_map = {
@@ -230,7 +226,7 @@ def phase_1_attack(collect_data=True):
     # After recovering all 12 bytes of the AES key, plot the final key scores for each byte to visualize the confidence of the predictions made by the Random Forest models.
     if collect_data: plotMaker.plot_all_final_key_scores(all_key_scores, REAL_KEY, MAP_TYPE)
 
-    # --- CALCOLO SUCCESS RATE POST-MLE ---
+    # --- Calculate the success rate of the recovered key bytes after the Maximum Likelihood Estimation (MLE) approach by comparing the recovered key bytes with the real key bytes.
     correct_bytes = 0
     for i in range(12):
         real_byte = int(REAL_KEY[i*2 : i*2+2], 16)
@@ -303,12 +299,42 @@ def phase_2_attack(known_k1_12bytes):
         # This mapping is crucial for the divide et impera approach, as it allows us to focus on the relevant bytes of K2 for each unknown byte of K1.
         involved_k2_idx = k2_targets_map[col]
 
+        # Considering an AES block of 16 bytes, before the ShiftRows operation, the unknown byte of K1 are in the forth column of the AES state, which holds the indices 12, 13, 14, and 15.
+        # So, for each column of AES, the unknown byte of K1 is at index 15 - the current column index.
+        unknown_k1_idx = 15 - col
+
+        # Since the last 4 bytes of the IV are fixed to 0x00000002, we can use this information to reduce the search space for the unknown byte of K1.
+        iv_byte_for_k1 = 0x02 if unknown_k1_idx == 15 else 0x00
+        
+        # Simulate the expected Hamming weight for the unknown byte of K1 based on the attack samples. 
+        # This is done by calculating the mean of the Hamming weights for the unknown byte across all attack samples and rounding it to the nearest integer.
+        expected_hw = round(attack_df[f'HW_P1_{unknown_k1_idx}'].mean())
+        # In a real-world scenario, the collected data would be a collection of power consumption traces or electromagnetic emissions captured during the execution of the AES algorithm.
+        # After calculating the mean of the power traces, we would pass the averaged trace to the ML model to predict the expected Hamming weight for the unknown byte of K1 based on the attack samples.
+
+        print(f"[*] Expected Hamming Weight (from Phase 1 traces) for K1 byte {unknown_k1_idx}: {expected_hw}")
+
         # Initialize a list to hold the hypothesis for the missing byte of K1 and the corresponding best guesses for the 4 bytes of K2.
         bytes_hypotesis = []
         
-        # Test all 256 possible values for the unknown byte of K1 (0-255) to find the best guesses for the corresponding 4 bytes of K2.
+        # Test all possible values for the unknown byte of K1 (0-255) to find the best guesses for the corresponding 4 bytes of K2.
+        # By using the expected Hamming weight calculated from the attack samples, we can filter out impossible hypotheses for the unknown byte of K1, reducing the search space and improving the efficiency of the attack.
         for guess_k1 in range(256):
             
+            # --- search space reduction based on the expected Hamming weight ---
+            # Calculate the expected output of the S-Box for the current guess of the unknown byte of K1 and the corresponding byte of the IV.
+            sbox_out = sbox[guess_k1 ^ iv_byte_for_k1]
+            
+            # Check the Hamming weight of the S-Box output for the current guess of the unknown byte of K1. The Hamming weight is the number of bits set to 1 in the binary representation of the S-Box output.
+            hw_out = bin(sbox_out).count('1')
+            
+            # If the Hamming weight of the S-Box output does not match the expected Hamming weight calculated from the attack samples, 
+            # we skip this guess for the unknown byte of K1, as it is unlikely to be correct.
+            if hw_out != expected_hw:
+                continue
+            
+            # ---
+
             # For each of the four bytes of K2 that are influenced by the current unknown byte of K1, we initialize an array to hold the scores for each possible byte value (0-255).
             # Each index in this array corresponds to a possible byte value, and the scores will be accumulated based on the predicted probabilities from the ML model for each attack sample.
             k2_scores = [np.zeros(256) for _ in range(4)]
@@ -324,7 +350,7 @@ def phase_2_attack(known_k1_12bytes):
                 iv = bytes.fromhex(attack_pkt['IV'])
 
                 # We call the aseColumnSimulation function to simulate the first round of AES for the current column (col) using the extracted IV, the known first 12 bytes of K1, and the current guess for the unknown byte of K1.
-                mixed_col = aseColumnSimulation(iv, known_k1_12bytes, guess_k1, col)                
+                mixed_col = aseColumnSimulation(iv, known_k1_12bytes, unknown_k1_idx, guess_k1, col)                
                 
                 # Then for each of the four bytes of K2 that are influenced by the current unknown byte of K1, we calculate the expected output of the S-Box for each possible byte value (0-255) of K2 thanks to the ML model predictions.
                 for j in range(4):
@@ -466,5 +492,3 @@ if __name__ == "__main__":
             target_tag_hex
         ], 
     )
-    
-
