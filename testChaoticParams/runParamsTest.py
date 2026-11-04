@@ -8,6 +8,7 @@ import tempfile
 
 import secrets
 import concurrent.futures
+import multiprocessing
 
 from enum import Enum
 
@@ -16,7 +17,7 @@ from getLeaderBoard import createLeaderBoard
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
-maps = ['logistic','tent','henon','arnold','sine','chebyshev','lorenz','chen','rossler']
+maps = ['logistic','tent','sine','chebyshev','henon','arnold','lorenz','chen','rossler']
 
 alfa = [0.1,0.5,1.0,2.0,5.0,10.0,15.0]
 beta = [0.01,0.05,0.1,0.25,0.5]
@@ -158,8 +159,12 @@ def run_test(test_type, alfa=None, beta=None):
         map_output_dir = os.path.join(current_dir, "ciphers", map)
         os.makedirs(map_output_dir, exist_ok=True)
 
+        # Determine the number of workers based on SLURM_CPUS_ON_NODE or the number of CPU cores
+        slurm_cups = os.environ.get('SLURM_CPUS_ON_NODE')
+        max_workers_count = int(slurm_cups) if slurm_cups else min(8, multiprocessing.cpu_count())
+
         # Use a ProcessPoolExecutor to run the tests in parallel
-        with concurrent.futures.ProcessPoolExecutor() as executor:
+        with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers_count) as executor:
 
             # Submit the worker function for each test to the executor and collect the futures
             futures = [executor.submit(worker, test_type, map, alfa, beta) for _ in range(TESTS_NUMBER)]

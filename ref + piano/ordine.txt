@@ -35,80 +35,122 @@
 	
 
 
-- differential uniformity & nonlinearity (?)
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-- studio caratteristiche anti-quantum (?)
+Utility per il cluster:
+	# per lanciare un job
+	sbatch submit_job.sh
+
+	# per vedere la coda
+	squeue
+
+	# risultati in corso
+	cat risultati_----.out
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-[in cluster]
+### QUANTO DEEP??? ###
 
-1. La Scrematura Veloce (Avalanche e Key Sensitivity)
-	- Strumento: Il tuo script runParamsTest.py su blocchi da 16 byte.
-	- Azione: Genera le heatmap.
-	- Selezione: Per ogni mappa caotica, isola le 2 o 3 coppie di alpha e beta che si avvicinano di più all'ideale del $50\%$ di bit modificati. Scarta tutto il resto.
-	
-{2 VOLTE! UNA CON UPDATE PER BLOCK E UNA CON UPDATE PER ROUND}
-	2. La Validazione Architetturale (Entropia e SWaP)
-		- Strumento: Il benchmark hardware tester.c (chiamato da runBenchmark.py).
-		- Azione: Inserisci hardcoded i parametri vincitori della Fase 1 ed esegui la cifratura su payload da 5 MB.
-		- Selezione: Leggi il results.csv. Conferma che l'Entropia di Shannon per quei parametri rimanga inchiodata a circa 7.9999 e che l'uso di CPU/Memoria non subisca picchi anomali. Eleggi il parametro definitivo per ogni mappa.
-		
-	3. La Certificazione Statistica (NIST SP 800-22)
-		- Strumento: Suite ufficiale NIST.
-		- Azione: Usando il candidato perfetto per ogni mappa, genera file binari di grandi dimensioni (solitamente tra i 10 MB e i 100 MB, a seconda del setup della suite).
-		- Selezione: Ottenere la prova matematica formale che la tua variante, con quegli specifici alpha e beta, supera i 15 test di casualità (p-value > 0.01).
-		
-	4. Il Test Pratico (Machine Unlearning)
-		- Strumento: Script Python ML.
-		- Azione: Genera il dataset di traffico di rete cifrato usando esclusivamente le configurazioni certificate al passaggio precedente.
-		- Selezione: Addestrare il classificatore per dimostrare empiricamente il blocco della traffic analysis, costituendo il capitolo finale e più innovativo del tuo lavoro.
-		
-		
-1. Il Test di Baseline (Il gruppo di controllo)
-Configurazione: AES-GCM Standard (nessun caos).
-Chiave: Una singola chiave fissa e nota (es. la tua REAL_KEY attuale).
-Obiettivo: Dimostrare che, in assenza di difese, l'attacco estrae 12 byte su 12 (Success Rate 100%) in 50 pacchetti. Questo stabilisce che il tuo modello di attacco (Random Forest + MLE) è valido e letale.
+### Sia in spigazione AES che in GCM mostro codice ? ###
 
-2. Analisi Comparativa delle Mappe (Sensibilità alla Dinamica)
-Configurazione: Aggiornamento del caos fissato a "una volta per blocco" (per mantenere il throughput alto).
-Chiave: La stessa chiave fissa del Test 1.
-Cosa misurare: Esegui l'attacco su 3 o 4 mappe molto diverse tra loro. Scegline una monodimensionale (es. Logistic), una bidimensionale (es. Henon) e una complessa/continua (es. Lorenz o Rössler).
-Obiettivo: Raccogliere il Success Rate post-MLE per ciascuna. Mostrerai nella tesi che le mappe più complesse (Lorenz) portano il SR allo 0%, mentre quelle semplici (Logistic) potrebbero lasciare qualche "spiffero" statistico (es. 16% o 2 byte). Questo giustifica la scelta di implementare mappe complesse.
+- Abstract (alla fine)
 
-3. L'Impatto della Frequenza di Aggiornamento (Sicurezza vs Performance)
-Configurazione: Scegli una singola mappa "media" (es. Tent o Logistic).
-Cosa misurare: Lancia l'attacco prima con aggiornamento del caos Per Blocco, poi con aggiornamento Per Round.
-Obiettivo: Incrociare i dati di sicurezza con quelli del tuo modulo testBenchmark. Dimostrerai il trade-off fondamentale: aggiornare il caos a ogni Round abbassa ulteriormente il Success Rate dell'attaccante, ma consuma più Joule e riduce i MB/s di throughput. Aggiornarlo per Blocco è più veloce ma leggermente meno resiliente contro il Machine Learning.
+- introduzione
+	- stato dell'arte delle comunicazioni satellitari: vulnerabilità dovute al nuovo spazio
+		- machine learning come minaccia sempre più pressante
+	- scopo dello studio: implementare, ottimizzare e validare un'architettura software-based leggera per immunizzare il segmento spaziale dagli attacchi SCA, superando i limiti di costo dell'hardware
+	- soluzioni di difesa
+		- difesa canale fisico, [l'unico costo è l'eventuale implementazione dell'HW, che avverrebbe comunque pre-lancio]
+		- difesa ad alto livello (crittografia) [crittografia più affidabile e semplice da installare, ma costosa a livello di risorse]
+	- stato dell'arte degli algoritmi di cifratura usati nelle SATCOM con focus su AES256-GCM w/ IV a 12byte come algoritmo principale
+	- AES con iniezione caotica nella s-box + a cosa può servire
 
-4. Validazione dell'Invarianza della Chiave (Robustezza)
-Configurazione: Scegli la mappa vincente (es. Lorenz) con aggiornamento per blocco.
-Cosa misurare: Genera 5 (o massimo 10) chiavi AES completamente casuali e lancia l'attacco per ciascuna.
-Obiettivo: Invece di riportare il singolo risultato, calcolerai la media e la varianza del Success Rate su queste 5-10 chiavi. Mostrare che il Success Rate medio rimane attorno allo 0-5% indipendentemente dalla chiave utilizzata certifica che la difesa non è legata a una chiave "fortunata", ma è una proprietà strutturale del sistema.
+- Spiegazione AES256
+	- Algoritmo di cifratura simmetrico
+	- blocchi da 16byte, trattati come matrici 4x4
+	- espansione chiave
+	- 10 round, 4 fasi per round. Sia cifratura che decifratura iniziano con un addRoundKey Experimental
+		- AddRoundKey
+		- SubBytes, unica operazione non lineare, e principale bersaglio degli attacchi
+		- ShiftRows
+		- MixColumn
 
+- Spiegazione del GCM
+	- Alterazione della CTR mode che garantisce authenticated encryption grazie ad un tag
+	- (key and IV Requirements ?)
+	- multiplication in binary Galois finite field of 2^128.
+	- GHASH
+	- authenticated encryption algorithm
+	- authenticated decryption algorithm
+	- Test vettori nist per verifica della correttezza dell'implementazione
+	- simulazione AWGN (Additive White Gaussian Noise): Mostrare funzionamento di GCM e corretto fallimento (per esempio per bit flip dovuti alla comunicazione spaziale)
 
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+- AES con iniezione caotica nella s-box improntato al machine unlearning
+	- cos'è il machine unlearning in questo contesto: rompere la corrispondenza deterministica ricercata dai modelli ML
+	- cosa aggiunge l'iniezione caotica e dove agisce (formula di alterazione della S-box con spiegazione dei ruoli di alfa, beta, gamma e delta)
+	- mappe caotiche studiate (per ogni mappa i parametri ottimali)
+		- discrete
+			- monodimensionali
+				- logistic
+				- tent
+				- sine
+				- chebyshev
+			- bidimensionali
+				- henon
+				- arnold
+		- continue (in questo caso, tutte tridimensionali)
+			- Runge-Kutta 4th order method per approssimare le funzioni continue con alto grado di precisione
+			- lorenz
+			- chen
+			- rossler
+	- valori di partenza della mappe derivati dalla chiave (risolve il problema della sincronizzazione tra Ground e Space segment + problemi di determinismo dovuti a seed comuni su macchine diverse)
 
-[per la tesi] (non in ordine & non completo)
+	- DUE opzioni di aggiornamento del Chaos: once per round / once per block
 
-- Cifrare alcuni testi e/o immagini e mostrare
-- AWGN (Additive White Gaussian Noise): Mostrare funzionamento di GCM e corretto fallimento (per esempio per bit flip dovuti alla comunicazione spaziale)
-- SWaP (Size, Weight, and Power), le misurazioni di energia, potenza e memoria sevono a questo
-- Throughput da confrontare con i classici datalink satellitari (banda S o banda X), dimostrando che l'algoritmo è sufficientemente veloce per crittografare la telemetria in tempo reale (TT&C - Telemetry, Tracking, and Command) senza creare latenza.
+- Selezione delle più promettenti coppie di alfa e beta per ogni mappa caotica
+	- Key sensitivity e avalanche effect per la Selezione
+	- spiegazione dei criteri di classification
+	- confronto dei risultati delle varie mappe in avalanche effect e key sensitivity con l'AES base
 
+- SWaP (Size, Weight, and Power), le misurazioni di energia, potenza e memoria sugli Alfa e Beta selezionati
+	- misurazioni su pc classici e non FPGA, ma comunque indicativi
+	- confronti soluzione per Block con soluzione per Round
+	- confronti con AES standard
+	- Throughput da confrontare con i classici datalink satellitari (banda S o banda X), verificando se l'algoritmo è sufficientemente veloce per crittografare la telemetria in tempo reale
+	 (TT&C - Telemetry, Tracking, and Command) senza creare latenza.
 
+- convalidazione randomica con i test nist (chaos perfetto a livello teorico ma può cadere in loop in implementazione informatica, perciò controllo)
+	- successo medio sui test
+	- uniformità dei p-value
 
-Sono uno studente universitario in sapienza e sto svolgendo la triennale in informatica. Sono in procinto di laurearmi e ccon il mio relatore ci siamo accordati su un progetto di satellite security. La principale ispirazione proviene dal paper in allegato.
+- Attacco side-channel alla S-box channel con ML
+	- cos'è, quali sono le superfici di attacco nelle SATCM e perché è una minaccia
+		- supply chain attack
+		- attacchi alla ground station
+		- attacchi ai Satellite-as-a-Service con sistemi di ascolto sw
+	- perché l'AES standard è vulnerabile mentre la versione con iniezione caotica no
+	- (confronto con l'attacco del paper?)
+	- l'attacco in analisi (Key recovery completo con ML misto a un approccio divide et impera + brute force)
+		- logica di attacco punta a raccogliere le misurazioni dei consumi di potenza in uscita dalla s-box e usare un modello ML per predirre il valore corretto 
+		  (relazione diretta con gli HW) & scelta di simulare usando quelli
+		- modello ML random forest, spiegazione ruolo e funzionamento (generico)
+		- fase di profilazione su dati raccolti su "dispositivo clone" per allenare il modello ML
+		- fase 1, sui primi 12 byte per via del funzionamento del GCM sugli IV di 12byte (standard SATCOM)
+			- misurazione degli HW di N (50 nel mio caso) pacchetti rubati accostati ai loro IV pubblici.
+			- consegna dei dato al modello ML addestrato che ritorna un vettore di probabilità che ad ogni possible valore assumibile dal byte assegna la probabilità che sia quello giusto
+			- reperimento dei primi 12 byte con il 100% di precisione nell'AES base sfruttando la totale conoscenza del funzionamento dell'AES256-GCM
+		- fase 2
+			- sempre sfruttando la totale conoscenza dell'AES256-GCM, si sfrutta la fase di shiftRows + MixColumn per associare ad ogni byte ignoto di K1 4 byte ignoti di K2.
+			  K2 non è deducibile con la stessa tecnica della prima metà per via della mancanza degli ultimi 4 byte della prima metà.
+			  Perciò per ognuno dei 4 byte di K1 viene fatta un ipotesi tra tutte le 256 possibili, viene eseguita la logica dell'AES256 solo sulla colonna che contiene il byte sconosciuto 
+			  corrente e viene chiesto allo stesso modello di determinare quali sarebbero i 4 byte corrispondenti in K2 se quello corrente ipotizzato di K1 fosse giusto. 
+			  Fatto per ogni byte otteniamo 4*256 = 2^32 combinazioni di chiave, tra le quali ci sarà anche quella corretta.
+	- Success Rates standard VS chaos (per blocco)
+		- confronto anche per round per verificare il funzionamento della resistenza anche dell'approccio più leggero + analisi dei trade-off
 
-Oltre al paper ti ho allegato il progetto praticamente finito, ora ti racconterò come vorrei strutturare la tesi in base alle ricerche e l'implementazione che ho fatto e in base alle misurazioni che farò quando il relatore mi darà accesso al cluster universitario; in seguito vorrei un feedback, commentando e valutando quanto più possibile ogni passaggio.
-
-- Ispirandomi al paper in allegato, ho deciso di approfondire la questione dell'iniezione caotica nella mappa caotica dell'AES, in accordo con il relatore, attraverso un'implementazione, che manca nel paper di riferimento. Perciò, ho iniziato cercando una baseline affidabile, e l'ho trovata nella libreria open-source su github tiny-aes-c. La scelta è ricaduta qui e non su implementazioni più profonde come quella OpenSSL in quanto questa come altre più commerciali sono proprietarie e con porzioni di codice addirittura in assembly, perciò per semplicità di modifica ho preferito utilizzare tiny-aes-c dopo essermi assicurato che fosse già popolare nell'ambito della letteratura del tema.
-- Ho cercato gli standard degli algoritmi di cifratura delle comunicazioni satellitari, e ho visto che lo standard è AES256-GCM con IV a 12byte. Implementando perciò la prima differenza dal paper di riferimento, che secondo me irrealisticamente, basa i suoi studi sul'ECB, ho modificato l'implementazione di tiny-aes-c per aggiungere il metodo d'uso GCM, con il risultato che puoi vedere nella cartella aes_default.
-- Per assicurarmi della correttezza dell'implementazione GCM, ho importato dei vettori di test ufficiali NIST ed ho verificato che tutte le cifrature e decifrature fossero corrette (ed ha funzionato), con i riusltati che puoi vedere nella cartella checkGCMcorrectness.
-- Come punto cruciale del progetto, ho alterato l'AES standard per ospitare l'iniezione caotica all'interno della S-box. Questo fa si che a seconda dell'output della mappa caotica di turno, una tra 256 configurazioni possibili della S-box vengono usate utilizzando un pattern pseudo-random garantito dalla mappa caotica che usa come origine un "seed" ottenuto dalla chiave AES. Le mappe caotiche che ho implementato sono: 6 discrete, logistic, tent, henon, arnold, sine, chebyshev; e tre continue adattate al codice usando l'rk4 step, lorenz, chen e rossler. Il risultato lo trovi nella cartella aes_chaos 
-- Anche qui c'è un'altra differenza importante dal paper di riferimento, il quale inserisce l'aggiornamento della mappa caotica una volta per round all'interno dell'AES. Tuttavia, in quanto nelle comunicazioni satellitari l'efficienza energetica è chiave, ho deciso di sperimentare offrendo un'alternativa all'aggiornamento una volta per round, ossia una volta per blocco, questo dovrebbe garantire un miglioramento prestazionale senza venir meno alle capacità di machine unlearning proposte dal paper di riferimento.
-- Nella formula che definisce il peso con il quale la mappa caotica influisce sulla S-box, spiccano due parametri alfa e beta come evidenzia anche il paper di riferimento. I valori ottimali di questi possono variare in base alla mappa, perciò, nella cartella testAvalancheEffect_KeySensitivity puoi trovare un test che applica i due suddetti test all'AES di turno per verificare che per un blocco di 128 bit l'alterazione di un singolo bit del plaintext/chiave porti alla modifica di esattamente 64 bit nel ciphertext. Questo test verrà usato nelle misurazioni che trovi nella cartella testChaoticParams, i quali per un sottoinsieme specifico di alfa e beta, per ogni mappa caotica, lanceranno migliaia di test avalanche effect e key sensitivity per trovare la migliore coppia per ogni mappa.
-- Una volta trovate le migliori coppie e hardcodati i loro valori nelle mappe caotiche, lancierei i benchamrk che trovi nellacartella testBenchmark. Questi prendono uno specifico file generao casualmente di dimensione N MB e lo cifrano e decifrano migliaia di volte con la stessa chiave per estrarne: troughput, tempo impiegato, memoria consumata, energia consumata, potenza consumata; così da poter confrontare le versioni caotiche con la baseline standard AES256-GCM. Questa fase verrà svolta sia per l'aggiornamento per round che per l'aggiornamento per blocco, per poter mostrare le differenze in consumo (al netto dell'ambiente di test che è un personal computer su un implementazione in C, i miglioramenti dovrebbero essere analoghi anche su macchine e linguaggi più performanti e adatti allo scopo).
--  A questo punto, ho preso dalla libreria open source su github di stevenang per testare la randomicità degli output delle cifrature con le varie mappe caotiche secono lo standard NIST 800-22r1a, i test li puoi trovare nella cartella testRandomness e dovrebbero essere solo un contorno per assicurarsi che la modifica all'AES non ne toglia le sue proprietà di diffusione del caso.
-- Dopo aver terminato tutte le verifiche di cui sopra, inizia la seconda e ultima metà dello studio: il paper di riferimento simula un side-channel attack misurando la potenza dei valori in uscita dalla s-box per trovare dei pattern attraverso il machine learning e effettuare un classification-attack, il loro punto è che con l'iniezione caotica che sfrutta il machine unlearning, l'attacco fallisce. Tuttavia, come detto prima nel paper utilizzano AES ECB, che per il contesto SATCOM trovo estremamente irrealistico. Perciò, ho deciso di implementare un altro tipo di attacco side-channel che sfrutta il ML e che con la versione caotica diventa inefficace, la mia versione, inoltre, è secondo me ben più preoccupante è realistica nel contesto studiato: tento infatti una key recovery totale. Il risultato dell'implementazione dell'attacco lo puoi trovare nella cartella side-channel_attack e consiste in: 1) Sfruttando l'IV (che è pubblico) di dimensione standard a 12byte, dopo una fase di addestramento di un modello ML (nel mio caso Random Forest) simulo il furto di 100 pacchetti, dei quali conosco il loro IV (che è pubblico) e le misurazioni in  potenza delle consumazioni in uscita dalla S-box del primo round (per i primi 16 byte della chiave) e del secondo round (per la seconda metà). Secondo l'implementazione standard del GCM, quando l'IV è di 12byte, in input all'AES ci va IV || 0x00000002, questo rende perciò impossibile risalire a tutti i 16 byte del primo round per via di assenza di varianza, ma il modello riesce facilmente ad individuare i primi 12. Dopodiché per la seconda fase dell'attacco, inizio un approccio divide et impera per il quale dopo la fase shift row, i 4 byte ignoti della prima metà della chiave so sono distribuiti nelle 4 colonne, perciò dopo il mix column ogni byte ignoto influenza esattamente solo 4 byte per la seconda metà della chiave. A questo punto, per ogni possibile valore assumibile dai 4 byte ignoti della prima metà della chiave, vedo quali sono i valori più probabili per gli altri 4 byte della seconda metà della chiave grazie al ML, mi salvo tutte le porzioni in un file e poi tento tutte le 2^32 combinazioni su un pacchetto intercettato, verificando con il tag GCM che la chiave sia corretta. Questo ho già verificato che funzioni ed è un grande successo ridurre lo spazio di ricerca da 2^256 a 2^32.
-- La conclusione consisterebbe nel verificare (come ho già fatto) che usando le mappe caotiche il ML non riesce neanche a individuare con successo la totalità dei primi 12 byte della chiave, rendendo impossibile derivare il resto (con piccole eccezioni statistiche, il modello a volte indovina uno o al più due byte, comunque una quantità altamente insufficiente).
+- Conclusioni
+	- Inezione caotica non dovrebbe rappresentare un grande overhead per le SATCOM sopratutto se implementata con aggiornamento per blocco
+	- Soluzione software based per resistere a tutti gli attacchi side-channel mirati alla s-box
+	- Studi futuri
+		- Implementazione su FPGA rad-hard per accelerare ancora di più i calcoli e renderli più realistici /
+		  ottimizzare l'implementazione a basso livello a mo' di OpenSSL per avere un paragone alla pari con gli algoritmi moderni.

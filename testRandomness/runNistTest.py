@@ -1,9 +1,13 @@
 import os
 import sys
-import subprocess
+
 import csv
+
 import tempfile
+
+import subprocess
 import concurrent.futures
+import multiprocessing
 
 from createReport import create_report 
 
@@ -94,10 +98,10 @@ def run_single_test(args):
         return i, nome_test, f"Errore: {e}"
 
 # Define the list of maps to be tested and the output CSV file path
-MAPPE = ["standard",'logistic','tent','henon','arnold','sine','chebyshev','lorenz','chen','rossler']
+MAPPE = ["standard",'logistic','tent','sine','chebyshev','henon','arnold','lorenz','chen','rossler']
 OUTPUT_CSV = os.path.join(current_dir, "nist_results.csv")
 
-N_TESTS = 55
+N_TESTS = 100
 
 # Define the main function to run the automation of tests
 def run_automation():
@@ -136,7 +140,11 @@ def run_automation():
                     # Use a ProcessPoolExecutor to run the tests in parallel, submitting each test to the executor and collecting the results as they complete
                     print(f"[{mappa.upper()} - {seed}] Test NIST avviati in parallelo...")
 
-                    with concurrent.futures.ProcessPoolExecutor() as executor:
+                    # Determine the number of workers based on SLURM_CPUS_ON_NODE or the number of CPU cores
+                    slurm_cups = os.environ.get('SLURM_CPUS_ON_NODE')
+                    max_workers_count = int(slurm_cups) if slurm_cups else min(8, multiprocessing.cpu_count())
+
+                    with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers_count) as executor:
                         # Submit the tests to the executor and store the futures in a dictionary, mapping each future to its corresponding argument 
                         # in a dictionary comprehension, allowing us to track which test corresponds to which future as they complete
                         futures = {executor.submit(run_single_test, arg): arg for arg in args_list}
@@ -162,4 +170,4 @@ if __name__ == "__main__":
 
     run_automation()
 
-    create_report(OUTPUT_CSV)
+    create_report()

@@ -8,6 +8,7 @@ import random
 import os
 import tempfile
 import concurrent.futures
+import multiprocessing
 
 import attack as attack_module
 
@@ -18,7 +19,7 @@ TEST_QUANTITY = 1000
 SUCCESS_RATES_CSV = "data/success_rates.csv"
 
 # List of chaotic map types to be tested in the side-channel attack. Each map type will be used to generate different sets of training and attack data for the AES key recovery process.
-MAPS = ["standard",'logistic','tent','henon','arnold','sine','chebyshev','lorenz','chen','rossler']
+MAPS = ["standard",'logistic','tent','sine','chebyshev','henon','arnold','lorenz','chen','rossler']
 
 # Function to run a single test for a given chaotic map type and random seed. It generates training and attack data, 
 # performs the first phase of the side-channel attack to recover the first 12 bytes of the AES key, and returns the success rate of the key recovery process.
@@ -74,9 +75,13 @@ if __name__ == "__main__":
             # counter will keep track of the number of completed tests for progress reporting
             counter = 0
 
+            # Determine the number of workers based on SLURM_CPUS_ON_NODE or the number of CPU cores
+            slurm_cups = os.environ.get('SLURM_CPUS_ON_NODE')
+            max_workers_count = int(slurm_cups) if slurm_cups else min(8, multiprocessing.cpu_count())
+
             # Use a ProcessPoolExecutor to run multiple tests in parallel, improving the efficiency of the testing process. 
             # Each test is submitted as a separate task to the executor, and the results are collected as they complete.
-            with concurrent.futures.ProcessPoolExecutor() as executor:
+            with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers_count) as executor:
                 futures = [executor.submit(run_single_test, map, timeSeed + i) for i in range(TEST_QUANTITY)]
 
                 # As each test completes, the success rate is added to avgRate, and the counter is incremented. Progress is printed to the console in real-time.

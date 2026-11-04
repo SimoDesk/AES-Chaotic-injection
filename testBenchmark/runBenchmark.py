@@ -13,10 +13,10 @@ MAPS_CONFIG = {
     "standard": "-DNO_CHAOS",
     "logistic": "-DUSE_LOGISTIC_MAP",
     "tent": "-DUSE_TENT_MAP",
-    "henon": "-DUSE_HENON_MAP",
-    "arnold": "-DUSE_ARNOLD_CAT_MAP",
     "sine": "-DUSE_SINE_MAP",
     "chebyshev": "-DUSE_CHEBYSHEV_MAP",
+    "henon": "-DUSE_HENON_MAP",
+    "arnold": "-DUSE_ARNOLD_CAT_MAP",
     "lorenz": "-DUSE_LORENZ_MAP",
     "chen": "-DUSE_CHEN_MAP",
     "rossler": "-DUSE_ROSSLER_MAP"

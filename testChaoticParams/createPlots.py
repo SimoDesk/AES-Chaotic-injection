@@ -26,10 +26,10 @@ TEST_FILES = {
 MAP_ORDER = (
     "logistic",
     "tent",
-    "henon",
-    "arnold",
     "sine",
     "chebyshev",
+    "henon",
+    "arnold",
     "lorenz",
     "chen",
     "rossler",
