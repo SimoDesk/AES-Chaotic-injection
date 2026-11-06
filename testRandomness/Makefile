@@ -21,5 +21,5 @@ aes_chaos.o: ../aes_chaos/aes_chaos.c
 
 clear:
 	rm -f extract_bin
-	find ciphers -type f -delete
-	find nist_report -type f -delete
+	-find ciphers -type f -delete
+	-find nist_report -type f -delete

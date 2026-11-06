@@ -18,8 +18,10 @@
 % Set the font to Times New Roman (or a similar serif font)
 \usepackage{mathptmx}
 
-% Set the page margins to 3 cm on all sides
-\usepackage[top=3cm, bottom=3cm, left=3cm, right=3cm]{geometry}
+% Set the page margins to 2.5 cm on all sides
+\usepackage[a4paper, top=2.5cm, bottom=2.5cm, left=3cm, right=2.5cm]{geometry}
+
+
 
 % Set line spacing to 1.5
 \usepackage{setspace}
@@ -36,10 +38,18 @@
 % Load package for adjusting the width of text blocks
 \usepackage{fancyhdr}
 
+% Redefine the chapter title format and spacing
+\usepackage{titlesec}
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{15pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{10pt}{25pt}
+
+
+
 % Configuration for the page header in a chapter page
 \pagestyle{fancy}
 \fancyhf{}                              % Clear all header and footer fields
-\fancyhead[L]{\nouppercase{\rightmark}} % Chapter title in the header on the left
+\fancyhead[L]{\nouppercase{\leftmark}} % Chapter title in the header on the left
 \fancyhead[R]{\textbf{\thepage}}        % Page number in the header on the right
 \renewcommand{\headrulewidth}{0.4pt}    % Set the thickness of the horizontal line in the header
 
@@ -50,11 +60,17 @@
     \renewcommand{\headrulewidth}{0pt}  % No horizontal line in the header
 }
 
+% Bibliography management with biblatex
+\usepackage[backend=biber,style=numeric,sorting=none]{biblatex}
+\addbibresource{references.bib}
+
 % ----------------------------------------------------------------------------------------
 \begin{document}
 
 % Title page configuration
 \begin{titlepage}
+    \sffamily
+
     % No page number on the title page
     \thispagestyle{empty}
 
@@ -152,12 +168,159 @@ Author's email: \texttt{simo.desk04@gmail.com}
 \newpage
 
 \chapter{Introduction}
-Questo è il mio primo capitolo in locale.
+%Nel contesto della crittografia su canali satellitari adottiamo lo standard AES~\cite{rashid2024privacypreservingimagessatellitecommunications}.
 
-Ecco una formula matematica di prova, perfettamente allineata:
-\begin{equation}
-    f(x) = \int_{a}^{b} x^2 \,dx
-\end{equation}
+\chapter[Background and State-of-the-Art of Satellite Communications]{Background and State-of-the-Art of \\ Satellite Communications}Satellite communications (SATCOM) are vastly different from how they appeared just a few decades ago. 
+At that time, space-based communications were mainly represented by government activities, characterized by larger and more expensive satellites than the ones used today. 
+This era is also known as the \textit{old space} ~\cite[pp.~377]{aLotOfReferences}, a term often used to describe the space applications that emerged during the Cold War.
+
+On the other hand, since the beginning of the \textit{new space} era ~\cite[pp.~377--398]{aLotOfReferences}, 
+thanks to the ever-decreasing cost of satellite launches and the enormous technological progress that has been made in recent years, 
+space has become increasingly populated by satellites used for commercial purposes, such as:
+\begin{itemize}
+    \item \textit{Telecommunications and broadband connectivity}: they help to provide an internet connection even in the most remote regions or those that are hard to reach with a physical connection ~\cite[pp.~373--381]{aLotOfReferences}.
+
+    \item \textit{Television broadcast and multimedia streaming}: due to the constant demand for high-quality multimedia, 
+    the wide coverage of satellite communications helps to deliver content to a large number of users more efficiently ~\cite[pp.~373--381]{aLotOfReferences}.
+
+    \item \textit{Global Positioning System (GPS)}: numerous sectors make use of satellite-based geolocation to plan routes or monitor the movement of resources. 
+    In addition to this, a large number of people use geolocation daily to plan their travels ~\cite[pp.~378--381]{aLotOfReferences}.
+
+    \item \textit{Earth observation}: thanks to more affordable satellites, it is now possible for private entities to start their own Earth observation programs for scientific purposes, 
+    such as environmental analysis. Moreover, satellites observing the Earth are widely used for meteorological purposes ~\cite[pp.~372--381]{aLotOfReferences}.
+
+    \item \textit{Internet of Things (IoT)}: because of the multifaceted nature of IoT devices, which can take on many different forms,
+     from smart homes to means of transport, it is essential that the coverage area serving these devices is as wide as possible.
+      Such needs are effectively addressed by using SATCOMs as the main communication method ~\cite[pp.~372]{aLotOfReferences}.
+
+    \item \textit{Satellite as a service (SataaS)}: while it is true that the cost of satellite lounches is significantly decreased,
+    it remains unaffordable for many private companies that would otherwise benefit of the wide coverage provided by SATCOMs. 
+    \newline
+    To address this challange, majour caerospace operators can lease resources on their satellites to third-party users,
+    granting them access to space infrastructure without the need for additional launches ~\cite{SataaS}.
+\end{itemize}
+Along with the opportunities offered by the \textit{new space}, the critical requirements of the \textit{old space} have not diminished. 
+Today, satellite communications remain essential for handling mission-critical data exchanges, such as those required by aviation and maritime operations~\cite[pp.~397--398]{aLotOfReferences}, 
+as well as for the coordination of rescue services in disaster or crisis situations ~\cite[p.~388--389]{aLotOfReferences}.
+
+Given the critical nature of the communications handled by SATCOM systems, 
+it is becoming increasingly important to protect the information shared within these networks from malicious actors.
+To fully understand the scale of these security challenges and how threats can compromise the network,
+it is essential to analyze its underlying infrastructure. A modern SATCOM system is not a monolithic entity, but rather a complex, distributed architecture. Breaking down this infrastructure into its fundamental segments is a crucial step to accurately identify the specific attack surfaces that adversaries might exploit.
+
+\section{SATCOM Architecture}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.6\textwidth]{images/segment.png}
+    \caption[Architectural segments of a satellite system]\small{{Architectural overview of space, ground, and user segments in satellite systems ~\cite{wiki_ground_segment}.}}
+    \label{fig:sat_segments}
+\end{figure}
+
+Satellite communications are typically classified into three fundamental segments, although the exact categorization may vary across the literature.
+One common classification framework, as described in~\cite[p.~381]{aLotOfReferences}, divides the architecture into the \textit{Space Segment}, the \textit{Ground Segment}, and the \textit{Link Segment}. 
+In this model, the \textit{Ground Segment} encompasses both the \textit{Ground Stations}, which act as gateways for devices lacking direct satellite communication capabilities,
+and the \textit{User Segment}, which consists of end-user terminals equipped for space links. 
+Another classification model still includes the \textit{Space Segment} and the \textit{Ground Segment}, 
+but explicitly separates the \textit{User Segment}, treating the \textit{Link Segment} merely as a passive communication channel ~\cite[p.~5671]{LEO_MEO_GEO}. 
+
+While all these components are crucial to maintain the network's operability, this thesis will adopt the classification proposed in ~\cite{aLotOfReferences}. 
+Grouping the ground stations and end-user devices under a unified \textit{Ground Segment} is conceptually sound for terrestrial entities. 
+More importantly, treating the \textit{Link Segment} as a primary, distinct architectural component is essential for the scope of this study, 
+as the physical transmission channel introduces specific vulnerabilities and security challenges that are central to the analyzed threat model.
+
+\subsection{Space Segment}
+The space segment is represented by the satellites in orbit, each composed of the \textit{bus}, which handles onboard systems such as power and thermal management, 
+and the \textit{payload}, which is the part of the spacecraft designed to fulfill the satellite's specific mission ~\cite[pp.~381--383]{aLotOfReferences}. 
+Examples of payloads include telescopes to analyze distant objects or sensors to measure spatial properties.
+
+Depending on the satellite's mission, its orbital height from Earth can vary radically ~\cite{LEO_MEO_GEO}:
+\begin{itemize}
+    \item \textit{Low Earth Orbit (LEO)}: due to their low altitude, usually between 500 and 1200~km, 
+    these types of satellites are ideal for extending terrestrial networks thanks to their low latency (around 30~ms).
+    However, because they are so close to the Earth, it is often necessary to deploy a group of interconnected \textit{LEO} satellites,
+    known as a \textit{satellite constellation}, in order to cover a wider area of the planet.
+    Additionally, because of the high risk of collision with space debris, the lifetime of \textit{LEO} spacecraft is around 5 to 7 years, 
+    which is usually shorter than that of other satellites.
+
+    \item \textit{Medium Earth Orbit (MEO)}: usually positioned at an altitude of 2000 to 20000~km, 
+    they represent a midpoint between coverage and latency (around 125~ms). 
+    A significant share of \textit{MEO} spacecraft function as GPS satellites, and typically 6 units are necessary in order to provide adequate service. 
+    Because of their intermediate position, \textit{MEO} satellites often serve as relay nodes between \textit{LEO} and \textit{GEO} satellites. 
+    Finally, their operational lifetime is estimated at 10 to 15 years, depending on their altitude and exposure to radiation.
+
+    \item \textit{Geostationary Equatorial Orbit (GEO)}: operating in the highest orbital layer at approximately 36000~km,
+    these spacecraft take exactly 24 hours to complete an orbit, appearing stationary to an observer on Earth. 
+    Thanks to their high altitude, they can cover one-third of the entire planet's surface, making them ideal for broadcasting. 
+    However, it is important to account for the latency accumulated during transmission (around 600~ms).
+    Due to their distance from the planet and the large quantity of resources needed to launch \textit{GEO} spacecraft, they are usually built to last longer, typically around 15 to 20 years.
+
+\end{itemize}
+
+\subsection{Ground Segment}
+This segment represents the terrestrial infrastructure that communicates 
+with satellites. Depending on the role of the receiver or sender, it can 
+be classified into several sub-components, the primary ones being ~\cite[pp.~383--384]{aLotOfReferences}:
+\begin{itemize}
+    \item \textit{Ground Stations (GS)}: equipped with dedicated hardware, they can transmit and receive signals even from the most distant satellites. 
+    A vast amount of traffic passes through them, as the majority of terrestrial devices lack the necessary peripherals to communicate directly with 
+    spacecraft.
+    
+    \item \textit{Mission Control Centers (MCC)}: their role is to ensure the satellite's mission continues undisturbed by analyzing the telemetry 
+    sent by the spacecraft. Telemetry consists of messages transmitted by the satellites containing critical information, such as their exact orbit or 
+    internal hardware measurements; this data allows operators to detect anomalies and perform necessary corrective actions. 
+
+    \item \textit{User Segment}: this component comprises all the end-user devices, which receive messages after they are forwarded by the 
+    \textit{Ground Stations}. Moreover, devices equipped with the necessary peripherals to communicate directly with the \textit{Space Segment}, such 
+    as ships, airplanes, and Satellite TV, also fall into this category. 
+\end{itemize}
+
+\subsection{Link Segment}
+This segment is represented by the radio waves that link the Earth to space and the satellites to one another, as well as the hardware 
+components used to establish these connections. Specifically, the \textit{Link Segment} can be categorized as follows ~\cite[pp.~381]{aLotOfReferences}:
+\begin{itemize}
+    \item \textit{Ground-to-Ground}: connects the \textit{Ground Stations} to the \textit{User Segment} and vice versa.
+
+    \item \textit{Ground-to-Space}: also known as the \textit{uplink}, it represents the communication path from the \textit{Ground Segment} 
+    to the \textit{Space Segment}.
+
+    \item \textit{Space-to-Ground}: also known as the \textit{downlink}, it represents the communication path from the \textit{Space Segment} 
+    to the \textit{Ground Segment}.
+
+    \item \textit{Space-to-Space}: connects the spacecraft within the \textit{Space Segment} to one another, even across different orbital altitudes.
+\end{itemize}
+
+\section{SATCOM Threats}
+Due to the distributed architecture of SATCOM networks, security threats targeting any individual segment must be rigorously addressed. 
+Tampering with a single component can have cascading effects, jeopardizing the other segments and compromising both the spacecraft's mission and the 
+broader network to which it is connected. Some threats associated with each segment are outlined below.
+
+\subsection{Space Segment Threats}
+While spacecraft are physically out of reach for potential attackers, this physical isolation does not exempt the \textit{Space Segment} from cyber threats.
+Examples include~\cite[pp.~386--389]{aLotOfReferences}:
+\begin{itemize}
+    \item \textit{Software Attacks}: malicious software could be introduced into the satellite's systems via the \textit{Link Segment}.
+    Alternatively, in a \textit{Satellite-as-a-Service (SataaS)} architecture, an attacker could exploit the shared infrastructure by gaining access to the spacecraft's resources under the guise of a legitimate user.
+    
+    \item \textit{Denial of Service (DoS)}: these attacks pose a significant threat to the \textit{Space Segment}, 
+    as an excessive volume of requests sent to the targeted satellite could overwhelm its processing capabilities, temporarily or permanently disrupting its mission.
+
+    \item \textit{Hardware attacks}: supply chain
+
+\end{itemize}
+
+%sottocapitolo per le vulnerabilità (nota importante per il machine learning)
+
+%sottocapitolo soluzioni di difesa
+
+%sottocapitolo state-of-the-art AES256-GCM
+
+%sottocapitolo scopo dello studio + a cosa può servire
+
+
+
+% New page for the bibliography
+\newpage
+\printbibliography[heading=bibintoc, title={Bibliography}]
 
 
 \end{document}

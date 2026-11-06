@@ -1,11 +1,11 @@
 #!/bin/bash
 #SBATCH --job-name=aes_chaos_test
-#SBATCH --partition=students             
+#SBATCH --partition=thesis             
 #SBATCH --nodes=1                        
 #SBATCH --ntasks=1                       
 #SBATCH --cpus-per-task=8                
 #SBATCH --mem=30G                        
-#SBATCH --time=24:00:00                  
+#SBATCH --time=8:00:00                  
 #SBATCH --output=risultati_%j.out        
 #SBATCH --error=errori_%j.err            
 

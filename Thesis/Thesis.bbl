@@ -1,0 +1,171 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global/global}
+    \entry{aLotOfReferences}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=fe532a015e6161a5374263a45d0d1144}{%
+           family={Salim},
+           familyi={S\bibinitperiod},
+           given={Sara},
+           giveni={S\bibinitperiod}}}%
+        {{hash=ab9bcf08d864de16f62df4a541080d3c}{%
+           family={Moustafa},
+           familyi={M\bibinitperiod},
+           given={Nour},
+           giveni={N\bibinitperiod}}}%
+        {{hash=e5883236e64d11b6c74c9bddea54c831}{%
+           family={Reisslein},
+           familyi={R\bibinitperiod},
+           given={Martin},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{7e0aa8a86c3b0a547459680d4dde3e78}
+      \strng{fullhash}{7e0aa8a86c3b0a547459680d4dde3e78}
+      \strng{fullhashraw}{7e0aa8a86c3b0a547459680d4dde3e78}
+      \strng{bibnamehash}{7e0aa8a86c3b0a547459680d4dde3e78}
+      \strng{authorbibnamehash}{7e0aa8a86c3b0a547459680d4dde3e78}
+      \strng{authornamehash}{7e0aa8a86c3b0a547459680d4dde3e78}
+      \strng{authorfullhash}{7e0aa8a86c3b0a547459680d4dde3e78}
+      \strng{authorfullhashraw}{7e0aa8a86c3b0a547459680d4dde3e78}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{IEEE Communications Surveys \& Tutorials}
+      \field{number}{1}
+      \field{title}{Cybersecurity of Satellite Communications Systems: A Comprehensive Survey of the Space, Ground, and Links Segments}
+      \field{volume}{27}
+      \field{year}{2025}
+      \field{pages}{372\bibrangedash 425}
+      \range{pages}{54}
+      \verb{doi}
+      \verb 10.1109/COMST.2024.3408277
+      \endverb
+      \keyw{Computer security;Computer crime;Surveys;Space vehicles;Satellites;Satellite broadcasting;Media;Cyberattack;cybersecurity;ground segment;links segment;space segment;satellite communications}
+    \endentry
+    \entry{SataaS}{inproceedings}{}{}
+      \name{author}{4}{}{%
+        {{hash=4fece3f163324172bba987dcd205bd8e}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Weidong},
+           giveni={W\bibinitperiod}}}%
+        {{hash=3ebada13908c04a410363628089033d3}{%
+           family={Xue},
+           familyi={X\bibinitperiod},
+           given={Yiqi},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=08d270b00797dc5a2b6c001ca36de4f5}{%
+           family={Wu},
+           familyi={W\bibinitperiod},
+           given={Junyi},
+           giveni={J\bibinitperiod}}}%
+        {{hash=394255064489178bfbe6051d0688e58c}{%
+           family={Xu},
+           familyi={X\bibinitperiod},
+           given={Xiaobin},
+           giveni={X\bibinitperiod}}}%
+      }
+      \strng{namehash}{eb3043b8b8fa17fed0bd616cdd537c31}
+      \strng{fullhash}{0bb0b8b74d49dfa808ab88a0ce3d5a51}
+      \strng{fullhashraw}{0bb0b8b74d49dfa808ab88a0ce3d5a51}
+      \strng{bibnamehash}{eb3043b8b8fa17fed0bd616cdd537c31}
+      \strng{authorbibnamehash}{eb3043b8b8fa17fed0bd616cdd537c31}
+      \strng{authornamehash}{eb3043b8b8fa17fed0bd616cdd537c31}
+      \strng{authorfullhash}{0bb0b8b74d49dfa808ab88a0ce3d5a51}
+      \strng{authorfullhashraw}{0bb0b8b74d49dfa808ab88a0ce3d5a51}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{2020 IEEE 11th International Conference on Software Engineering and Service Science (ICSESS)}
+      \field{title}{Satellite as a Service: a Hybrid Resource Management Framework for Space-terrestrial Integrated Networks}
+      \field{year}{2020}
+      \field{pages}{171\bibrangedash 174}
+      \range{pages}{4}
+      \verb{doi}
+      \verb 10.1109/ICSESS49938.2020.9237705
+      \endverb
+      \keyw{Space vehicles;Rockets;Satellites;Space technology;Simulation;Hardware;Resource management;satellites;services;virtual machines;computing resources management}
+    \endentry
+    \entry{wiki_ground_segment}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=e0dedb40dda8df32fd056b6b6551502b}{%
+           family={{Wikimedia Commons}},
+           familyi={W\bibinitperiod}}}%
+      }
+      \strng{namehash}{e0dedb40dda8df32fd056b6b6551502b}
+      \strng{fullhash}{e0dedb40dda8df32fd056b6b6551502b}
+      \strng{fullhashraw}{e0dedb40dda8df32fd056b6b6551502b}
+      \strng{bibnamehash}{e0dedb40dda8df32fd056b6b6551502b}
+      \strng{authorbibnamehash}{e0dedb40dda8df32fd056b6b6551502b}
+      \strng{authornamehash}{e0dedb40dda8df32fd056b6b6551502b}
+      \strng{authorfullhash}{e0dedb40dda8df32fd056b6b6551502b}
+      \strng{authorfullhashraw}{e0dedb40dda8df32fd056b6b6551502b}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Accessed: 06-11-2026}
+      \field{title}{Diagram of the Space, Ground, and User Segments in a Satellite Communications System}
+      \field{year}{2026}
+      \verb{urlraw}
+      \verb https://commons.wikimedia.org/wiki/File:Space_Ground_User_segments.png
+      \endverb
+      \verb{url}
+      \verb https://commons.wikimedia.org/wiki/File:Space_Ground_User_segments.png
+      \endverb
+    \endentry
+    \entry{LEO_MEO_GEO}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=e702c1365dedc19e936da9afb3136f5e}{%
+           family={Verma},
+           familyi={V\bibinitperiod},
+           given={Aditi\bibnamedelimb Ranjit\bibnamedelima Kumar},
+           giveni={A\bibinitperiod\bibinitdelim R\bibinitperiod\bibinitdelim K\bibinitperiod}}}%
+      }
+      \strng{namehash}{e702c1365dedc19e936da9afb3136f5e}
+      \strng{fullhash}{e702c1365dedc19e936da9afb3136f5e}
+      \strng{fullhashraw}{e702c1365dedc19e936da9afb3136f5e}
+      \strng{bibnamehash}{e702c1365dedc19e936da9afb3136f5e}
+      \strng{authorbibnamehash}{e702c1365dedc19e936da9afb3136f5e}
+      \strng{authornamehash}{e702c1365dedc19e936da9afb3136f5e}
+      \strng{authorfullhash}{e702c1365dedc19e936da9afb3136f5e}
+      \strng{authorfullhashraw}{e702c1365dedc19e936da9afb3136f5e}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{IEEE Open Journal of the Communications Society}
+      \field{title}{Cybersecurity in Satellite Communication Networks: Key Threats and Neutralization Measures}
+      \field{volume}{6}
+      \field{year}{2025}
+      \field{pages}{5667\bibrangedash 5692}
+      \range{pages}{26}
+      \verb{doi}
+      \verb 10.1109/OJCOMS.2025.3585060
+      \endverb
+      \keyw{Security;Satellite broadcasting;Computer security;Cryptography;Space vehicles;Jamming;Encryption;Satellites;Resilience;Extraterrestrial measurements;Satellite communications (SATCOM);cybersecurity;cryptographic methods;satellite jamming;spoofing}
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

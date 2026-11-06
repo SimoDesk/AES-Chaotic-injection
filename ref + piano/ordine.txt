@@ -1,8 +1,8 @@
 - ricerca mappe caotiche e soluzioni di implementazioni
 	- implementazione della logica del chaos nell'AES [Satell Commun Network - 2025 - Kumar - Advanced Encryption Techniques in Satellite Communications With Chaotic Injection]
 - informazioni sulle mappe caotice
-	- Lorenz system [A_Chaotic_Encryption-Based_Wireless_Secure_Transmission_System_for_Satellite_Communication]
-	- (1) Discrete chaotic and (2) Continuous chaotic [2410.21177v1]
+	- (1) Discrete chaotic and (2) Continuous chaotic [Privacy-Preserving for Images in Satellite Communications: A Comprehensive Review of
+Chaos-Based Encryption]
 	- The GCM (Galois Counter Mode) [nistspecialpublication800-38d]
 	- Approssimazione di integrali [NumericalRecipesinC] 
 	- valori deafault Lorenz map [atsc-1520-0469_1963_020_0130_dnf_2_0_co_2]
@@ -26,7 +26,6 @@
 	- condivisione dei valori caotici usando la chiave come seed senza rand [A_Normalized_Exponential_Piecewise_Chaotic_System_NEPCS_and_DNA_Image_Cryptography_Using_SHA-256]
 	- correttezza della randomicità delle implementazioni seguendo [nistspecialpublication800-22r1a] usando la libreria open source [https://github.com/stevenang/randomness_testsuite.git]
 	- usano stevenang per i test [13616_FLiPS_Few_Shot_Fingerpri], [26. ID 27703]
-	- utilizzo della politica cross-key correlation per verificare la correttezza delle implementazioni nei test [nistspecialpublication800-22r1a]
 	
 - ML related
 	- mostra come le reti neurali possano rompere l'AES imparando a mappare i Pesi di Hamming e tracce di potenza [2018-053]
@@ -36,6 +35,11 @@
 
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+LANCIATI:
+	- TEST BENCHMARK su 1000
+	- TEST RANDOMNESS SU 100
 
 Utility per il cluster:
 	# per lanciare un job
@@ -56,34 +60,41 @@ Utility per il cluster:
 - Abstract (alla fine)
 
 - introduzione
+	- contesto
+	- scopo
+	- struttura tesi
+
+- background e stato dell'arte
 	- stato dell'arte delle comunicazioni satellitari: vulnerabilità dovute al nuovo spazio
 		- machine learning come minaccia sempre più pressante
-	- scopo dello studio: implementare, ottimizzare e validare un'architettura software-based leggera per immunizzare il segmento spaziale dagli attacchi SCA, superando i limiti di costo dell'hardware
 	- soluzioni di difesa
 		- difesa canale fisico, [l'unico costo è l'eventuale implementazione dell'HW, che avverrebbe comunque pre-lancio]
 		- difesa ad alto livello (crittografia) [crittografia più affidabile e semplice da installare, ma costosa a livello di risorse]
 	- stato dell'arte degli algoritmi di cifratura usati nelle SATCOM con focus su AES256-GCM w/ IV a 12byte come algoritmo principale
 	- AES con iniezione caotica nella s-box + a cosa può servire
+	- scopo dello studio: implementare, ottimizzare e validare un'architettura software-based leggera per immunizzare il segmento spaziale dagli attacchi SCA, superando i limiti di costo dell'hardware
 
-- Spiegazione AES256
-	- Algoritmo di cifratura simmetrico
-	- blocchi da 16byte, trattati come matrici 4x4
-	- espansione chiave
-	- 10 round, 4 fasi per round. Sia cifratura che decifratura iniziano con un addRoundKey Experimental
-		- AddRoundKey
-		- SubBytes, unica operazione non lineare, e principale bersaglio degli attacchi
-		- ShiftRows
-		- MixColumn
 
-- Spiegazione del GCM
-	- Alterazione della CTR mode che garantisce authenticated encryption grazie ad un tag
-	- (key and IV Requirements ?)
-	- multiplication in binary Galois finite field of 2^128.
-	- GHASH
-	- authenticated encryption algorithm
-	- authenticated decryption algorithm
-	- Test vettori nist per verifica della correttezza dell'implementazione
-	- simulazione AWGN (Additive White Gaussian Noise): Mostrare funzionamento di GCM e corretto fallimento (per esempio per bit flip dovuti alla comunicazione spaziale)
+- Algoritmi di cifratura standard
+	- Spiegazione AES256
+		- Algoritmo di cifratura simmetrico
+		- blocchi da 16byte, trattati come matrici 4x4
+		- espansione chiave
+		- 10 round, 4 fasi per round. Sia cifratura che decifratura iniziano con un addRoundKey Experimental
+			- AddRoundKey
+			- SubBytes, unica operazione non lineare, e principale bersaglio degli attacchi
+			- ShiftRows
+			- MixColumn
+
+	- Spiegazione del GCM
+		- Alterazione della CTR mode che garantisce authenticated encryption grazie ad un tag
+		- key and IV Requirements 
+		- multiplication in binary Galois finite field of 2^128.
+		- GHASH
+		- authenticated encryption algorithm
+		- authenticated decryption algorithm
+		- Test vettori nist per verifica della correttezza dell'implementazione
+		- simulazione AWGN (Additive White Gaussian Noise): Mostrare funzionamento di GCM e corretto fallimento (per esempio per bit flip dovuti alla comunicazione spaziale)
 
 - AES con iniezione caotica nella s-box improntato al machine unlearning
 	- cos'è il machine unlearning in questo contesto: rompere la corrispondenza deterministica ricercata dai modelli ML
@@ -107,21 +118,22 @@ Utility per il cluster:
 
 	- DUE opzioni di aggiornamento del Chaos: once per round / once per block
 
-- Selezione delle più promettenti coppie di alfa e beta per ogni mappa caotica
-	- Key sensitivity e avalanche effect per la Selezione
-	- spiegazione dei criteri di classification
-	- confronto dei risultati delle varie mappe in avalanche effect e key sensitivity con l'AES base
+- Validazione e misurazioni
+	- Selezione delle più promettenti coppie di alfa e beta per ogni mappa caotica
+		- Key sensitivity e avalanche effect per la Selezione
+		- spiegazione dei criteri di classification
+		- confronto dei risultati delle varie mappe in avalanche effect e key sensitivity con l'AES base
 
-- SWaP (Size, Weight, and Power), le misurazioni di energia, potenza e memoria sugli Alfa e Beta selezionati
-	- misurazioni su pc classici e non FPGA, ma comunque indicativi
-	- confronti soluzione per Block con soluzione per Round
-	- confronti con AES standard
-	- Throughput da confrontare con i classici datalink satellitari (banda S o banda X), verificando se l'algoritmo è sufficientemente veloce per crittografare la telemetria in tempo reale
-	 (TT&C - Telemetry, Tracking, and Command) senza creare latenza.
+	- SWaP (Size, Weight, and Power), le misurazioni di energia, potenza e memoria sugli Alfa e Beta selezionati
+		- misurazioni su pc classici e non FPGA, ma comunque indicativi
+		- confronti soluzione per Block con soluzione per Round
+		- confronti con AES standard
+		- Throughput da confrontare con i classici datalink satellitari (banda S o banda X), verificando se l'algoritmo è sufficientemente veloce per crittografare la telemetria in tempo reale
+		(TT&C - Telemetry, Tracking, and Command) senza creare latenza.
 
-- convalidazione randomica con i test nist (chaos perfetto a livello teorico ma può cadere in loop in implementazione informatica, perciò controllo)
-	- successo medio sui test
-	- uniformità dei p-value
+	- convalidazione randomica con i test nist (chaos perfetto a livello teorico ma può cadere in loop in implementazione informatica, perciò controllo)
+		- successo medio sui test
+		- uniformità dei p-value
 
 - Attacco side-channel alla S-box channel con ML
 	- cos'è, quali sono le superfici di attacco nelle SATCM e perché è una minaccia
@@ -129,7 +141,7 @@ Utility per il cluster:
 		- attacchi alla ground station
 		- attacchi ai Satellite-as-a-Service con sistemi di ascolto sw
 	- perché l'AES standard è vulnerabile mentre la versione con iniezione caotica no
-	- (confronto con l'attacco del paper?)
+	- confronto con l'attacco del paper
 	- l'attacco in analisi (Key recovery completo con ML misto a un approccio divide et impera + brute force)
 		- logica di attacco punta a raccogliere le misurazioni dei consumi di potenza in uscita dalla s-box e usare un modello ML per predirre il valore corretto 
 		  (relazione diretta con gli HW) & scelta di simulare usando quelli

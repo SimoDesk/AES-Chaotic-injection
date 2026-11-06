@@ -45,6 +45,8 @@ def create_plots(fileName = "results.csv"):
     if time_dec_base:
         plt.axhline(y=time_dec_base, color='#ff7f0e', linestyle='--', alpha=0.8, label='Baseline Decryption')
 
+    plt.ylim(1.60, 1.75)
+
     plt.title('Average Time for Encryption and Decryption Phases')
     plt.xlabel('Algorithm')
     plt.ylabel('Average Time (s)')
@@ -65,6 +67,8 @@ def create_plots(fileName = "results.csv"):
         plt.axhline(y=throughput_enc_base, color="#32aaff", linestyle='--', alpha=0.8, label='Baseline Encryption')
     if throughput_dec_base:
         plt.axhline(y=throughput_dec_base, color="#ff9f4b", linestyle='--', alpha=0.8, label='Baseline Decryption')
+
+    plt.ylim(2.90, 3.10)
 
     plt.title('Average Throughput for Encryption and Decryption Phases')
     plt.xlabel('Algorithm')
@@ -91,6 +95,8 @@ def create_plots(fileName = "results.csv"):
         plt.axhline(y=baseline_enc_J, color='#1f77b4', linestyle='--', alpha=0.8, label='Encryprion energy Baseline')
     if baseline_dec_J:
         plt.axhline(y=baseline_dec_J, color='#ff7f0e', linestyle='--', alpha=0.8, label='Decryption energy Baseline')
+
+    plt.ylim(240000, 260000)
 
     plt.title('Average Energy Consumption for Encryption and Decryption Phases')
     plt.xlabel('Algorithm')

@@ -22,7 +22,7 @@ ChaosMap parseMapType(const char* map_str) {
 
 int main(int argc, char *argv[])
 {
-    if (argc < 3) {
+    if (argc < 4) {
         printf("Args error");
         return EXIT_FAILURE;
     }
@@ -79,21 +79,7 @@ int main(int argc, char *argv[])
         AES_GCM_authenticated_encrypt_buffer(&ctx_std, &res_std, text_length, aad, AAD_LENGTH, GCM_TAGLEN);
     }
 
-    char filename[256];
-    int path_length = snprintf(filename, sizeof(filename), "ciphers/%s/cipher_%s.bin", argv[1], argv[2]);
-    if (path_length < 0 || (size_t)path_length >= sizeof(filename)) {
-        fprintf(stderr, "Percorso del file di output troppo lungo\n");
-        free(key);
-        free(iv);
-        free(text);
-        free(aad);
-        if (map_type != NONE) {
-            AES_CHAOS_GCM_free_ctx(&ctx_chaos);
-        } else {
-            AES_GCM_free_ctx(&ctx_std);
-        }
-        return EXIT_FAILURE;
-    }
+    const char *filename = argv[3];
 
     FILE *file = fopen(filename, "wb");
     if (file == NULL) {

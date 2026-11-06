@@ -3,7 +3,7 @@
 
 #define TEXT_LENGTH (1024 * 1024 * 5) // MB
 
-#define TEST_NUMBER 10 // Set to 1 for a single test, or any other number for multiple tests
+#define TEST_NUMBER 1000 // Set to 1 for a single test, or any other number for multiple tests
 
 #define FILENAME "results.csv" // File to save the results
 

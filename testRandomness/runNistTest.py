@@ -127,9 +127,10 @@ def run_automation():
                 # For each seed from 0 to 99, run the extract_bin executable to generate ciphertexts with different seeds, ensuring that the tests are run on a variety of inputs
                 # This follow the NIST recommendation to test the randomness of outputs across different keys and initial conditions, which is crucial for evaluating the security and robustness of the chaotic maps used in the AES encryption process
                 for seed in range(0, 0 + N_TESTS):
-                    subprocess.run(["./extract_bin", mappa, str(seed)], cwd=current_dir, check=True)
 
                     bin_filename = os.path.join(map_output_dir, f"cipher_{seed}.bin")
+                    
+                    subprocess.run(["./extract_bin", mappa, str(seed), bin_filename], cwd=current_dir, check=True)
 
                     # Prepare the list of arguments for parallel execution, where each argument is a tuple of the test index and the binary filename
                     args_list = [(i, bin_filename) for i in range(len(test_function))]

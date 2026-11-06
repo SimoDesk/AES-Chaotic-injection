@@ -46,8 +46,8 @@ struct LogisticMap {
 #define DEFAULT_LOGISTIC_P 3.75
 #define DEFAULT_LOGISTIC_X 0.5
 
-#define DEFAULT_CHAOS_LOGISTIC_ALPHA 5
-#define DEFAULT_CHAOS_LOGISTIC_BETA 0.25
+#define DEFAULT_CHAOS_LOGISTIC_ALPHA 2
+#define DEFAULT_CHAOS_LOGISTIC_BETA 0.1
 
 // Define the structures for the tent map and its default parameters.
 struct TentMap {
@@ -57,7 +57,7 @@ struct TentMap {
 #define DEFAULT_TENT_P 1.9998;
 #define DEFAULT_TENT_X 0.123;
 
-#define DEFAULT_CHAOS_TENT_ALPHA 15
+#define DEFAULT_CHAOS_TENT_ALPHA 0.1
 #define DEFAULT_CHAOS_TENT_BETA 0.01
 
 // Define the structures for the Henon map and its default parameters.
@@ -70,8 +70,8 @@ struct HenonMap {
 #define DEFAULT_HENON_X 0.1
 #define DEFAULT_HENON_Y 0.1
 
-#define DEFAULT_CHAOS_HENON_ALPHA 0.5
-#define DEFAULT_CHAOS_HENON_BETA 0.5
+#define DEFAULT_CHAOS_HENON_ALPHA 5
+#define DEFAULT_CHAOS_HENON_BETA 0.05
 
 
 struct ArnoldCatMap {
@@ -81,7 +81,7 @@ struct ArnoldCatMap {
 #define DEFAULT_ARNOLD_Y 0.456
 
 #define DEFAULT_CHAOS_ARNOLD_ALPHA 0.1
-#define DEFAULT_CHAOS_ARNOLD_BETA 0.5
+#define DEFAULT_CHAOS_ARNOLD_BETA 0.05
 
 struct SineMap {
   double x;
@@ -90,8 +90,8 @@ struct SineMap {
 #define DEFAULT_SINE_X 0.123
 #define DEFAULT_SINE_MU 0.99
 
-#define DEFAULT_CHAOS_SINE_ALPHA 2
-#define DEFAULT_CHAOS_SINE_BETA 0.01
+#define DEFAULT_CHAOS_SINE_ALPHA 0.1
+#define DEFAULT_CHAOS_SINE_BETA 0.5
 
 struct ChebyshevMap {
   double x;
@@ -100,8 +100,8 @@ struct ChebyshevMap {
 #define DEFAULT_CHEBYSHEV_X 0.7654
 #define DEFAULT_CHEBYSHEV_MU 4
 
-#define DEFAULT_CHAOS_CHEBYSHEV_ALPHA 10.5
-#define DEFAULT_CHAOS_CHEBYSHEV_BETA 0.25
+#define DEFAULT_CHAOS_CHEBYSHEV_ALPHA 2
+#define DEFAULT_CHAOS_CHEBYSHEV_BETA 0.05
 
 struct LorenzMap {
   double x, y, z;
@@ -115,8 +115,8 @@ struct LorenzMap {
 #define DEFAULT_LORENZ_RHO 28.0
 #define DEFAULT_LORENZ_BETA (8.0 / 3.0)
 
-#define DEFAULT_CHAOS_LORENZ_ALPHA 1
-#define DEFAULT_CHAOS_LORENZ_BETA 0.05
+#define DEFAULT_CHAOS_LORENZ_ALPHA 0.1
+#define DEFAULT_CHAOS_LORENZ_BETA 0.01
 
 struct ChenMap {
   double x, y, z;
@@ -130,8 +130,8 @@ struct ChenMap {
 #define DEFAULT_CHEN_B 3.0
 #define DEFAULT_CHEN_C 28.0
 
-#define DEFAULT_CHAOS_CHEN_ALPHA 0.05
-#define DEFAULT_CHAOS_CHEN_BETA 0.05
+#define DEFAULT_CHAOS_CHEN_ALPHA 0.1
+#define DEFAULT_CHAOS_CHEN_BETA 0.01
 
 struct RosslerMap {
   double x, y, z;
@@ -146,7 +146,7 @@ struct RosslerMap {
 #define DEFAULT_ROSSLER_C 5.7
 
 #define DEFAULT_CHAOS_ROSSLER_ALPHA 2
-#define DEFAULT_CHAOS_ROSSLER_BETA 0.5
+#define DEFAULT_CHAOS_ROSSLER_BETA 0.05
 
 #define DEFAULT_DT 0.01
 
