@@ -71,7 +71,6 @@ Utility per il cluster:
 		- difesa canale fisico, [l'unico costo è l'eventuale implementazione dell'HW, che avverrebbe comunque pre-lancio]
 		- difesa ad alto livello (crittografia) [crittografia più affidabile e semplice da installare, ma costosa a livello di risorse]
 	- stato dell'arte degli algoritmi di cifratura usati nelle SATCOM con focus su AES256-GCM w/ IV a 12byte come algoritmo principale
-	- AES con iniezione caotica nella s-box + a cosa può servire
 	- scopo dello studio: implementare, ottimizzare e validare un'architettura software-based leggera per immunizzare il segmento spaziale dagli attacchi SCA, superando i limiti di costo dell'hardware
 
 

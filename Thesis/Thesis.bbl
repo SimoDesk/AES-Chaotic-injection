@@ -19,6 +19,148 @@
 
 \refsection{0}
   \datalist[entry]{none/global//global/global/global}
+    \entry{KumarPaper}{article}{}{}
+      \name{author}{7}{}{%
+        {{hash=044aa2387565d6d8aec479ba113e242d}{%
+           family={Kumar},
+           familyi={K\bibinitperiod},
+           given={Amit\bibnamedelima Krishan},
+           giveni={A\bibinitperiod\bibinitdelim K\bibinitperiod}}}%
+        {{hash=fc09c3b0823f92f9cd133fb6df0e5b69}{%
+           family={Quan},
+           familyi={Q\bibinitperiod},
+           given={Craig},
+           giveni={C\bibinitperiod}}}%
+        {{hash=7111cc3c1b7fb78907e4a93cc58aac9e}{%
+           family={Houniola},
+           familyi={H\bibinitperiod},
+           given={Maximillan},
+           giveni={M\bibinitperiod}}}%
+        {{hash=67ffcfb856f5e615226641d8a21d1843}{%
+           family={Singh},
+           familyi={S\bibinitperiod},
+           given={Satyanand\bibnamedelima S.},
+           giveni={S\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
+        {{hash=796d9f081943d2b83b2de5f3dbc3040c}{%
+           family={Kumar},
+           familyi={K\bibinitperiod},
+           given={Rahul\bibnamedelima R.},
+           giveni={R\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
+        {{hash=85d2f2b20b900e90d5a2d81c2100c503}{%
+           family={Assaf},
+           familyi={A\bibinitperiod},
+           given={Mansour\bibnamedelima H.},
+           giveni={M\bibinitperiod\bibinitdelim H\bibinitperiod}}}%
+        {{hash=7e3576ffe8b83100181050ed0a37722e}{%
+           family={Kumar},
+           familyi={K\bibinitperiod},
+           given={Sushil},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{3b1391f2129e2ebe835f78093a41f61a}
+      \strng{fullhash}{9f4c9a2f6cfaa2ee249a96e0293d3a4b}
+      \strng{fullhashraw}{9f4c9a2f6cfaa2ee249a96e0293d3a4b}
+      \strng{bibnamehash}{3b1391f2129e2ebe835f78093a41f61a}
+      \strng{authorbibnamehash}{3b1391f2129e2ebe835f78093a41f61a}
+      \strng{authornamehash}{3b1391f2129e2ebe835f78093a41f61a}
+      \strng{authorfullhash}{9f4c9a2f6cfaa2ee249a96e0293d3a4b}
+      \strng{authorfullhashraw}{9f4c9a2f6cfaa2ee249a96e0293d3a4b}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{ABSTRACT Satellite communication systems are important in global information exchange in areas such as military security, weather forecasting, and telecommunications. Advanced encryption standard (AES) is widely used in satellite communication due to its robustness and efficiency. However, conventional AES implementations focus primarily on encryption and decryption, which require further improvements in attack resilience, particularly against adversaries that use machine learning–based cryptanalysis and quantum threats. This paper examines the use of AES algorithms to protect data transmission over satellite communications. It introduces novel modifications to AES, incorporating machine unlearning as a defensive mechanism against attacks, chaotic injection for enhanced key unpredictability, and a quantum-inspired approach based on wavefunction collapse to mislead attackers. Machine unlearning dynamically alters cryptographic states upon intrusion detection, preventing key recovery. Chaotic injection is explored in the S-Box and key scheduling process to introduce controlled unpredictability without compromising reversibility. Additionally, a quantum circuit representation of AES is proposed, where an adversarial attack induces a wavefunction collapse, leading to incorrect but deterministic outputs. Performance evaluation under additive white Gaussian noise (AWGN) conditions demonstrates that the proposed AES achieves an average encryption throughput of 194 Mbps with only 3.2\% additional computational overhead, whereas entropy analysis shows 7.85–7.92 bits/byte, with an improvement of 1.08\% over standard AES and expanding the effective key space by approximately 6.6 times. Comparative security testing shows a 25\% increase in resistance to differential attacks. Empirical machine learning attacks demonstrate a drop in classifier accuracy from approximately 92.3\% for the baseline AES to 55.5\% for the proposed scheme. These results confirm that the proposed modifications significantly strengthen AES while maintaining computational efficiency for real-world satellite communication scenarios.}
+      \field{journaltitle}{International Journal of Satellite Communications and Networking}
+      \field{number}{2}
+      \field{title}{Advanced Encryption Techniques in Satellite Communications With Chaotic Injection and Quantum Collapse for Enhanced Security}
+      \field{volume}{44}
+      \field{year}{2026}
+      \field{pages}{158\bibrangedash 170}
+      \range{pages}{13}
+      \verb{doi}
+      \verb https://doi.org/10.1002/sat.70009
+      \endverb
+      \verb{eprint}
+      \verb https://onlinelibrary.wiley.com/doi/pdf/10.1002/sat.70009
+      \endverb
+      \verb{urlraw}
+      \verb https://onlinelibrary.wiley.com/doi/abs/10.1002/sat.70009
+      \endverb
+      \verb{url}
+      \verb https://onlinelibrary.wiley.com/doi/abs/10.1002/sat.70009
+      \endverb
+      \keyw{advanced encryption standard (AES),chaotic injection,cryptographic resilience,satellite communication systems,security threats}
+    \endentry
+    \entry{tinyAES}{software}{}{}
+      \name{author}{1}{}{%
+        {{hash=706cde2525d9a88436681d53549c2928}{%
+           family={Kokke},
+           familyi={K\bibinitperiod},
+           given={Kasper},
+           giveni={K\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {GitHub}%
+      }
+      \strng{namehash}{706cde2525d9a88436681d53549c2928}
+      \strng{fullhash}{706cde2525d9a88436681d53549c2928}
+      \strng{fullhashraw}{706cde2525d9a88436681d53549c2928}
+      \strng{bibnamehash}{706cde2525d9a88436681d53549c2928}
+      \strng{authorbibnamehash}{706cde2525d9a88436681d53549c2928}
+      \strng{authornamehash}{706cde2525d9a88436681d53549c2928}
+      \strng{authorfullhash}{706cde2525d9a88436681d53549c2928}
+      \strng{authorfullhashraw}{706cde2525d9a88436681d53549c2928}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{GitHub repository}
+      \field{title}{{tiny-AES-c}: Small Portable {AES128/192/256} in {C}}
+      \field{year}{2020}
+      \verb{urlraw}
+      \verb https://github.com/kokke/tiny-AES-c
+      \endverb
+      \verb{url}
+      \verb https://github.com/kokke/tiny-AES-c
+      \endverb
+    \endentry
+    \entry{AES256-GCM}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=47cbb6bb050264fe0e94e0645d6599ee}{%
+           family={{Consultative Committee for Space Data Systems (CCSDS)}},
+           familyi={C\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Washington, D.C., USA}%
+      }
+      \list{publisher}{1}{%
+        {CCSDS}%
+      }
+      \strng{namehash}{47cbb6bb050264fe0e94e0645d6599ee}
+      \strng{fullhash}{47cbb6bb050264fe0e94e0645d6599ee}
+      \strng{fullhashraw}{47cbb6bb050264fe0e94e0645d6599ee}
+      \strng{bibnamehash}{47cbb6bb050264fe0e94e0645d6599ee}
+      \strng{authorbibnamehash}{47cbb6bb050264fe0e94e0645d6599ee}
+      \strng{authornamehash}{47cbb6bb050264fe0e94e0645d6599ee}
+      \strng{authorfullhash}{47cbb6bb050264fe0e94e0645d6599ee}
+      \strng{authorfullhashraw}{47cbb6bb050264fe0e94e0645d6599ee}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{Issue 2}
+      \field{month}{7}
+      \field{number}{CCSDS 355.0-B-2}
+      \field{title}{Space Data Link Security Protocol}
+      \field{type}{Recommendation for Space Data System Standards}
+      \field{year}{2022}
+      \verb{urlraw}
+      \verb https://ccsds.org/Pubs/355x0b2.pdf
+      \endverb
+      \verb{url}
+      \verb https://ccsds.org/Pubs/355x0b2.pdf
+      \endverb
+    \endentry
     \entry{aLotOfReferences}{article}{}{}
       \name{author}{3}{}{%
         {{hash=fe532a015e6161a5374263a45d0d1144}{%
@@ -45,8 +187,8 @@
       \strng{authornamehash}{7e0aa8a86c3b0a547459680d4dde3e78}
       \strng{authorfullhash}{7e0aa8a86c3b0a547459680d4dde3e78}
       \strng{authorfullhashraw}{7e0aa8a86c3b0a547459680d4dde3e78}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{IEEE Communications Surveys \& Tutorials}
@@ -92,8 +234,8 @@
       \strng{authornamehash}{eb3043b8b8fa17fed0bd616cdd537c31}
       \strng{authorfullhash}{0bb0b8b74d49dfa808ab88a0ce3d5a51}
       \strng{authorfullhashraw}{0bb0b8b74d49dfa808ab88a0ce3d5a51}
-      \field{sortinit}{8}
-      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{2020 IEEE 11th International Conference on Software Engineering and Service Science (ICSESS)}
@@ -164,6 +306,284 @@
       \verb 10.1109/OJCOMS.2025.3585060
       \endverb
       \keyw{Security;Satellite broadcasting;Computer security;Cryptography;Space vehicles;Jamming;Encryption;Satellites;Resilience;Extraterrestrial measurements;Satellite communications (SATCOM);cybersecurity;cryptographic methods;satellite jamming;spoofing}
+    \endentry
+    \entry{PLS}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=3fd20732196b81a345ea43389a18d9de}{%
+           family={Abdelsalam},
+           familyi={A\bibinitperiod},
+           given={Nora},
+           giveni={N\bibinitperiod}}}%
+        {{hash=b57bfa71d193f5b4e6b173d9a8963ef4}{%
+           family={Al-Kuwari},
+           familyi={A\bibinithyphendelim K\bibinitperiod},
+           given={Saif\bibnamedelima M.},
+           giveni={S\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+        {{hash=7c89a3e05c69754a550d2bdda4f82450}{%
+           family={Erbad},
+           familyi={E\bibinitperiod},
+           given={Aiman\bibnamedelima M.},
+           giveni={A\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+      }
+      \strng{namehash}{8df51245578a53067f84719da9a60872}
+      \strng{fullhash}{8df51245578a53067f84719da9a60872}
+      \strng{fullhashraw}{8df51245578a53067f84719da9a60872}
+      \strng{bibnamehash}{8df51245578a53067f84719da9a60872}
+      \strng{authorbibnamehash}{8df51245578a53067f84719da9a60872}
+      \strng{authornamehash}{8df51245578a53067f84719da9a60872}
+      \strng{authorfullhash}{8df51245578a53067f84719da9a60872}
+      \strng{authorfullhashraw}{8df51245578a53067f84719da9a60872}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{IET Communications}
+      \field{number}{1}
+      \field{title}{Physical layer security in satellite communication: State-of-the-art and open problems}
+      \field{volume}{19}
+      \field{year}{2025}
+      \field{pages}{e12830}
+      \range{pages}{-1}
+      \verb{doi}
+      \verb 10.1049/cmu2.12830
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1049/cmu2.12830
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1049/cmu2.12830
+      \endverb
+    \endentry
+    \entry{IBE}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=f3c851fb906c7d177a9c910b1a87622a}{%
+           family={Jeon},
+           familyi={J\bibinitperiod},
+           given={Suhyeon},
+           giveni={S\bibinitperiod}}}%
+        {{hash=6d33e33e7bae296c29fda5a9788c079c}{%
+           family={Kwak},
+           familyi={K\bibinitperiod},
+           given={Jeongho},
+           giveni={J\bibinitperiod}}}%
+        {{hash=61a93ca0a5f807bff04d3e2c5ce3d030}{%
+           family={Choi},
+           familyi={C\bibinitperiod},
+           given={Jihwan\bibnamedelima P.},
+           giveni={J\bibinitperiod\bibinitdelim P\bibinitperiod}}}%
+      }
+      \strng{namehash}{5088ca84634351acaabc7a91a2128ba2}
+      \strng{fullhash}{5088ca84634351acaabc7a91a2128ba2}
+      \strng{fullhashraw}{5088ca84634351acaabc7a91a2128ba2}
+      \strng{bibnamehash}{5088ca84634351acaabc7a91a2128ba2}
+      \strng{authorbibnamehash}{5088ca84634351acaabc7a91a2128ba2}
+      \strng{authornamehash}{5088ca84634351acaabc7a91a2128ba2}
+      \strng{authorfullhash}{5088ca84634351acaabc7a91a2128ba2}
+      \strng{authorfullhashraw}{5088ca84634351acaabc7a91a2128ba2}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{IEEE Transactions on Aerospace and Electronic Systems}
+      \field{number}{3}
+      \field{title}{Cross-Layer Encryption of CFB-AES-TURBO for Advanced Satellite Data Transmission Security}
+      \field{volume}{58}
+      \field{year}{2022}
+      \field{pages}{2192\bibrangedash 2205}
+      \range{pages}{14}
+      \verb{doi}
+      \verb 10.1109/TAES.2021.3134988
+      \endverb
+      \keyw{Encryption;Security;Satellite broadcasting;Turbo codes;Satellites;Receivers;Ciphers;Advanced encryption standard (AES);channel coding;cipher feedback (CFB) mode;encryption;satellite communication;security;turbo codes}
+    \endentry
+    \entry{masterSessionKey}{report}{}{}
+      \list{location}{1}{%
+        {Washington, D.C.}%
+      }
+      \list{publisher}{1}{%
+        {Consultative Committee for Space Data Systems (CCSDS)}%
+      }
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labeltitlesource}{title}
+      \field{edition}{Issue 1}
+      \field{month}{2}
+      \field{number}{CCSDS 355.1-B-1}
+      \field{title}{{Space Data Link Security Protocol---Extended Procedures}}
+      \field{type}{Recommended Standard}
+      \field{year}{2020}
+      \verb{urlraw}
+      \verb https://ccsds.org/Pubs/355x1b1.pdf
+      \endverb
+      \verb{url}
+      \verb https://ccsds.org/Pubs/355x1b1.pdf
+      \endverb
+    \endentry
+    \entry{diffieHellman}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=64bf536193a84b0e04cc198c3b2917f8}{%
+           family={Baghaei\bibnamedelima Jezehei},
+           familyi={B\bibinitperiod\bibinitdelim J\bibinitperiod},
+           given={Mahdi},
+           giveni={M\bibinitperiod}}}%
+        {{hash=468423adbbe5833059eb0ab44577b869}{%
+           family={Olamaei},
+           familyi={O\bibinitperiod},
+           given={Seyed\bibnamedelima Ahmad},
+           giveni={S\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+        {{hash=5f67ac1c9dc57aa33163d60fbb72685c}{%
+           family={Broumandnia},
+           familyi={B\bibinitperiod},
+           given={Ali},
+           giveni={A\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Semnan University}%
+      }
+      \strng{namehash}{74f306ab9fda6848cea318c1839509a9}
+      \strng{fullhash}{74f306ab9fda6848cea318c1839509a9}
+      \strng{fullhashraw}{74f306ab9fda6848cea318c1839509a9}
+      \strng{bibnamehash}{74f306ab9fda6848cea318c1839509a9}
+      \strng{authorbibnamehash}{74f306ab9fda6848cea318c1839509a9}
+      \strng{authornamehash}{74f306ab9fda6848cea318c1839509a9}
+      \strng{authorfullhash}{74f306ab9fda6848cea318c1839509a9}
+      \strng{authorfullhashraw}{74f306ab9fda6848cea318c1839509a9}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{With the expansion of Internet of Things (IoT) services and the use of satellite communications, according to the regional or continental extent of these services, the need for lightweight encryption has increased. In satellite communications, security cannot be fully implemented given the long transmission distances, rendering heavy encryption algorithms, such as RSA, unreliable. ECC using mathematical solutions and elliptic curve discrete logarithm problems (ECDLP) can be considered a lightweight algorithm in telecommunications. Here, we propose a new strategy for secure IOT data communication between a satellite link and a terrestrial link that uses the principles of ECC elliptic curve cryptography and the NIST P-256 standard for key agreement and encryption for transmitting messages over the satellite communication platform.}
+      \field{issn}{2008-6822}
+      \field{journaltitle}{International Journal of Nonlinear Analysis and Applications}
+      \field{number}{4}
+      \field{title}{Lightweight secure message transfer protocol based on ECC (Nist P-256) Internet of Things equipped with satellite communications}
+      \field{volume}{16}
+      \field{year}{2025}
+      \field{pages}{93\bibrangedash 102}
+      \range{pages}{10}
+      \verb{doi}
+      \verb 10.22075/ijnaa.2023.32465.4831
+      \endverb
+      \verb{eprint}
+      \verb https://ijnaa.semnan.ac.ir/article_8995_d469547325a320e660ba7f4bf05c7ecf.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://ijnaa.semnan.ac.ir/article_8995.html
+      \endverb
+      \verb{url}
+      \verb https://ijnaa.semnan.ac.ir/article_8995.html
+      \endverb
+      \keyw{Elliptic Curve Cryptography,Internet of Things,Cryptographic Protocols,Satellite and Information Security,Satellite Communications}
+    \endentry
+    \entry{quantum-AES-vulnerable}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=e33b2ed0bd8436e426ac31f212068dbe}{%
+           family={Sharma},
+           familyi={S\bibinitperiod},
+           given={Neeraj},
+           giveni={N\bibinitperiod}}}%
+      }
+      \strng{namehash}{e33b2ed0bd8436e426ac31f212068dbe}
+      \strng{fullhash}{e33b2ed0bd8436e426ac31f212068dbe}
+      \strng{fullhashraw}{e33b2ed0bd8436e426ac31f212068dbe}
+      \strng{bibnamehash}{e33b2ed0bd8436e426ac31f212068dbe}
+      \strng{authorbibnamehash}{e33b2ed0bd8436e426ac31f212068dbe}
+      \strng{authornamehash}{e33b2ed0bd8436e426ac31f212068dbe}
+      \strng{authorfullhash}{e33b2ed0bd8436e426ac31f212068dbe}
+      \strng{authorfullhashraw}{e33b2ed0bd8436e426ac31f212068dbe}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Information Systems Engineering and Management}
+      \field{month}{05}
+      \field{title}{Investigating the Impact of Quantum Computing on Existing Encryption Methods}
+      \field{volume}{10}
+      \field{year}{2025}
+      \field{pages}{994\bibrangedash 1010}
+      \range{pages}{17}
+      \verb{doi}
+      \verb 10.52783/jisem.v10i41s.8035
+      \endverb
+    \endentry
+    \entry{AES}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=ef9cb61878e61d434507444346b29d1a}{%
+           family={{National Institute of Standards and Technology}},
+           familyi={N\bibinitperiod}}}%
+      }
+      \list{institution}{2}{%
+        {National Institute of Standards}%
+        {Technology}%
+      }
+      \strng{namehash}{ef9cb61878e61d434507444346b29d1a}
+      \strng{fullhash}{ef9cb61878e61d434507444346b29d1a}
+      \strng{fullhashraw}{ef9cb61878e61d434507444346b29d1a}
+      \strng{bibnamehash}{ef9cb61878e61d434507444346b29d1a}
+      \strng{authorbibnamehash}{ef9cb61878e61d434507444346b29d1a}
+      \strng{authornamehash}{ef9cb61878e61d434507444346b29d1a}
+      \strng{authorfullhash}{ef9cb61878e61d434507444346b29d1a}
+      \strng{authorfullhashraw}{ef9cb61878e61d434507444346b29d1a}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{5}
+      \field{number}{NIST FIPS 197-upd1}
+      \field{title}{{Advanced Encryption Standard (AES)}}
+      \field{type}{Federal Information Processing Standards Publication}
+      \field{year}{2023}
+      \verb{doi}
+      \verb 10.6028/NIST.FIPS.197-upd1
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.6028/NIST.FIPS.197-upd1
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.6028/NIST.FIPS.197-upd1
+      \endverb
+    \endentry
+    \entry{GCM}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=cb698fb75e6c17d7b7bffc2da99a0db2}{%
+           family={Dworkin},
+           familyi={D\bibinitperiod},
+           given={Morris},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{institution}{2}{%
+        {National Institute of Standards}%
+        {Technology (NIST)}%
+      }
+      \list{location}{1}{%
+        {Gaithersburg, MD}%
+      }
+      \strng{namehash}{cb698fb75e6c17d7b7bffc2da99a0db2}
+      \strng{fullhash}{cb698fb75e6c17d7b7bffc2da99a0db2}
+      \strng{fullhashraw}{cb698fb75e6c17d7b7bffc2da99a0db2}
+      \strng{bibnamehash}{cb698fb75e6c17d7b7bffc2da99a0db2}
+      \strng{authorbibnamehash}{cb698fb75e6c17d7b7bffc2da99a0db2}
+      \strng{authornamehash}{cb698fb75e6c17d7b7bffc2da99a0db2}
+      \strng{authorfullhash}{cb698fb75e6c17d7b7bffc2da99a0db2}
+      \strng{authorfullhashraw}{cb698fb75e6c17d7b7bffc2da99a0db2}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{11}
+      \field{number}{800-38D}
+      \field{title}{{Recommendation for Block Cipher Modes of Operation: Galois/Counter Mode (GCM) and GMAC}}
+      \field{type}{NIST Special Publication}
+      \field{year}{2007}
+      \verb{doi}
+      \verb 10.6028/NIST.SP.800-38D
+      \endverb
+      \verb{urlraw}
+      \verb https://csrc.nist.gov/pubs/sp/800/38/d/final
+      \endverb
+      \verb{url}
+      \verb https://csrc.nist.gov/pubs/sp/800/38/d/final
+      \endverb
     \endentry
   \enddatalist
 \endrefsection

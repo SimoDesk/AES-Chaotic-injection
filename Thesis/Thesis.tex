@@ -1,4 +1,4 @@
-\documentclass[12pt,a4paper]{report}
+\documentclass[11pt,a4paper]{report}
 
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
@@ -19,7 +19,7 @@
 \usepackage{mathptmx}
 
 % Set the page margins to 2.5 cm on all sides
-\usepackage[a4paper, top=2.5cm, bottom=2.5cm, left=3cm, right=2.5cm]{geometry}
+\usepackage[a4paper, top=2.8cm, bottom=2.8cm, left=3.2cm, right=2.8cm]{geometry}
 
 
 
@@ -62,6 +62,7 @@
 
 % Bibliography management with biblatex
 \usepackage[backend=biber,style=numeric,sorting=none]{biblatex}
+\usepackage{xurl} % Allows line breaks in URLs in the bibliography
 \addbibresource{references.bib}
 
 % ----------------------------------------------------------------------------------------
@@ -168,40 +169,63 @@ Author's email: \texttt{simo.desk04@gmail.com}
 \newpage
 
 \chapter{Introduction}
-%Nel contesto della crittografia su canali satellitari adottiamo lo standard AES~\cite{rashid2024privacypreservingimagessatellitecommunications}.
+
+\section{Thesis Objective}
+Inspired by the foundational work of Kumar et al. \cite{KumarPaper}, the primary objective of this thesis is to develop a proof-of-concept implementation of \textit{AES with chaotic injection}. 
+This is achieved by extending the open-source \texttt{tiny-aes-c} library \cite{tinyAES} and adapting it to comply with modern satellite communication standards through the integration of the \textit{AES-256-GCM} mode of operation \cite{AES256-GCM}.
+
+Furthermore, this study aims to analyze the integration of various chaotic maps within the cipher's architecture. 
+These configurations will be rigorously benchmarked to evaluate execution time and energy consumption, thereby identifying the optimal solution for the resource-constrained SATCOM environment. 
+Concurrently, statistical and cryptographic tests will verify that altering the standard encryption algorithm does not degrade its fundamental cryptographic properties.
+
+Building upon these analyses, the thesis proposes an architectural optimization tailored for satellite communications. 
+A comprehensive comparison will be provided between the baseline chaotic algorithm proposed by Kumar et al. and a modified iteration engineered to yield superior performance metrics, 
+rendering it highly appropriate for space applications.
+
+Lastly, significantly diverging from the scope of Kumar et al. \cite{KumarPaper}, this research will simulate a Machine Learning-based Side-Channel Attack (SCA) aiming for complete key recovery. 
+This simulation serves a critical dual purpose: it demonstrates a devastating threat vector that is entirely feasible against standard AES-256-GCM in current SATCOM architectures, 
+while simultaneously proving that the proposed chaotic implementation successfully immunizes the system against such advanced profiling attacks.
+
+
+
+% ====================================================================================================
+
+% ====================================================================================================
+
+
 
 \chapter[Background and State-of-the-Art of Satellite Communications]{Background and State-of-the-Art of \\ Satellite Communications}Satellite communications (SATCOM) are vastly different from how they appeared just a few decades ago. 
 At that time, space-based communications were mainly represented by government activities, characterized by larger and more expensive satellites than the ones used today. 
-This era is also known as the \textit{old space} ~\cite[pp.~377]{aLotOfReferences}, a term often used to describe the space applications that emerged during the Cold War.
+This era is also known as the \textit{old space} \cite[p. 377]{aLotOfReferences}, a term often used to describe the space applications that emerged during the Cold War.
 
-On the other hand, since the beginning of the \textit{new space} era ~\cite[pp.~377--398]{aLotOfReferences}, 
+On the other hand, since the beginning of the \textit{new space} era \cite[p. 377--398]{aLotOfReferences}, 
 thanks to the ever-decreasing cost of satellite launches and the enormous technological progress that has been made in recent years, 
 space has become increasingly populated by satellites used for commercial purposes, such as:
 \begin{itemize}
-    \item \textit{Telecommunications and broadband connectivity}: they help to provide an internet connection even in the most remote regions or those that are hard to reach with a physical connection ~\cite[pp.~373--381]{aLotOfReferences}.
+    \item \textit{Telecommunications and broadband connectivity}: they help to provide an internet connection even in the most remote regions or those that are hard to reach with a physical connection \cite[p. 373--381]{aLotOfReferences}.
 
     \item \textit{Television broadcast and multimedia streaming}: due to the constant demand for high-quality multimedia, 
-    the wide coverage of satellite communications helps to deliver content to a large number of users more efficiently ~\cite[pp.~373--381]{aLotOfReferences}.
+    the wide coverage of satellite communications helps to deliver content to a large number of users more efficiently \cite[p. 373--381]{aLotOfReferences}.
 
     \item \textit{Global Positioning System (GPS)}: numerous sectors make use of satellite-based geolocation to plan routes or monitor the movement of resources. 
-    In addition to this, a large number of people use geolocation daily to plan their travels ~\cite[pp.~378--381]{aLotOfReferences}.
+    In addition to this, a large number of people use geolocation daily to plan their travels \cite[p. 378--381]{aLotOfReferences}.
 
     \item \textit{Earth observation}: thanks to more affordable satellites, it is now possible for private entities to start their own Earth observation programs for scientific purposes, 
-    such as environmental analysis. Moreover, satellites observing the Earth are widely used for meteorological purposes ~\cite[pp.~372--381]{aLotOfReferences}.
+    such as environmental analysis. Moreover, satellites observing the Earth are widely used for meteorological purposes \cite[p. 372--381]{aLotOfReferences}.
 
     \item \textit{Internet of Things (IoT)}: because of the multifaceted nature of IoT devices, which can take on many different forms,
      from smart homes to means of transport, it is essential that the coverage area serving these devices is as wide as possible.
-      Such needs are effectively addressed by using SATCOMs as the main communication method ~\cite[pp.~372]{aLotOfReferences}.
+      Such needs are effectively addressed by using SATCOMs as the main communication method \cite[p. 372]{aLotOfReferences}.
 
     \item \textit{Satellite as a service (SataaS)}: while it is true that the cost of satellite lounches is significantly decreased,
     it remains unaffordable for many private companies that would otherwise benefit of the wide coverage provided by SATCOMs. 
     \newline
     To address this challange, majour caerospace operators can lease resources on their satellites to third-party users,
-    granting them access to space infrastructure without the need for additional launches ~\cite{SataaS}.
+    granting them access to space infrastructure without the need for additional launches \cite{SataaS}.
 \end{itemize}
 Along with the opportunities offered by the \textit{new space}, the critical requirements of the \textit{old space} have not diminished. 
-Today, satellite communications remain essential for handling mission-critical data exchanges, such as those required by aviation and maritime operations~\cite[pp.~397--398]{aLotOfReferences}, 
-as well as for the coordination of rescue services in disaster or crisis situations ~\cite[p.~388--389]{aLotOfReferences}.
+Today, satellite communications remain essential for handling mission-critical data exchanges, such as those required by aviation and maritime operations \cite[p. 397--398]{aLotOfReferences}, 
+as well as for the coordination of rescue services in disaster or crisis situations \cite[p. 388--389]{aLotOfReferences}.
 
 Given the critical nature of the communications handled by SATCOM systems, 
 it is becoming increasingly important to protect the information shared within these networks from malicious actors.
@@ -212,46 +236,46 @@ it is essential to analyze its underlying infrastructure. A modern SATCOM system
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.6\textwidth]{images/segment.png}
-    \caption[Architectural segments of a satellite system]\small{{Architectural overview of space, ground, and user segments in satellite systems ~\cite{wiki_ground_segment}.}}
+    \caption[Architectural segments of a satellite system]\small{{Architectural overview of space, ground, and user segments in satellite systems \cite{wiki_ground_segment}.}}
     \label{fig:sat_segments}
 \end{figure}
 
 Satellite communications are typically classified into three fundamental segments, although the exact categorization may vary across the literature.
-One common classification framework, as described in~\cite[p.~381]{aLotOfReferences}, divides the architecture into the \textit{Space Segment}, the \textit{Ground Segment}, and the \textit{Link Segment}. 
-In this model, the \textit{Ground Segment} encompasses both the \textit{Ground Stations}, which act as gateways for devices lacking direct satellite communication capabilities,
-and the \textit{User Segment}, which consists of end-user terminals equipped for space links. 
-Another classification model still includes the \textit{Space Segment} and the \textit{Ground Segment}, 
-but explicitly separates the \textit{User Segment}, treating the \textit{Link Segment} merely as a passive communication channel ~\cite[p.~5671]{LEO_MEO_GEO}. 
+One common classification framework, as described in \cite[p. 381]{aLotOfReferences}, divides the architecture into the \textit{space segment}, the \textit{ground segment}, and the \textit{link segment}. 
+In this model, the \textit{ground Segment} encompasses both the \textit{ground Stations}, which act as gateways for devices lacking direct satellite communication capabilities,
+and the \textit{user segment}, which consists of end-user terminals equipped for space links. 
+Another classification model still includes the \textit{space segment} and the \textit{ground segment}, 
+but explicitly separates the \textit{user segment}, treating the \textit{link segment} merely as a passive communication channel \cite[p. 5671]{LEO_MEO_GEO}. 
 
-While all these components are crucial to maintain the network's operability, this thesis will adopt the classification proposed in ~\cite{aLotOfReferences}. 
-Grouping the ground stations and end-user devices under a unified \textit{Ground Segment} is conceptually sound for terrestrial entities. 
-More importantly, treating the \textit{Link Segment} as a primary, distinct architectural component is essential for the scope of this study, 
+While all these components are crucial to maintain the network's operability, this thesis will adopt the classification proposed in \cite{aLotOfReferences}. 
+Grouping the ground stations and end-user devices under a unified \textit{ground segment} is conceptually sound for terrestrial entities. 
+More importantly, treating the \textit{link segment} as a primary, distinct architectural component is essential for the scope of this study, 
 as the physical transmission channel introduces specific vulnerabilities and security challenges that are central to the analyzed threat model.
 
 \subsection{Space Segment}
 The space segment is represented by the satellites in orbit, each composed of the \textit{bus}, which handles onboard systems such as power and thermal management, 
-and the \textit{payload}, which is the part of the spacecraft designed to fulfill the satellite's specific mission ~\cite[pp.~381--383]{aLotOfReferences}. 
+and the \textit{payload}, which is the part of the spacecraft designed to fulfill the satellite's specific mission \cite[p. 381--383]{aLotOfReferences}. 
 Examples of payloads include telescopes to analyze distant objects or sensors to measure spatial properties.
 
-Depending on the satellite's mission, its orbital height from Earth can vary radically ~\cite{LEO_MEO_GEO}:
+Depending on the satellite's mission, its orbital height from Earth can vary radically \cite{LEO_MEO_GEO}:
 \begin{itemize}
-    \item \textit{Low Earth Orbit (LEO)}: due to their low altitude, usually between 500 and 1200~km, 
-    these types of satellites are ideal for extending terrestrial networks thanks to their low latency (around 30~ms).
+    \item \textit{Low Earth Orbit (LEO)}: due to their low altitude, usually between 500 and 1200 km, 
+    these types of satellites are ideal for extending terrestrial networks thanks to their low latency (around 30 ms).
     However, because they are so close to the Earth, it is often necessary to deploy a group of interconnected \textit{LEO} satellites,
     known as a \textit{satellite constellation}, in order to cover a wider area of the planet.
     Additionally, because of the high risk of collision with space debris, the lifetime of \textit{LEO} spacecraft is around 5 to 7 years, 
     which is usually shorter than that of other satellites.
 
-    \item \textit{Medium Earth Orbit (MEO)}: usually positioned at an altitude of 2000 to 20000~km, 
-    they represent a midpoint between coverage and latency (around 125~ms). 
+    \item \textit{Medium Earth Orbit (MEO)}: usually positioned at an altitude of 2000 to 20000 km, 
+    they represent a midpoint between coverage and latency (around 125 ms). 
     A significant share of \textit{MEO} spacecraft function as GPS satellites, and typically 6 units are necessary in order to provide adequate service. 
     Because of their intermediate position, \textit{MEO} satellites often serve as relay nodes between \textit{LEO} and \textit{GEO} satellites. 
     Finally, their operational lifetime is estimated at 10 to 15 years, depending on their altitude and exposure to radiation.
 
-    \item \textit{Geostationary Equatorial Orbit (GEO)}: operating in the highest orbital layer at approximately 36000~km,
+    \item \textit{Geostationary Equatorial Orbit (GEO)}: operating in the highest orbital layer at approximately 36000 km,
     these spacecraft take exactly 24 hours to complete an orbit, appearing stationary to an observer on Earth. 
     Thanks to their high altitude, they can cover one-third of the entire planet's surface, making them ideal for broadcasting. 
-    However, it is important to account for the latency accumulated during transmission (around 600~ms).
+    However, it is important to account for the latency accumulated during transmission (around 600 ms).
     Due to their distance from the planet and the large quantity of resources needed to launch \textit{GEO} spacecraft, they are usually built to last longer, typically around 15 to 20 years.
 
 \end{itemize}
@@ -259,7 +283,7 @@ Depending on the satellite's mission, its orbital height from Earth can vary rad
 \subsection{Ground Segment}
 This segment represents the terrestrial infrastructure that communicates 
 with satellites. Depending on the role of the receiver or sender, it can 
-be classified into several sub-components, the primary ones being ~\cite[pp.~383--384]{aLotOfReferences}:
+be classified into several sub-components, the primary ones being \cite[p. 383--384]{aLotOfReferences}:
 \begin{itemize}
     \item \textit{Ground Stations (GS)}: equipped with dedicated hardware, they can transmit and receive signals even from the most distant satellites. 
     A vast amount of traffic passes through them, as the majority of terrestrial devices lack the necessary peripherals to communicate directly with 
@@ -270,23 +294,23 @@ be classified into several sub-components, the primary ones being ~\cite[pp.~383
     internal hardware measurements; this data allows operators to detect anomalies and perform necessary corrective actions. 
 
     \item \textit{User Segment}: this component comprises all the end-user devices, which receive messages after they are forwarded by the 
-    \textit{Ground Stations}. Moreover, devices equipped with the necessary peripherals to communicate directly with the \textit{Space Segment}, such 
+    \textit{Ground Stations}. Moreover, devices equipped with the necessary peripherals to communicate directly with the \textit{space segment}, such 
     as ships, airplanes, and Satellite TV, also fall into this category. 
 \end{itemize}
 
 \subsection{Link Segment}
 This segment is represented by the radio waves that link the Earth to space and the satellites to one another, as well as the hardware 
-components used to establish these connections. Specifically, the \textit{Link Segment} can be categorized as follows ~\cite[pp.~381]{aLotOfReferences}:
+components used to establish these connections. Specifically, the \textit{link segment} can be categorized as follows \cite[p. 381]{aLotOfReferences}:
 \begin{itemize}
-    \item \textit{Ground-to-Ground}: connects the \textit{Ground Stations} to the \textit{User Segment} and vice versa.
+    \item \textit{Ground-to-Ground}: connects the \textit{ground stations} to the \textit{user segment} and vice versa.
 
-    \item \textit{Ground-to-Space}: also known as the \textit{uplink}, it represents the communication path from the \textit{Ground Segment} 
-    to the \textit{Space Segment}.
+    \item \textit{Ground-to-Space}: also known as the \textit{uplink}, it represents the communication path from the \textit{ground segment} 
+    to the \textit{space segment}.
 
-    \item \textit{Space-to-Ground}: also known as the \textit{downlink}, it represents the communication path from the \textit{Space Segment} 
-    to the \textit{Ground Segment}.
+    \item \textit{Space-to-Ground}: also known as the \textit{downlink}, it represents the communication path from the \textit{space segment} 
+    to the \textit{ground segment}.
 
-    \item \textit{Space-to-Space}: connects the spacecraft within the \textit{Space Segment} to one another, even across different orbital altitudes.
+    \item \textit{Space-to-Space}: connects the spacecraft within the \textit{space segment} to one another, even across different orbital altitudes.
 \end{itemize}
 
 \section{SATCOM Threats}
@@ -295,26 +319,196 @@ Tampering with a single component can have cascading effects, jeopardizing the o
 broader network to which it is connected. Some threats associated with each segment are outlined below.
 
 \subsection{Space Segment Threats}
-While spacecraft are physically out of reach for potential attackers, this physical isolation does not exempt the \textit{Space Segment} from cyber threats.
-Examples include~\cite[pp.~386--389]{aLotOfReferences}:
-\begin{itemize}
-    \item \textit{Software Attacks}: malicious software could be introduced into the satellite's systems via the \textit{Link Segment}.
-    Alternatively, in a \textit{Satellite-as-a-Service (SataaS)} architecture, an attacker could exploit the shared infrastructure by gaining access to the spacecraft's resources under the guise of a legitimate user.
-    
-    \item \textit{Denial of Service (DoS)}: these attacks pose a significant threat to the \textit{Space Segment}, 
-    as an excessive volume of requests sent to the targeted satellite could overwhelm its processing capabilities, temporarily or permanently disrupting its mission.
+While spacecraft are physically out of reach for potential attackers, this physical isolation does not exempt the \textit{space segment} from cyber threats.
 
-    \item \textit{Hardware attacks}: supply chain
+Examples include \textit{software attacks}, in which malicious software could be introduced into the satellite's systems via the \textit{link segment}.
+Alternatively, in a \textit{Satellite-as-a-Service (SataaS)} architecture, an attacker could exploit the shared infrastructure by gaining access to the spacecraft's resources under the guise of a legitimate user. 
+Furthermore, \textit{Denial of Service (DoS)} attacks pose a significant threat to the \textit{space segment}, as an excessive volume of requests sent to the targeted satellite could overwhelm its processing capabilities, temporarily or permanently disrupting its mission.
 
-\end{itemize}
+Beyond software vulnerabilities, \textit{hardware attacks} target the physical infrastructure of the satellite. 
+A particularly insidious example is the \textit{supply chain attack}, which compromises the manufacturing process of the spacecraft by exploiting the decentralized production models typical of the \textit{new space} industry \cite[p. 386--389]{aLotOfReferences}. 
 
-%sottocapitolo per le vulnerabilità (nota importante per il machine learning)
+Although significantly harder to mount and execute, another critical threat to the \textit{space segment} is posed by \textit{kinetic or anti-satellite (ASAT) weapons}. 
+These systems consist of high-energy beams or physical interceptors that aim to blind the spacecraft's communications or physically destroy its components \cite[p. 5677]{LEO_MEO_GEO}.
 
-%sottocapitolo soluzioni di difesa
+Finally, another catastrophic threat is the risk of \textit{satellite hijacking}. 
+Through command spoofing techniques, an attacker could force the spacecraft to deviate from its intended orbit, often leading to the complete destruction of the satellite as it burns up upon atmospheric reentry \cite[p. 386--389]{aLotOfReferences}.
 
-%sottocapitolo state-of-the-art AES256-GCM
+\subsection{Ground Segment Threats}
+Compared to the \textit{space segment}, the \textit{ground segment} represents a much more accessible entry point for attackers due to its terrestrial location.
+Moreover, despite the physical distance between \textit{Ground Stations} and the spacecraft, the impairment of a terrestrial facility can easily jeopardize the satellite itself. 
+For instance, malware contaminating a station on Earth could easily be transferred to the \textit{space segment} via the \textit{link segment}.
 
-%sottocapitolo scopo dello studio + a cosa può servire
+Similar to the threats facing the space infrastructure, \textit{software attacks} could lead to the temporary deactivation of the communication channels used to send messages to the \textit{space segment}. 
+If the compromised facility is a \textit{Mission Control Center (MCC)}, operators would be unable to monitor the satellite's telemetry or detect potential anomalies. 
+Consequently, a synchronized cyberattack targeting the \textit{Space Segment} simultaneously would go completely unnoticed.
+
+While \textit{Denial of Service (DoS)} and \textit{Distributed Denial of Service (DDoS)} attacks also pose a significant threat to the \textit{ground segment}, 
+a vulnerability exclusively tied to the terrestrial infrastructure is \textit{Unauthorized Access to Ground Stations}. 
+If physical or logical authentication mechanisms are missing, poorly designed, or vulnerable, an adversary could gain unauthorized entry, ultimately leading to a complete takeover of the spacecraft's control systems \cite[p. 389--391]{aLotOfReferences}.
+
+\subsection{Link Segment Threats}
+Lastly, the \textit{link aegment} is arguably the most vulnerable of the three segments, primarily due to its wireless nature. 
+The most straightforward threat is \textit{eavesdropping}, which consists of the unauthorized interception of communications. 
+The adversaries' preferred target for eavesdropping is typically the \textit{downlink}, as the signal is directed towards Earth over a wide footprint; 
+conversely, the highly directional trajectory of the \textit{uplink} makes it significantly more difficult to capture data \cite[p.~393]{aLotOfReferences}.
+
+\textit{Link jamming} is another critical threat to consider. Equipped with sufficiently powerful hardware, adversaries can execute a \textit{DoS} attack by flooding the communication channel with noise. 
+Just as with eavesdropping, it is generally easier to jam the \textit{downlink} than the \textit{uplink}. 
+This occurs because the signal arriving from space is inherently weak by the time it reaches Earth, whereas a terrestrial attacker would find it extremely challenging to overpower the highly amplified \textit{uplink} signals transmitted by \textit{Ground Stations}.
+
+Furthermore, \textit{signal spoofing} involves falsifying or replaying messages over the communication link. 
+By doing so, an attacker can deceive the receiving system if robust security and authentication mechanisms are missing or insufficient \cite[p.~391--394]{aLotOfReferences}.
+
+\subsection{An Emergent Threat: Machine Learning}
+Although \textit{Artificial Intelligence (AI)} and \textit{Machine Learning (ML)} are widely employed in defensive contexts, 
+such as \textit{Intrusion Detection Systems (IDS)} and \textit{Intrusion Prevention Systems (IPS)}, they also represent a formidable offensive threat.
+
+A first example is linked to the energy-constrained nature of the space environment. Due to strict limits on power and computational resources, onboard ML models dedicated to security are often lightweight and less complex. 
+Consequently, attackers can exploit these limitations by injecting imperceptible adversarial noise to elude the defensive models \cite[p.~5682]{LEO_MEO_GEO}.
+
+More critically for the scope of this study, the increasing accessibility of advanced ML algorithms has revolutionized cryptanalysis. 
+While ML can be used to perform traffic analysis by identifying patterns in encrypted SATCOM communications due to the presence of predictable packet headers, 
+an even more critical risk arises when ML is combined with \textit{Side-Channel Attacks (SCA)}. 
+
+Adversaries can leverage ML models to analyze physical leakages, such as the power consumption of the satellite's hardware during encryption. 
+Thanks to the ability of ML to uncover complex, non-linear correlations within noisy data, attackers can profile these leakages and completely recover the secret keys. 
+In the context of shared architectures like \textit{SataaS}, where adversaries might run software on the same physical hardware, 
+ML-based SCAs represent a severe threat if the isolation mechanisms designed to prevent software-based power monitoring are missing or insufficient.
+
+Furthermore, while the traditional execution of SCAs requires placing specific measurement probes on the target hardware, which is an unfeasible task for a satellite already in orbit, 
+a sophisticated \textit{supply chain attack} can circumvent this limitation. 
+Adversaries could compromise key satellite components, such as cryptographic chips or CPUs, by implanting the necessary hardware trojans during the manufacturing process, 
+establishing a covert channel to transmit the leaked information once deployed in space.
+
+Lastly, to compromise the SATCOM infrastructure via an SCA, an adversary could exploit the interconnection between the network segments by targeting the more physically accessible \textit{ground stations}. 
+Since the ground and space segments must share the same cryptographic parameters to establish a secure link, 
+successfully extracting the secret key from a ground terminal yields the exact same catastrophic result for the entire network.
+
+\section{Defensive Strategies}
+To counter the vast range of threats discussed previously, SATCOM security relies on various defensive strategies that can be broadly categorized into two main paradigms. 
+While both approaches aim to secure satellite communications, they achieve this through fundamentally different methodologies.
+
+\subsection{Physical Layer Security (PLS)}
+The first approach leverages the intrinsic physical properties of the wireless communication channel to provide countermeasures against specific threats. 
+It minimizes resource consumption while ensuring a high level of security under targeted operational circumstances.
+
+A prominent example of this technique relies on the concept of the \textit{wiretap channel}. 
+By employing specialized beamforming antennas, the sender can focus the transmission beam, confining the signal's footprint exclusively to the legitimate receiver's location. 
+Simultaneously, artificial noise can be injected into the spatial directions outside this main beam to degrade the signal-to-noise ratio for potential eavesdroppers \cite[p.~3--4]{PLS}.
+
+A major advantage of \textit{PLS} is that it is significantly less demanding in terms of energy consumption compared to high-level \textit{cryptography} \cite[p.~2]{PLS}. 
+Consequently, this technology is particularly well-suited for SATCOM environments, where spacecraft must operate under strict energy and computational constraints.
+
+However, this defensive strategy presents notable limitations. For instance, PLS mechanisms cannot detect or correct data integrity issues, such as bit-flip errors, 
+which frequently occur during transmission due to long propagation distances and the interference of space radiation. 
+To address these vulnerabilities, current literature frequently explores the combined use of \textit{PLS} and high-level \textit{cryptography}. 
+This hybrid approach aims to achieve comprehensive security by allowing the two methodologies to mutually compensate for each other's limitations.
+
+\subsection{Traditional Cryptography}
+Regardless of the transmission medium, \textit{cryptography} represents a fundamental solution for ensuring data confidentiality. 
+By relying on either a single secret key or a public-private key pair, cryptographic algorithms conceal the true content of a message, 
+rendering the transmitted data indistinguishable from random noise.
+
+Algorithms that rely on a single shared key are known as symmetric-key ciphers. 
+For this cryptographic approach to function securely, the secret key must be distributed through a secure channel; 
+the compromise of such critical information leads to a complete breach of communication confidentiality until a new secret key can be established.
+
+To address the key distribution challenge, researchers continuously explore lightweight and efficient methods to establish secure channels. 
+Proposed solutions include \textit{Identity-Based Encryption (IBE)}, where the receiver's public identity serves as the public key while a trusted third party generates the corresponding private key \cite[pp.~2193--2194]{IBE}, 
+as well as \textit{Quantum Key Distribution (QKD)}, which leverages quantum mechanics to securely establish a symmetric key \cite[p.~5683]{LEO_MEO_GEO}. 
+Traditionally, however, SATCOM systems have relied on pre-loading a set of master keys onto the spacecraft prior to its launch, 
+from which dynamically changing session keys are derived \cite{masterSessionKey}. 
+More recently, modern space infrastructures have begun deploying \textit{Elliptic Curve Cryptography (ECC)-based Diffie-Hellman} key exchanges, 
+capitalizing on the computational efficiency and smaller key sizes of ECC~\cite{diffieHellman}.
+
+As implied by the adoption of ECC, the resource-constrained nature of the space environment implies the use of highly efficient algorithms to avoid overburdening the satellite's power and computational budget. 
+For this reason, traditional asymmetric-key algorithms like \textit{RSA}, which require substantial computational overhead to process large key pairs, are generally not recommended for SATCOM encryption.
+
+Finally, a major advantage of traditional cryptography over PLS techniques lies in its software-based nature. 
+While deploying a new PLS mechanism requires rigid hardware integration during the satellite's manufacturing phase, 
+cryptographic protocols can potentially be updated or patched remotely, even for spacecraft already in active mission operations. 
+
+Furthermore, to combat both eavesdropping and signal spoofing simultaneously, modern SATCOM architectures increasingly rely on Authenticated Encryption with Associated Data (AEAD) schemes, 
+which guarantee both the confidentiality and the integrity of the transmitted information in a single, efficient operational step \cite{AES256-GCM}.
+
+\section{SATCOM Cryptographic State-of-the-Art: AES-256-GCM}
+Following the directives of the \textit{Consultative Committee for Space Data Systems (CCSDS)}, 
+the most widely adopted cryptographic algorithm in modern satellite infrastructures is the \textit{Advanced Encryption Standard (AES)} operating in \textit{Galois/Counter Mode (GCM)} with a 256-bit key~\cite{AES256-GCM}.
+
+The rationale behind this choice rests on the intrinsic computational efficiency of AES. 
+While older deployments often relied on 128-bit keys, the escalating threat posed by quantum computing has shifted the security paradigm. 
+Quantum-based attacks, specifically those leveraging Grover's algorithm, can effectively halve the search space of a symmetric-key block cipher, 
+reducing a 128-bit key security level from $2^{128}$ to a computationally feasible $2^{64}$ \cite{quantum-AES-vulnerable}. 
+Conversely, halving the $2^{256}$ search space of AES-256 still leaves an effective security level of $2^{128}$, which remains robustly secure against foreseeable quantum cryptanalysis.
+
+AES is a block cipher that requires its input to be processed in fixed blocks of 128 bits. 
+To adapt this core algorithm to variable-length messages, a specific \textit{mode of operation} must be employed. 
+The CCSDS recommends GCM, an advanced alteration of the classic \textit{Counter Mode (CTR)}. 
+GCM acts as an \textit{Authenticated Encryption with Associated Data (AEAD)} scheme, providing both message confidentiality and authentication simultaneously. 
+This is achieved by generating an authentication tag derived from the plaintext, the secret key, and the \textit{Additional Authenticated Data (AAD)}.
+
+The adoption of GCM ensures that any data manipulation or bit-flip errors incurred during transmission can be reliably intercepted; 
+if the authentication tag verification fails, the receiver can discard the corrupted payload and request a retransmission. 
+
+Finally, to guarantee cryptographic security, AES-GCM requires a strictly unique \textit{Initialization Vector (IV)} associated with each message. 
+Reusing an IV compromises the algorithm's confidentiality. 
+Based on CCSDS recommendations, the optimal IV length is fixed at 96 bits (12 bytes) \cite{quantum-AES-vulnerable}.
+
+
+
+% ====================================================================================================
+
+% ====================================================================================================
+
+
+
+\chapter[Algorithmic Foundations of AES-256-GCM]{Algorithmic Foundations of \\ AES-256-GCM}
+
+As mentioned in the previous chapter, the primary cryptographic standard utilized in modern SATCOM environments is AES-256-GCM. 
+
+This chapter provides a comprehensive overview of the mathematical and algorithmic logic underlying this protocol. 
+First, it explores the internal mechanics of the Advanced Encryption Standard (AES) block cipher, strictly following the specifications outlined in the \textit{Federal Information Processing Standard (FIPS) 197} \cite{AES}.
+Subsequently, it details the \textit{Galois/Counter Mode (GCM)} of operation, based on the guidelines established by the \textit{National Institute of Standards and Technology (NIST)} Special Publication 800-38D \cite{GCM}.
+
+By dissecting these standardized primitives, this chapter lays the essential technical groundwork for understanding the specific vulnerabilities targeted by Side-Channel Attacks (SCA), 
+and ultimately justifies the architectural modifications proposed later in this study.
+
+\section{AES-256}
+The Advanced Encryption Standard (AES) has established itself as the preeminent symmetric encryption algorithm since the publication of the official \textit{FIPS 197} standard in 2001. 
+Selected by NIST through a rigorous public competition to replace the aging \textit{Data Encryption Standard (DES)}, 
+AES has consistently proven its resilience over the decades. 
+The core algorithm has remained fundamentally unchanged, with the primary adaptation to emerging threats being the transition from a 128-bit to a 256-bit key length.
+
+As a symmetric-key cipher, AES relies on a single shared secret key for both the encryption and decryption processes. 
+This symmetry, combined with the algorithm's computational efficiency, results in a highly lightweight protocol that maintains robust cryptographic security. 
+These characteristics represent the primary reasons for its widespread adoption as the standard for resource-constrained environments like SATCOMs.
+
+AES operates as a block cipher, meaning it processes data in fixed-size blocks of 128 bits (16 bytes). 
+An input block can be represented as an array of 16 bytes:
+\[
+\mathbf{in} = \begin{bmatrix} in_0 & in_1 & in_2 & \dots & in_{15} \end{bmatrix}
+\]
+
+During the execution of the algorithm, this 16-byte input is mapped into a $4 \times 4$ matrix of bytes, known as the \textit{State matrix} ($S$). 
+As defined by the standard, the State matrix is populated column by column:
+\[
+S = \begin{bmatrix}
+in_0 & in_4 & in_8    & in_{12} \\
+in_1 & in_5 & in_9    & in_{13} \\
+in_2 & in_6 & in_{10} & in_{14} \\
+in_3 & in_7 & in_{11} & in_{15}
+\end{bmatrix}
+\]
+
+% espansione della chiave
+
+% 14 round
+
+% le 4 fasi
+
+% ogni fase ha il suo inverso
+
 
 
 

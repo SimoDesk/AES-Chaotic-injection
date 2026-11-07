@@ -72,7 +72,7 @@ def trainModels(train_df, byteNumber, attackPhase):
 # The function used in the MixColumn operation takes a byte (8 bits) as input and returns the result of multiplying that byte by 2 in GF(2^8).
 # In order to perform this multiplication as quickly as possible, we use a bitwise left shift operation to multiply the byte by 2, ((x << 1) & 0xFF) adding a bitwise AND operation with 0xFF to ensure that the result is still a byte (8 bits).
 # Then we check if the most significant bit (MSB) of the original byte is set (i.e., if x >= 128). If it is, we perform a bitwise XOR operation with 0x1B, which is the irreducible polynomial used in AES to reduce the result back into GF(2^8).
-def galoisDouble(x):
+def xTimes(x):
     return ((x << 1) & 0xFF) ^ ((x >> 7) * 0x1B)
 
 
@@ -114,7 +114,7 @@ def aseColumnSimulation(IV, known_k1_12bytes, unknown_k1_idx, guess_k1, col):
     
     # Following the implementation of the MixColumn operation which uses each byte moltiplied by 1, 2 or 3 in GF(2^8), we pre-calculate the x2 operation, since
     # the x1 operation is just the byte itself, and the x3 operation is just the x2 operation XORed with the byte itself.
-    x0, x1, x2, x3 = galoisDouble(h0), galoisDouble(h1), galoisDouble(h2), galoisDouble(h3)
+    x0, x1, x2, x3 = xTimes(h0), xTimes(h1), xTimes(h2), xTimes(h3)
 
     # The official MixColumn operation is:
     # s'0 = (2 * s0) ^ (3 * s1) ^ (1 * s2) ^ (1 * s3)
