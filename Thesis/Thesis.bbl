@@ -585,6 +585,173 @@
       \verb https://csrc.nist.gov/pubs/sp/800/38/d/final
       \endverb
     \endentry
+    \entry{tinyAES_IoMT}{article}{}{}
+      \name{author}{5}{}{%
+        {{hash=4d638314fd7a72ee19265e0c597f547f}{%
+           family={Naser},
+           familyi={N\bibinitperiod},
+           given={Hayder\bibnamedelima Yasir},
+           giveni={H\bibinitperiod\bibinitdelim Y\bibinitperiod}}}%
+        {{hash=3a5694c58209b85a3bef322afb25f208}{%
+           family={Mattar},
+           familyi={M\bibinitperiod},
+           given={Ali\bibnamedelima K.},
+           giveni={A\bibinitperiod\bibinitdelim K\bibinitperiod}}}%
+        {{hash=509468cda0bf3b0bfd5194ea583789a6}{%
+           family={Saare},
+           familyi={S\bibinitperiod},
+           given={Murtaja\bibnamedelima Ali},
+           giveni={M\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+        {{hash=05abc5af8baa3312f6fc29d1b735cb6e}{%
+           family={Almaiah},
+           familyi={A\bibinitperiod},
+           given={Mohammed\bibnamedelima Amin},
+           giveni={M\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+        {{hash=74a20d07b5a2b3097b9ea7cffe2fe4d4}{%
+           family={Shehab},
+           familyi={S\bibinitperiod},
+           given={Rami},
+           giveni={R\bibinitperiod}}}%
+      }
+      \strng{namehash}{1dcecae2bac60ec118e76958290fc243}
+      \strng{fullhash}{b49b10b7ea0ebad038d78fc42b23d97f}
+      \strng{fullhashraw}{b49b10b7ea0ebad038d78fc42b23d97f}
+      \strng{bibnamehash}{1dcecae2bac60ec118e76958290fc243}
+      \strng{authorbibnamehash}{1dcecae2bac60ec118e76958290fc243}
+      \strng{authornamehash}{1dcecae2bac60ec118e76958290fc243}
+      \strng{authorfullhash}{b49b10b7ea0ebad038d78fc42b23d97f}
+      \strng{authorfullhashraw}{b49b10b7ea0ebad038d78fc42b23d97f}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Engineering, Technology \&amp; Applied Science Research}
+      \field{month}{8}
+      \field{number}{4}
+      \field{title}{A Comparison of Lightweight Cryptographic Protocols for Energy-Efficient and Sustainable IoMT Authentication}
+      \field{volume}{15}
+      \field{year}{2025}
+      \field{pages}{25746\bibrangedash 25756}
+      \range{pages}{11}
+      \verb{doi}
+      \verb 10.48084/etasr.12204
+      \endverb
+      \verb{urlraw}
+      \verb https://etasr.com/index.php/ETASR/article/view/12204
+      \endverb
+      \verb{url}
+      \verb https://etasr.com/index.php/ETASR/article/view/12204
+      \endverb
+    \endentry
+    \entry{tinyAES_IoT}{inproceedings}{}{}
+      \name{author}{3}{}{%
+        {{hash=62881ad1e23da228deccc92387d5eb18}{%
+           family={Tsao},
+           familyi={T\bibinitperiod},
+           given={Brandon},
+           giveni={B\bibinitperiod}}}%
+        {{hash=e38212361db6fd71583df2a250b3adae}{%
+           family={Liu},
+           familyi={L\bibinitperiod},
+           given={Yuhong},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=bc2a3f2316ff24612b4a70e56ba83a79}{%
+           family={Dezfouli},
+           familyi={D\bibinitperiod},
+           given={Behnam},
+           giveni={B\bibinitperiod}}}%
+      }
+      \strng{namehash}{865713874ca3e236414f6d5d9d5c74cc}
+      \strng{fullhash}{865713874ca3e236414f6d5d9d5c74cc}
+      \strng{fullhashraw}{865713874ca3e236414f6d5d9d5c74cc}
+      \strng{bibnamehash}{865713874ca3e236414f6d5d9d5c74cc}
+      \strng{authorbibnamehash}{865713874ca3e236414f6d5d9d5c74cc}
+      \strng{authornamehash}{865713874ca3e236414f6d5d9d5c74cc}
+      \strng{authorfullhash}{865713874ca3e236414f6d5d9d5c74cc}
+      \strng{authorfullhashraw}{865713874ca3e236414f6d5d9d5c74cc}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{11}
+      \field{title}{Analysis of the duration and energy consumption of AES algorithms on a contiki-based IoT device}
+      \field{year}{2019}
+      \field{pages}{483\bibrangedash 491}
+      \range{pages}{9}
+      \verb{doi}
+      \verb 10.1145/3360774.3368202
+      \endverb
+    \endentry
+    \entry{imageAES}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=0531ad13e89eb83e923c7c8fda6965b9}{%
+           family={Chikkala},
+           familyi={C\bibinitperiod},
+           given={Durga\bibnamedelima Prasad},
+           giveni={D\bibinitperiod\bibinitdelim P\bibinitperiod}}}%
+      }
+      \strng{namehash}{0531ad13e89eb83e923c7c8fda6965b9}
+      \strng{fullhash}{0531ad13e89eb83e923c7c8fda6965b9}
+      \strng{fullhashraw}{0531ad13e89eb83e923c7c8fda6965b9}
+      \strng{bibnamehash}{0531ad13e89eb83e923c7c8fda6965b9}
+      \strng{authorbibnamehash}{0531ad13e89eb83e923c7c8fda6965b9}
+      \strng{authornamehash}{0531ad13e89eb83e923c7c8fda6965b9}
+      \strng{authorfullhash}{0531ad13e89eb83e923c7c8fda6965b9}
+      \strng{authorfullhashraw}{0531ad13e89eb83e923c7c8fda6965b9}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Medium}
+      \field{title}{AES (Advanced Encryption Standard)}
+      \field{urlday}{8}
+      \field{urlmonth}{11}
+      \field{urlyear}{2026}
+      \field{year}{2024}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://medium.com/@durgachikkaladev/aes-advanced-encryption-standard-88e440cf0525
+      \endverb
+      \verb{url}
+      \verb https://medium.com/@durgachikkaladev/aes-advanced-encryption-standard-88e440cf0525
+      \endverb
+    \endentry
+    \entry{imageSBOX}{article}{}{}
+      \true{moreauthor}
+      \true{morelabelname}
+      \name{author}{1}{}{%
+        {{hash=bf76387929cd2d65dc50e637fc764db3}{%
+           family={Siddique},
+           familyi={S\bibinitperiod},
+           given={Muhammad\bibnamedelimb Asif\bibnamedelima Bin},
+           giveni={M\bibinitperiod\bibinitdelim A\bibinitperiod\bibinitdelim B\bibinitperiod}}}%
+      }
+      \strng{namehash}{d869f83e1c41e1795bc0f4a333fa1fe1}
+      \strng{fullhash}{d869f83e1c41e1795bc0f4a333fa1fe1}
+      \strng{fullhashraw}{d869f83e1c41e1795bc0f4a333fa1fe1}
+      \strng{bibnamehash}{d869f83e1c41e1795bc0f4a333fa1fe1}
+      \strng{authorbibnamehash}{d869f83e1c41e1795bc0f4a333fa1fe1}
+      \strng{authornamehash}{d869f83e1c41e1795bc0f4a333fa1fe1}
+      \strng{authorfullhash}{d869f83e1c41e1795bc0f4a333fa1fe1}
+      \strng{authorfullhashraw}{d869f83e1c41e1795bc0f4a333fa1fe1}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Figure 3: S-box Values for All 256 Combinations in Hexadecimal Format}
+      \field{title}{An Efficient Hardware Implementation of AES S-Box}
+      \field{urlday}{8}
+      \field{urlmonth}{11}
+      \field{urlyear}{2026}
+      \field{year}{2019}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.researchgate.net/figure/S-box-Values-for-All-256-Combinations-in-Hexadecimal-Format-1_fig3_335740212
+      \endverb
+      \verb{url}
+      \verb https://www.researchgate.net/figure/S-box-Values-for-All-256-Combinations-in-Hexadecimal-Format-1_fig3_335740212
+      \endverb
+    \endentry
   \enddatalist
 \endrefsection
 \endinput

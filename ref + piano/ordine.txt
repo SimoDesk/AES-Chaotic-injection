@@ -79,7 +79,7 @@ Utility per il cluster:
 		- Algoritmo di cifratura simmetrico
 		- blocchi da 16byte, trattati come matrici 4x4
 		- espansione chiave
-		- 10 round, 4 fasi per round. Sia cifratura che decifratura iniziano con un addRoundKey Experimental
+		- 14 round, 4 fasi per round. Sia cifratura che decifratura iniziano con un addRoundKey
 			- AddRoundKey
 			- SubBytes, unica operazione non lineare, e principale bersaglio degli attacchi
 			- ShiftRows

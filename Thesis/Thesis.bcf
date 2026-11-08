@@ -2414,6 +2414,11 @@
     <bcf:citekey order="39" intorder="1">quantum-AES-vulnerable</bcf:citekey>
     <bcf:citekey order="40" intorder="1">AES</bcf:citekey>
     <bcf:citekey order="41" intorder="1">GCM</bcf:citekey>
+    <bcf:citekey order="42" intorder="1">tinyAES</bcf:citekey>
+    <bcf:citekey order="43" intorder="1">tinyAES_IoMT</bcf:citekey>
+    <bcf:citekey order="44" intorder="1">tinyAES_IoT</bcf:citekey>
+    <bcf:citekey order="45" intorder="1">imageAES</bcf:citekey>
+    <bcf:citekey order="46" intorder="1">imageSBOX</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="none">
