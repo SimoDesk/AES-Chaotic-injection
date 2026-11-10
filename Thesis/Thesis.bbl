@@ -752,6 +752,38 @@
       \verb https://www.researchgate.net/figure/S-box-Values-for-All-256-Combinations-in-Hexadecimal-Format-1_fig3_335740212
       \endverb
     \endentry
+    \entry{imageGCM}{manual}{}{}
+      \name{author}{1}{}{%
+        {{hash=bd4dc2386402e8a13fb61afa30767cb4}{%
+           family={{Xilinx, Inc.}},
+           familyi={X\bibinitperiod}}}%
+      }
+      \strng{namehash}{bd4dc2386402e8a13fb61afa30767cb4}
+      \strng{fullhash}{bd4dc2386402e8a13fb61afa30767cb4}
+      \strng{fullhashraw}{bd4dc2386402e8a13fb61afa30767cb4}
+      \strng{bibnamehash}{bd4dc2386402e8a13fb61afa30767cb4}
+      \strng{authorbibnamehash}{bd4dc2386402e8a13fb61afa30767cb4}
+      \strng{authornamehash}{bd4dc2386402e8a13fb61afa30767cb4}
+      \strng{authorfullhash}{bd4dc2386402e8a13fb61afa30767cb4}
+      \strng{authorfullhashraw}{bd4dc2386402e8a13fb61afa30767cb4}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Versione 2019.2}
+      \field{title}{Vitis Security Library: Galois/Counter Mode (GCM)}
+      \field{urlday}{10}
+      \field{urlmonth}{11}
+      \field{urlyear}{2026}
+      \field{year}{2019}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://xilinx.github.io/Vitis_Libraries/security/2019.2/guide_L1/internals/gcm.html
+      \endverb
+      \verb{url}
+      \verb https://xilinx.github.io/Vitis_Libraries/security/2019.2/guide_L1/internals/gcm.html
+      \endverb
+    \endentry
   \enddatalist
 \endrefsection
 \endinput

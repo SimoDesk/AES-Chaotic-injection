@@ -4,7 +4,6 @@
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
-\usepackage{graphicx}
 \usepackage{changepage}
 
 \usepackage{xcolor}
@@ -35,7 +34,7 @@
 \usepackage{amssymb}
 
 % Load package for including graphics such as images and figures
-\usepackage{graphicx}
+\usepackage[demo]{graphicx}
 
 % Load package for adjusting the width of text blocks
 \usepackage{fancyhdr}
@@ -833,6 +832,53 @@ By applying the bitwise XOR ($\oplus$) between the two column vectors, the resul
     \texttt{D5} 
 \end{bmatrix}
 \end{equation}
+
+\section{Galois/Counter Mode (GCM)}
+To apply a fixed-size block cipher such as AES to variable-length inputs, it is necessary to employ a specific \textit{mode of operation}. 
+A mode of operation dictates the exact architectural procedure by which the core encryption algorithm processes data streams larger than its native 128-bit block size.
+
+For instance, the most rudimentary mode of operation, \textit{Electronic Codebook (ECB)}, starts by evaluating whether the plaintext length is an exact multiple of 128 bits.
+If it is not, a padding scheme must be appended to the end of the message. The plaintext is then partitioned into 128-bit blocks, and each block is independently fed into the AES encryption algorithm. 
+Finally, the resulting encrypted blocks are sequentially concatenated to form the complete ciphertext.
+
+However, the ECB mode is notoriously vulnerable to cryptanalysis. Because the encryption of each block is entirely independent and deterministic, two identical plaintext blocks encrypted under the same key will invariably produce the exact same ciphertext blocks. 
+This fatal flaw fails to eliminate large-scale redundancies, preserving the structural patterns of the original data and rendering it cryptographically inadequate for secure communications. 
+
+To address these deterministic flaws, more advanced modes of operation were developed, such as the \textit{Counter Mode (CTR)}. 
+Unlike ECB, the CTR mode does not feed the plaintext directly into the cipher. Instead, it utilizes a 128-bit block comprising a unique \textit{nonce} (Number Used Once) concatenated with an internal counter.
+
+In this architecture, the input to the AES algorithm is the counter block itself. 
+The output of the AES encryption (a pseudo-random key stream) is then directly XORed with the current block of the plaintext to produce the ciphertext. 
+For each subsequent block of the message, the value of the counter is incremented by one, encrypted by the block cipher, and XORed with the next plaintext block.
+This operation is repeated until the entire message is processed.
+
+The utilization of the counter as the AES input, instead of the plaintext block itself, guarantees the CTR mode a complete lack of inter-block dependency, representing a major architectural advantage.
+
+By leveraging the possibility of pre-calculating the sequence of values that the counter will assume, the AES encryption operations can be highly parallelized, 
+thereby achieving significantly higher throughput compared to sequential modes.
+
+\subsubsection{The GCM Extension: Authenticated Encryption and Integrity}
+Building upon the architecture of the CTR mode, the \textit{Galois/Counter Mode (GCM)} expands the cryptographic framework by incorporating a robust authentication layer to ensure the integrity of the transmitted message. 
+To achieve this, GCM implements an \textit{Authenticated Encryption with Associated Data (AEAD)} scheme.
+
+In a typical network transmission, certain information must remain in plaintext to allow routers and gateways to correctly handle the packets. 
+This is defined as the \textit{Additional Authenticated Data (AAD)}. 
+The AAD typically comprises essential metadata such as network addresses, protocol versions, routing ports, and sequence numbers. 
+The inclusion of sequence numbers is particularly critical in SATCOM environments to prevent \textit{replay attacks}, a severe threat involving the malicious interception and subsequent retransmission of a previously valid message.
+
+While the AAD is transmitted unencrypted, its content, alongside the encrypted ciphertext, is mathematically processed by the algorithm to generate a unique 128-bit \textit{authentication tag}. 
+
+During transmission, this authentication tag is appended to the message payload (which consists of the AAD and the ciphertext). 
+Upon reception, the receiver replicates the exact same cryptographic process using the shared secret key, the received AAD, and the ciphertext to produce a new, localized authentication tag. 
+If this locally generated tag perfectly matches the received tag, the receiver can safely conclude that neither the ciphertext nor the plaintext metadata was altered, corrupted, or tampered with during transmission.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth]{images/GCM_encryption.png}
+    \caption[AES-GCM Authentication encryption scheme]{AES-GCM Authentication encryption scheme with authentication tag generation process \cite{imageGCM}.}
+    \label{fig:gcm_encryption_arch}
+\end{figure}
+
 
 
 

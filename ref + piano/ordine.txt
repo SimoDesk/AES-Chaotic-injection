@@ -64,6 +64,13 @@ Utility per il cluster:
 	- scopo
 	- struttura tesi
 
+######################################################################
+
+	- CAMBIARE ELENCO PUNTATO INIZIALE AAAAAAAAAAAAAAAAAAAAAAAAAAH
+	- aggiungere in 3.2 delle citazioni per il ECB e il CTR
+
+######################################################################
+
 - background e stato dell'arte
 	- stato dell'arte delle comunicazioni satellitari: vulnerabilità dovute al nuovo spazio
 		- machine learning come minaccia sempre più pressante

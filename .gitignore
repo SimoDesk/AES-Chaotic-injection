@@ -37,3 +37,6 @@ __pycache__/
 # Ignore the order file in the piano directory, but track all other files.
 !ordine.txt
 
+# Ignore the images used for the thesis
+!thesis/images/*.png
+
