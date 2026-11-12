@@ -939,7 +939,7 @@ void AES_CHAOS_ECB_encrypt(struct AES_CHAOS_ctx* ctx, uint8_t* buf)
 }
 
 // Galois multiplication in GF(2^128) for GCM mode
-void AES_CHAOS_galoisMoltiplication(const uint8_t *X, const uint8_t *Y, uint8_t *result) {
+void AES_CHAOS_galoisMultiplication(const uint8_t *X, const uint8_t *Y, uint8_t *result) {
   uint8_t Z[AES_CHAOS_BLOCKLEN] = {0};
 
   uint8_t V[AES_CHAOS_BLOCKLEN];
@@ -1039,7 +1039,7 @@ void AES_CHAOS_GCM_authenticated_encrypt_buffer(struct AES_CHAOS_GCM_ctx* ctx, s
         if (i + j < iv_len)
           J[j] ^= iv[i + j];
       }
-      AES_CHAOS_galoisMoltiplication(J, H, J); 
+      AES_CHAOS_galoisMultiplication(J, H, J); 
     }    
 
     uint8_t iv_len_block[AES_CHAOS_BLOCKLEN] = {0};
@@ -1057,7 +1057,7 @@ void AES_CHAOS_GCM_authenticated_encrypt_buffer(struct AES_CHAOS_GCM_ctx* ctx, s
     for (int j = 0; j < AES_CHAOS_BLOCKLEN; j++) {
       J[j] ^= iv_len_block[j];
     }
-    AES_CHAOS_galoisMoltiplication(J, H, J);
+    AES_CHAOS_galoisMultiplication(J, H, J);
   }
 
   uint8_t Jinc[AES_CHAOS_BLOCKLEN];
@@ -1077,7 +1077,7 @@ void AES_CHAOS_GCM_authenticated_encrypt_buffer(struct AES_CHAOS_GCM_ctx* ctx, s
       if (i + j < aad_length)
         S[j] ^= aad[i + j];
     }
-    AES_CHAOS_galoisMoltiplication(S, H, S);
+    AES_CHAOS_galoisMultiplication(S, H, S);
   }
 
   for (size_t i = 0; i < length; i += AES_CHAOS_BLOCKLEN) {
@@ -1085,7 +1085,7 @@ void AES_CHAOS_GCM_authenticated_encrypt_buffer(struct AES_CHAOS_GCM_ctx* ctx, s
       if (i + j < length)
         S[j] ^= res->buf[i + j];
     }
-    AES_CHAOS_galoisMoltiplication(S, H, S);
+    AES_CHAOS_galoisMultiplication(S, H, S);
   }
 
   uint8_t len_block[AES_CHAOS_BLOCKLEN] = {0};
@@ -1112,7 +1112,7 @@ void AES_CHAOS_GCM_authenticated_encrypt_buffer(struct AES_CHAOS_GCM_ctx* ctx, s
   for (int j = 0; j < AES_CHAOS_BLOCKLEN; j++) {
     S[j] ^= len_block[j];
   }
-  AES_CHAOS_galoisMoltiplication(S, H, S);
+  AES_CHAOS_galoisMultiplication(S, H, S);
 
   uint8_t Jtag[AES_CHAOS_BLOCKLEN];
   memcpy(Jtag, J, AES_CHAOS_BLOCKLEN);
@@ -1143,7 +1143,7 @@ int AES_CHAOS_GCM_authenticated_decrypt_buffer(struct AES_CHAOS_GCM_ctx* ctx, st
         if (i + j < iv_len)
           J[j] ^= iv[i + j];
       }
-      AES_CHAOS_galoisMoltiplication(J, H, J); 
+      AES_CHAOS_galoisMultiplication(J, H, J); 
     }    
 
     uint8_t iv_len_block[AES_CHAOS_BLOCKLEN] = {0};
@@ -1161,7 +1161,7 @@ int AES_CHAOS_GCM_authenticated_decrypt_buffer(struct AES_CHAOS_GCM_ctx* ctx, st
     for (int j = 0; j < AES_CHAOS_BLOCKLEN; j++) {
       J[j] ^= iv_len_block[j];
     }
-    AES_CHAOS_galoisMoltiplication(J, H, J);
+    AES_CHAOS_galoisMultiplication(J, H, J);
   }
 
   uint8_t S[AES_CHAOS_BLOCKLEN] = {0};
@@ -1171,7 +1171,7 @@ int AES_CHAOS_GCM_authenticated_decrypt_buffer(struct AES_CHAOS_GCM_ctx* ctx, st
       if (i + j < aad_length)
         S[j] ^= aad[i + j];
     }
-    AES_CHAOS_galoisMoltiplication(S, H, S);
+    AES_CHAOS_galoisMultiplication(S, H, S);
   }
 
   for (size_t i = 0; i < length; i += AES_CHAOS_BLOCKLEN) {
@@ -1179,7 +1179,7 @@ int AES_CHAOS_GCM_authenticated_decrypt_buffer(struct AES_CHAOS_GCM_ctx* ctx, st
       if (i + j < length)
         S[j] ^= res->buf[i + j];
     }
-    AES_CHAOS_galoisMoltiplication(S, H, S);
+    AES_CHAOS_galoisMultiplication(S, H, S);
   }
 
   uint8_t len_block[AES_CHAOS_BLOCKLEN] = {0};
@@ -1198,7 +1198,7 @@ int AES_CHAOS_GCM_authenticated_decrypt_buffer(struct AES_CHAOS_GCM_ctx* ctx, st
   for (int j = 0; j < AES_CHAOS_BLOCKLEN; j++) {
     S[j] ^= len_block[j];
   }
-  AES_CHAOS_galoisMoltiplication(S, H, S);
+  AES_CHAOS_galoisMultiplication(S, H, S);
 
   uint8_t Jinc[AES_CHAOS_BLOCKLEN];
   memcpy(Jinc, J, AES_CHAOS_BLOCKLEN);

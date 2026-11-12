@@ -66,8 +66,9 @@ Utility per il cluster:
 
 ######################################################################
 
-	- CAMBIARE ELENCO PUNTATO INIZIALE AAAAAAAAAAAAAAAAAAAAAAAAAAH
+	- CAMBIARE ELENCO PUNTATO INIZIALE
 	- aggiungere in 3.2 delle citazioni per il ECB e il CTR
+	- Mettere la mia repo nell'introduzione
 
 ######################################################################
 
@@ -103,8 +104,8 @@ Utility per il cluster:
 		- simulazione AWGN (Additive White Gaussian Noise): Mostrare funzionamento di GCM e corretto fallimento (per esempio per bit flip dovuti alla comunicazione spaziale)
 
 - AES con iniezione caotica nella s-box improntato al machine unlearning
-	- cos'è il machine unlearning in questo contesto: rompere la corrispondenza deterministica ricercata dai modelli ML
 	- cosa aggiunge l'iniezione caotica e dove agisce (formula di alterazione della S-box con spiegazione dei ruoli di alfa, beta, gamma e delta)
+	- cos'è il machine unlearning in questo contesto: rompere la corrispondenza deterministica ricercata dai modelli ML
 	- mappe caotiche studiate (per ogni mappa i parametri ottimali)
 		- discrete
 			- monodimensionali

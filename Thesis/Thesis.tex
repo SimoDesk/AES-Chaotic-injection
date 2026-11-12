@@ -33,8 +33,14 @@
 \usepackage{amsfonts}
 \usepackage{amssymb}
 
+% Load package for small captions in figures and tables
+\usepackage[font=small]{caption}
+
+% Invisible boundary for figures and tables to prevent them from floating too far from their reference point
+\usepackage{placeins}
+
 % Load package for including graphics such as images and figures
-\usepackage[demo]{graphicx}
+\usepackage{graphicx}
 
 % Load package for adjusting the width of text blocks
 \usepackage{fancyhdr}
@@ -45,7 +51,75 @@
   {\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{15pt}{\Huge}
 \titlespacing*{\chapter}{0pt}{10pt}{25pt}
 
+% Load package for creating colored boxes and listings
+\usepackage[most]{tcolorbox}
+\usepackage{listings}
+\usepackage{xcolor}
 
+% Define custom colors for code to use for code snippets
+\definecolor{codebg}{RGB}{250,250,252}
+\definecolor{codeframe}{RGB}{218,224,233}
+\definecolor{codetitlebg}{RGB}{238,242,246}
+\definecolor{codetitle}{RGB}{33,37,41}
+\definecolor{codeblue}{RGB}{0,80,180}
+\definecolor{codegreen}{RGB}{34,139,34}
+\definecolor{codegray}{RGB}{120,120,120}
+
+% C code listing environment with custom styling
+\newtcblisting[auto counter, number within=chapter]{clisting}[2][]{
+    listing only,
+    arc=2mm,
+    boxrule=0.7pt,
+    top=0.8pt,                 % Riduci il margine interno sopra il codice
+    bottom=0.8pt,              % Riduci il margine interno sotto il codice
+    colback=codebg,
+    colframe=codeframe,
+    title=\textbf{Listing \thetcbcounter:} #2,
+    coltitle=codetitle,
+    attach boxed title to top left={xshift=10pt, yshift=-\tcboxedtitleheight/2},
+    boxed title style={
+        colback=codetitlebg,
+        colframe=codeframe,
+        boxrule=0.7pt,
+        arc=1.5mm
+    },
+    listing options={
+        language=C,
+        basicstyle=\ttfamily\footnotesize,
+        keywordstyle=\color{codeblue}\bfseries,
+        commentstyle=\color{codegreen}\itshape,
+        numbers=left,
+        numberstyle=\tiny\color{codegray},
+        stepnumber=1,
+        numbersep=8pt,
+        showstringspaces=false,
+        tabsize=4,
+        breaklines=true,
+        columns=flexible
+    },
+    #1
+}
+
+% Terminal-like code listing environment with custom styling
+\newtcblisting{lightterminal}[1][]{
+    listing only,
+    arc=1.5mm,
+    boxrule=0.6pt,
+    top=3pt,
+    bottom=3pt,
+    left=6pt,
+    right=6pt,
+    colback=codebg,
+    colframe=codeframe,
+    listing options={
+        basicstyle=\ttfamily\scriptsize\color{black},
+        breaklines=true,
+        columns=fullflexible,
+        keepspaces=true,
+        numbers=none
+    },
+    #1
+}
 
 % Configuration for the page header in a chapter page
 \pagestyle{fancy}
@@ -71,7 +145,6 @@
 
 % Allows links for the bibliography
 \usepackage{xcolor}
-\usepackage{hyperref}
 \hypersetup{
     colorlinks=true,       
     linkcolor=black,       
@@ -518,15 +591,16 @@ To comprehend the logic underlying the Key Expansion algorithm, the primary vari
 
 The procedure is detailed in the following pseudocode (Algorithm \ref{alg:key_expansion}):
 \begin{algorithm}[htbp]
+\caption{Key Expansion Algorithm for AES-256}
 \label{alg:key_expansion}
 \begin{algorithmic}[1]
     \Procedure{KeyExpansion}{$key$}
         \State $i \gets 0$
         \While{$i \le N_k - 1$}
-            \State $w[i] \gets key[4 \times i,\; \dots,\; 4 \times i + 3]$
+            \State $w[i] \gets key[4 \cdot i,\; \dots,\; 4 \cdot i + 3]$
             \State $i \gets i + 1$
         \EndWhile \Comment{When the loop concludes, $i = N_k$.}
-        \While{$i \le (4 \times N_r + 3$)}
+        \While{$i \le (4 \cdot N_r + 3$)}
             \State $temp \gets w[i - 1]$
             \If{$i \bmod N_k = 0$}
                 \State $temp \gets \textsc{SubWord}(\textsc{RotWord}(temp)) \oplus Rcon[i / N_k]$
@@ -544,7 +618,7 @@ The procedure is detailed in the following pseudocode (Algorithm \ref{alg:key_ex
 In the initial phase \texttt{(lines 3--6)}, the original secret key is sequentially copied into the first $N_k$ words of the expanded key array $w$. 
 In the specific case of AES-256 ($N_k = 8$), the array elements $w[0]$ through $w[7]$ will hold the unmodified original key.
 
-The main loop \texttt{(lines 7--17)} iterates until the key schedule is completely populated, generating a total of $4 \times (N_r + 1)$ words (i.e., 60 words for AES-256). 
+The main loop \texttt{(lines 7--17)} iterates until the key schedule is completely populated, generating a total of $4 \cdot (N_r + 1)$ words (i.e., 60 words for AES-256). 
 For each iteration, the word preceding the current index is copied into the \texttt{temp} variable \texttt{(line 8)}. 
 Depending on the index $i$, specific non-linear operations may be applied to \texttt{temp} to guarantee cryptographic diffusion and security.
 
@@ -566,7 +640,7 @@ An input block can be represented as an array of 16 bytes:
 \mathbf{in} = \begin{bmatrix} in_0 & in_1 & in_2 & \dots & in_{15} \end{bmatrix}^T
 \]
 
-During the execution of the algorithm, this 16-byte input is mapped into a $4 \times 4$ matrix of bytes, known as the \textit{State matrix} ($S$). 
+During the execution of the algorithm, this 16-byte input is mapped into a $4 \cdot 4$ matrix of bytes, known as the \textit{State matrix} ($S$). 
 As defined by the standard, the State matrix is populated column by column:
 \[
 S = \begin{bmatrix}
@@ -597,7 +671,7 @@ Consequently, the 128-bit round keys derived during the Key Expansion phase are 
 \subsection{SubBytes}
 The \textsc{SubBytes} operation is the only strictly non-linear transformation within the AES algorithm. 
 It consists of a byte-by-byte substitution based on a fixed Look-Up Table (LUT) called the \textit{S-Box}. 
-The S-Box is a $16 \times 16$ matrix containing every possible byte value, ranging from \texttt{0x00} to \texttt{0xFF}.
+The S-Box is a $16 \cdot 16$ matrix containing every possible byte value, ranging from \texttt{0x00} to \texttt{0xFF}.
 
 Both the columns and the rows are labeled in hexadecimal format from \texttt{0} to \texttt{F}. 
 To apply the substitution, each byte of the State matrix is treated as a two-digit hexadecimal value: 
@@ -614,14 +688,14 @@ For instance, considering the binary input $X = 01101100_2$, its hexadecimal rep
 By intersecting row \texttt{6} and column \texttt{C} in the S-Box, the output is \texttt{0x50}. 
 Therefore, $\textsc{SubBytes}(\texttt{0x6C}) = \texttt{0x50}$.
 
-\subsubsection{The Construction of the S-Box}
+\paragraph{The Construction of the S-Box}
 The design of the S-Box stems from the fundamental cryptographic necessity to introduce strong non-linearity (confusion) into the cipher, 
 rendering it highly resistant to linear and differential cryptanalysis. 
 
 To achieve this, the S-Box is constructed through two mathematical steps. First, each element is mapped to its multiplicative inverse in the finite Galois Field $\mathrm{GF}(2^8)$. 
 The multiplicative inverse $x^{-1}$ of a value $x$ in this finite field is defined as the value that, when multiplied by $x$, yields 1:
 \begin{equation}
-    x \times x^{-1} \equiv 1 \pmod{x^8 + x^4 + x^3 + x + 1}
+    x \cdot x^{-1} \equiv 1 \pmod{x^8 + x^4 + x^3 + x + 1}
     \label{eq:aes_field_inverse}
 \end{equation}
 The irreducible polynomial $x^8 + x^4 + x^3 + x + 1$ corresponds to the binary sequence $100011011_2$. 
@@ -630,11 +704,11 @@ By definition, the inverse of \texttt{0x00} is mapped to itself.
 
 Secondly, to break algebraic symmetries and prevent structural attacks, each multiplicative inverse $b$ undergoes a specific affine transformation over $\mathrm{GF(2^8)}$: 
 \[
-b' = (A \times b) \oplus c
+b' = (A \cdot b) \oplus c
 \]
-where $A$ is a fixed $8 \times 8$ bit matrix, and $c$ is the constant column vector $[1,1,0,0,0,1,1,0]^T$ (corresponding to \texttt{0x63}).
+where $A$ is a fixed $8 \cdot 8$ bit matrix, and $c$ is the constant column vector $[1,1,0,0,0,1,1,0]^T$ (corresponding to \texttt{0x63}).
 
-\subsubsection{Vulnerability of the Software LUT Implementation}
+\paragraph{Vulnerability of the Software LUT Implementation}
 Because dynamically calculating the multiplicative inverse in $\mathrm{GF}(2^8)$ during every round would introduce an enormous computational overhead, 
 standard software implementations, such as the \texttt{tiny-aes-c} library or those deployed on resource-constrained IoT and edge devices, 
 rely entirely on precalculating these transformations and storing them in a static S-Box LUT.
@@ -654,7 +728,7 @@ It adheres to the following mathematical formulation:
     \label{eq:shift_rows}
 \end{equation}
 
-Following the application of \textsc{ShiftRows}, the resulting $4 \times 4$ matrix is altered such that the first row remains completely untouched. 
+Following the application of \textsc{ShiftRows}, the resulting $4 \cdot 4$ matrix is altered such that the first row remains completely untouched. 
 The second, third, and fourth rows undergo a cyclic left shift of one, two, and three byte positions, respectively. 
 
 \[
@@ -718,7 +792,7 @@ By expanding the matrix multiplication, where $\bullet$ denotes multiplication i
 \label{eq:mix_columns_bytes}
 \end{equation}
 
-\subsubsection{Software Implementation of GF($2^8$) Multiplication: xtime macro}
+\paragraph{Software Implementation of GF($2^8$) Multiplication: xtime macro}
 From a practical engineering perspective, performing heavy polynomial multiplications dynamically during every round would be computationally prohibitive for embedded systems. 
 However, the matrix coefficients were deliberately selected by the AES designers to be exceptionally small (\texttt{01}, \texttt{02}, and \texttt{03}) to allow for radical software optimization. 
 
@@ -734,7 +808,7 @@ where the coefficients $a_7, \dots, a_0$ are individual bits, with $a_7$ being t
 The hexadecimal value \texttt{0x02} corresponds to the binary string \texttt{00000010}, which is equivalent to the polynomial $x$. 
 Therefore, multiplying $A(x)$ by \texttt{0x02} yields:
 \[
-A(x) \times x = a_7x^8 + a_6x^7 + a_5x^6 + a_4x^5 + a_3x^4 + a_2x^3 + a_1x^2 + a_0x
+A(x) \cdot x = a_7x^8 + a_6x^7 + a_5x^6 + a_4x^5 + a_3x^4 + a_2x^3 + a_1x^2 + a_0x
 \]
 In computer architecture, multiplying by $x$ corresponds exactly to a logical bitwise left shift of one position. 
 However, to ensure the result remains within the finite field $\mathrm{GF}(2^8)$, the maximum degree of the resulting polynomial must not exceed $x^7$. 
@@ -747,16 +821,16 @@ This constraint presents two possible cases:
     To bring the result back into $\mathrm{GF}(2^8)$, it must be divided by the AES irreducible polynomial ($x^8 + x^4 + x^3 + x + 1$), and replaced by the remainder of this division. 
     In binary arithmetic over $\mathrm{GF}(2)$, this modulo reduction corresponds precisely to an XOR operation with the irreducible polynomial:
     \[
-    (A(x) \times x) \oplus (x^8 + x^4 + x^3 + x + 1)
+    (A(x) \cdot x) \oplus (x^8 + x^4 + x^3 + x + 1)
     \]
 \end{itemize}
 
 Building on this logic, multiplication by \texttt{03} is effortlessly computed. 
-Since \texttt{0x03} corresponds to the binary \texttt{00000011} (the polynomial $x + 1$), the multiplication $A(x) \times \texttt{0x03}$ expands to:
+Since \texttt{0x03} corresponds to the binary \texttt{00000011} (the polynomial $x + 1$), the multiplication $A(x) \cdot \texttt{0x03}$ expands to:
 \[
-A(x) \times (x + 1) = (A(x) \times x) + (A(x) \times 1) = (A(x) \times x) + A(x) 
+A(x) \cdot (x + 1) = (A(x) \cdot x) + (A(x) \cdot 1) = (A(x) \cdot x) + A(x) 
 \]
-The first term, $(A(x) \times x)$, is exactly the \texttt{02} multiplication (\texttt{xtime}) just demonstrated. 
+The first term, $(A(x) \cdot x)$, is exactly the \texttt{02} multiplication (\texttt{xtime}) just demonstrated. 
 Meanwhile, polynomial addition in $\mathrm{GF}(2^8)$ is mathematically equivalent to a simple bitwise XOR. Thus, the operation seamlessly translates to $(\texttt{02} \bullet A) \oplus A$.
 
 This architectural design guarantees that the \textsc{MixColumns} transformation remains exceptionally fast and highly efficient, 
@@ -772,7 +846,7 @@ For a given column $c$ (where $0 \le c < 4$) and a specific round, the transform
 = 
 \begin{bmatrix} s_{0,c} \\ s_{1,c} \\ s_{2,c} \\ s_{3,c} \end{bmatrix} 
 \oplus 
-\begin{bmatrix} w_{4 \times \text{round} + c} \end{bmatrix}
+\begin{bmatrix} w_{4 \cdot \text{round} + c} \end{bmatrix}
 \]
 
 Consider, for instance, the application of the \textsc{AddRoundKey} transformation to the first column of the state ($c = 0$) during the first round. 
@@ -792,7 +866,7 @@ Let the initial state column and the corresponding word from the expanded key ar
     \texttt{28} 
 \end{bmatrix}
 \qquad \text{and} \qquad
-w_{4 \times 1 + 0} = w_4 = 
+w_{4 \cdot 1 + 0} = w_4 = 
 \begin{bmatrix} 
     \texttt{D6} \\ 
     \texttt{AA} \\ 
@@ -857,7 +931,11 @@ The utilization of the counter as the AES input, instead of the plaintext block 
 By leveraging the possibility of pre-calculating the sequence of values that the counter will assume, the AES encryption operations can be highly parallelized, 
 thereby achieving significantly higher throughput compared to sequential modes.
 
-\subsubsection{The GCM Extension: Authenticated Encryption and Integrity}
+Although the baseline \texttt{tiny-aes-c} library~\cite{tinyAES} does not natively provide a GCM implementation, utilizing this specific mode is mandatory to accurately replicate the cryptographic environment characteristic of modern SATCOM systems. 
+Consequently, as a core experimental contribution of this study, the GCM architecture was custom-implemented on top of the existing block cipher. 
+This development was executed by strictly adhering to the official guidelines and mathematical specifications defined in NIST SP 800-38D \cite{GCM}.
+
+\paragraph{The GCM Extension: Authenticated Encryption and Integrity}
 Building upon the architecture of the CTR mode, the \textit{Galois/Counter Mode (GCM)} expands the cryptographic framework by incorporating a robust authentication layer to ensure the integrity of the transmitted message. 
 To achieve this, GCM implements an \textit{Authenticated Encryption with Associated Data (AEAD)} scheme.
 
@@ -872,15 +950,301 @@ During transmission, this authentication tag is appended to the message payload 
 Upon reception, the receiver replicates the exact same cryptographic process using the shared secret key, the received AAD, and the ciphertext to produce a new, localized authentication tag. 
 If this locally generated tag perfectly matches the received tag, the receiver can safely conclude that neither the ciphertext nor the plaintext metadata was altered, corrupted, or tampered with during transmission.
 
+
+\subsection{Key and IV Requirements}
+While the standard CTR mode utilizes a unique nonce as the prefix for its counter, the GCM architecture delegates this critical role to the \textit{Initialization Vector (IV)}. 
+To guarantee the designed cryptographic security bounds, strict regulatory requirements regarding the selection and management of both the key and the IV must be satisfied.
+
+\paragraph{Uniqueness and Forgery Attacks.}
+The most critical constraint of AES-GCM is the \textit{uniqueness requirement}. The standard dictates that the probability of the authenticated encryption function being invoked with the same Key/IV pair on two distinct plaintexts must be strictly less than $2^{-32}$. 
+
+The consequences of violating this requirement by reusing an IV with the same key are catastrophic. By construction, the GHASH authentication tag is derived via polynomial evaluations over $\mathrm{GF}(2^8)$ involving the ciphertext and the IV. 
+If an IV is repeated, an attacker can mathematically recover the internal authentication subkey. This exposes the system to \textit{forgery attacks}, allowing the attacker to produce fake messages with valid authentication tags, completely compromising the integrity of the channel. 
+In practice, safeguarding IV uniqueness is considered as vital as maintaining the secrecy of the master key itself.
+
+\paragraph{Key Freshness and Establishment.}
+In addition to the IV, key management plays a pivotal role. The principles of \textit{key uniqueness} and \textit{key establishment} mandate that for each new communication session, the generated symmetric key must be "fresh" (cryptographically unpredictable). 
+Furthermore, the communication channel utilized to distribute this master key (often asymmetric or out-of-band) must be highly secure to prevent key theft prior to the AES-GCM execution.
+
+\paragraph{IV Construction Methods.}
+Because of the vital role the IV plays, NIST SP 800-38D\cite{GCM} outlines strict construction rules, heavily recommending a standard IV length of 96 bits for optimal performance and security. 
+Depending on the system architecture, two main generation processes are defined:
+
+\begin{itemize}
+    \item \textbf{Deterministic Construction:} This method is mandatory for IVs strictly shorter than 96 bits, but is widely used for 96-bit IVs as well. 
+    It stipulates that the IV is divided into two sections: a \textit{fixed field} and an \textit{invocation field}. 
+    The fixed field uniquely identifies the device or the specific instance of the encryption algorithm (e.g., a satellite ID), whereas the invocation field acts as a sequential counter for the data sets. 
+    To maintain uniqueness, two devices sharing the same key must never share the same fixed field, and the invocation field must increment deterministicly.
+    
+    \item \textbf{RBG-based Construction:} For IVs of 96 bits or longer, a \textit{Random Bit Generator (RBG)} construction can be employed. 
+    This format consists of a \textit{random field} and an optional \textit{free field}. 
+    To satisfy the $2^{-32}$ collision probability threshold, the random field must have a minimum length of 96 bits and be generated by a cryptographically strong RBG. 
+    The free field has no structural requirements and can contain arbitrary device metadata, though the standard suggests leaving it empty to maximize the entropy of a fully randomized IV.
+\end{itemize}
+
+\subsection{Multiplication in \texorpdfstring{$\mathrm{GF}(2^{128})$}{GF(2\textasciicircum 128)}}
+As previously introduced in the \textsc{MixColumns} analysis, calculations within Galois Finite Fields are utilized to guarantee mathematical closure and strong diffusion, 
+ensuring that outputs remain strictly within a defined range while maintaining the influence of every input bit. 
+Correspondingly, one of the primary mathematical operations underlying the GCM authenticated encryption scheme is Galois multiplication applied over the extended finite field $\mathrm{GF}(2^{128})$.
+
+Within $\mathrm{GF}(2^{128})$, 128-bit blocks are treated as polynomials with a maximum degree of 127. 
+Each bit of the data block represents the coefficient of the corresponding polynomial term, ranging from $x^0$ to $x^{127}$.
+
+\begin{algorithm}[htbp]
+\caption{Multiplication in $\mathrm{GF}(2^{128})$: $X \bullet Y$}
+\label{alg:gf128_mult}
+\begin{algorithmic}[1]
+\Procedure{galoisMultiplication}{$X, Y$}
+    \State $R \gets 11100001_2 \,\|\, 0^{120}$
+    \State $Z \gets 0^{128}$
+    \State $V \gets Y$
+    \For{$i \gets 0$ \textbf{to} $127$}
+        \If{$x_i = 1$} \Comment{$x_i$ is the $i$-th bit of block $X$}
+            \State $Z \gets Z \oplus V$
+        \EndIf
+        \If{$\text{LSB}_1(V) = 0$}
+            \State $V \gets (V \gg 1$)
+        \Else
+            \State $V \gets (V \gg 1) \oplus R$
+        \EndIf
+    \EndFor
+    \State \Return $Z$
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+The algorithmic translation of this multiplication logic begins with the initialization of three primary variables \texttt{(lines 2--4)}:
+\begin{itemize}
+    \item $R$: Represents the reduction polynomial block, which is used to bring the result back into the finite field whenever a polynomial multiplication exceeds the maximum degree constraint. 
+    The formal irreducible polynomial chosen by the GCM designers is $f(x) = x^{128} + x^7 + x^2 + x + 1$. 
+    During modulo reduction in $\mathrm{GF}(2^{128})$, the $x^{128}$ term is mathematically substituted by $x^7 + x^2 + x + 1$. 
+    Following the NIST SP 800-38D standard~\cite{GCM}, which adopts a adopts a \textit{bit-reflected} convention, operating analogously to a little-endian scheme, where the leftmost bit is interpreted as the $x^0$ coefficient, this reduction polynomial is mapped to the binary string $11100001_2 \,\|\, 0^{120}$ (equivalent to the hexadecimal block \texttt{0xE100...00}).
+    
+    \item $Z$: The accumulator variable, initialized as an array of 128 zeros ($0^{128}$).
+    
+    \item $V$: The multiplicand variable, initialized as a direct copy of the input block $Y$.
+\end{itemize}
+
+To calculate the product $X \bullet Y$ in $\mathrm{GF}(2^{128})$, the algorithm employs a process known as \textit{Shift-and-Add}, which mathematically mirrors classical column-wise multiplication. 
+
+Considering that the 128-bit block $X$ is treated as a polynomial with a maximum degree of 127:
+\[
+X = x_0 + x_1x + x_2x^2 + \dots + x_{127}x^{127}
+\]
+by applying the distributive property, the multiplication between $X$ and $Y$ can be expanded as follows (where modulo 2 addition is logically equivalent to the bitwise XOR operator $\oplus$):
+\[
+X \bullet Y = (x_0 \cdot Y) \oplus (x_1 \cdot Y \cdot x) \oplus (x_2 \cdot Y \cdot x^2) \oplus \dots \oplus (x_{127} \cdot Y \cdot x^{127})
+\]
+
+Within the algorithm's pseudocode, this mathematical expansion is implemented inside the main loop \texttt{(lines 5--14)}. 
+The execution of each iteration can be broken down into two distinct operational phases: the accumulation phase and the shift-and-reduce phase.
+
+\paragraph{Phase 1: Accumulation (Lines 6--8)}
+During the $i$-th iteration, the algorithm inspects the state of $x_i$ (the $i$-th bit of $X$) to determine its contribution to the final product:
+\begin{itemize}
+    \item \textbf{If $x_i = 1$:} The mathematical term evaluates to $Y \cdot x^i$. Consequently, the current value of the multiplicand $V$ (which currently holds the value $Y \cdot x^i$) is XORed into the accumulator $Z$ \texttt{(line 7)}.
+    \item \textbf{If $x_i = 0$:} The term evaluates to $0$. Since zero is the identity element for the XOR operation, it acts as a null term, and the accumulator $Z$ remains unchanged.
+\end{itemize}
+
+\paragraph{Phase 2: Shift and Reduce (Lines 9--13)}
+In the final phase of the iteration, the state of the multiplicand $V$ must be updated for the next loop by multiplying it by $x$ (effectively elevating its polynomial degree). 
+Crucially, because the NIST SP 800-38D standard mandates a \textit{bit-reflected} (little-endian) convention, elevating the polynomial degree corresponds to a \textbf{logical right shift} ($\gg 1$) at the architectural level, rather than a traditional left shift.
+
+Moreover, to guarantee that the temporary result remains strictly within the $\mathrm{GF}(2^{128})$ boundaries, a boundary check is executed on the highest degree coefficient prior to the shift \texttt{(line 9)}. 
+Due to the bit-reflected nature of the data, the highest degree coefficient ($x^{127}$) is physically located at the Least Significant Bit ($\text{LSB}_1$) of the array. 
+If this bit is 0, a simple right shift is sufficient. However, if the LSB is 1, the subsequent right shift would cause an overflow outside the finite field. 
+To mathematically correct this, the shifted result is immediately XORed with the irreducible polynomial $R$ \texttt{(line 12)}, seamlessly reducing the value back into the valid finite field space.
+
+
+\subsection{\texorpdfstring{$\text{GHASH}$}{GHASH} Function}
+The generation of the authentication tag is the theoretical core of the GCM architecture, and the $\text{GHASH}$ function serves as the mathematical engine utilized by the main encryption algorithm to achieve this integrity guarantee.
+
+Despite its name, $\text{GHASH}$ is not a traditional unkeyed cryptographic hash function (such as SHA-256), but rather a \textit{universal hash function}. 
+It is specifically designed to compute a 128-bit message authentication code (MAC) by evaluating a polynomial over $\mathrm{GF}(2^{128})$. 
+When combined with the strict IV uniqueness requirements, it provides an extremely low probability of differential output collisions. 
+
+The cornerstone of the $\text{GHASH}$ design is the utilization of the \textit{hash subkey} $H$. 
+This subkey is derived by applying the block cipher to a 128-bit block of zeros under the master key, meaning $H = \text{AES}_K(0^{128})$. 
+Ultimately, the core operation executed within this function is the \textsc{galoisMultiplication} previously defined, which processes the data blocks iteratively.
+
+\begin{algorithm}[htbp]
+\caption{$\text{GHASH}_H$ Function}
+\label{alg:ghash}
+\begin{algorithmic}[1]
+\Procedure{$\text{GHASH}_H$}{$X$}
+    \State $m \gets \text{len}(X) / 128$
+    \State Let $X_1, X_2, \dots, X_m$ denote the blocks such that $X = X_1 \,\|\, X_2 \,\|\, \dots \,\|\, X_m$
+    \State $Y \gets 0^{128}$
+    \For{$i \gets 1$ \textbf{to} $m$}
+        \State $Y \gets \textsc{galoisMultiplication}(Y \oplus X_i, H)$ \Comment{Multiplication in $\mathrm{GF}(2^{128})$}
+    \EndFor
+    \State \Return $Y$
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+As detailed in Algorithm \ref{alg:ghash}, the variable $m$ denotes the total number of 128-bit blocks comprising the input $X$ \texttt{(line 2)}. 
+The sequence $X_1, X_2, \dots, X_m$ represents each sequential 128-bit section of the input \texttt{(line 3)}, 
+followed by the initialization of $Y$, a zero-block utilized as the accumulator variable \texttt{(line 4)}. 
+Finally, for each $i$-th block $X_i$, the accumulator $Y$ is mathematically updated with the output of the Galois multiplication between the hash subkey $H$ and the XORed state of $Y \oplus X_i$.
+
+\paragraph{Embedded C Implementation and Memory Optimization.}
+In space-grade embedded systems, dynamically allocating memory (e.g., utilizing the heap via \texttt{malloc}) for variable-length inputs is strictly avoided to prevent memory fragmentation and ensure deterministic execution. 
+Conversely, copying massive payloads directly onto the stack would immediately lead to stack overflow faults.
+
+To address these severe architectural constraints within the \texttt{tiny-aes-c} extension \cite{tinyAES}, the theoretical $\text{GHASH}$ algorithm was not implemented as a standalone function. 
+Instead, the mathematical operations are executed \textit{in-place} inside the main authenticated encryption and decryption routines. 
+As shown in the code snippet below, the implementation iteratively processes the Additional Authenticated Data (AAD) and the ciphertext in 16-byte chunks, XORing them directly into the accumulator \texttt{S} and immediately calling the \texttt{galoisMultiplication} function. 
+
+\begin{clisting}[label={lst:ghash_inline}]{In-place GHASH memory optimization loop.}
+// Processing AAD in blocks of 16 bytes without dynamic memory allocation
+for (size_t i = 0; i < aad_length; i += AES_BLOCKLEN) {
+    for (size_t j = 0; j < AES_BLOCKLEN; j++) {
+        if (i + j < aad_length) {
+            S[j] ^= aad[i + j];
+        }
+    }
+    galoisMultiplication(S, H, S);
+}
+\end{clisting}
+
+This engineering approach entirely circumvents the need to duplicate large data structures in memory, rigorously adapting the high-level NIST specifications to the harsh constraints of lightweight satellite microcontrollers.
+
+\subsection{Authenticated Encryption and Decryption Algorithms}
+Ultimately, all the cryptographic primitives and modes of operation detailed in this chapter converge into the final Authenticated Encryption with Associated Data (AEAD) algorithms. 
+These procedures orchestrate the encryption process to produce a secure ciphertext accompanied by an authentication tag, and conversely, manage the decryption process while cryptographically verifying the message's authenticity through tag comparison.
+
+\paragraph{Authenticated Encryption Algorithm}
+The encryption algorithm operates on the following set of input variables:
+\begin{itemize}
+    \item $K$: The secret 256-bit \textit{master key}.
+    \item $IV$: The variable-length \textit{Initialization Vector}, chosen in accordance with official NIST specifications \cite[p. 18--21]{GCM}. (In modern SATCOM standards, this is conventionally fixed at 96 bits / 12 bytes).
+    \item $P$: The variable-length input \textit{plaintext}.
+    \item $A$: The \textit{Additional Authenticated Data (AAD)}.
+    \item $t$: An integer value determining the maximum bit-length of the generated authentication tag.
+\end{itemize}
+
+Moreover, a set of auxiliary subroutines is utilized during execution. 
+The $\textsc{Ciph}_K()$ routine invokes the core AES block cipher to encrypt a 128-bit zero-block, producing the hash subkey $H$. 
+The $\text{inc}_{32}()$ function takes a 128-bit block and increments its 32 rightmost bits, which act as a counter that wraps around to zero upon overflow. 
+Lastly, $\textsc{Gctr}_K()$ executes the standard CTR mode of operation for a fixed key $K$, processing a given input payload starting from a specified initial counter block.
+
+\begin{algorithm}[htbp]
+\small
+\caption{GCM Authenticated Encryption}
+\label{alg:gcm_ae}
+\begin{algorithmic}[1]
+\Procedure{GcmAuthenticatedEncrypt}{$K, IV, P, A, t$}
+    \State $H \gets \textsc{Ciph}_K(0^{128})$ \Comment{Generate the hash subkey $H$}
+    \If{$\text{len}(IV) = 96$}
+        \State $J_0 \gets IV \,\|\, 0^{31} \,\|\, 1$
+    \Else
+        \State $s \gets 128 \cdot \lceil \text{len}(IV)/128 \rceil - \text{len}(IV)$
+        \State $J_0 \gets \textsc{Ghash}_H(IV \,\|\, 0^{s+64} \,\|\, [\text{len}(IV)]_{64})$
+    \EndIf
+    \State $C \gets \textsc{Gctr}_K(\text{inc}_{32}(J_0), P)$ \Comment{Encrypt plaintext $P$}
+    \State $u \gets 128 \cdot \lceil \text{len}(C)/128 \rceil - \text{len}(C)$
+    \State $v \gets 128 \cdot \lceil \text{len}(A)/128 \rceil - \text{len}(A)$
+    \State $S \gets \textsc{Ghash}_H(A \,\|\, 0^v \,\|\, C \,\|\, 0^u \,\|\, [\text{len}(A)]_{64} \,\|\, [\text{len}(C)]_{64})$
+    \State $T \gets \text{MSB}_t(\textsc{Gctr}_K(J_0, S))$ \Comment{Compute authentication tag of length $t$}
+    \State \Return $(C, T)$
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+The procedure initiates by computing the hash subkey $H$ via the $\textsc{Ciph}_K()$ routine \texttt{(line 2)}. 
+Subsequently, a conditional structure determines the format of the initial counter block $J_0$ \texttt{(lines 3--8)}. 
+If the $IV$ is exactly 96 bits long, $J_0$ is constructed by concatenating the $IV$ with a 32-bit counter initialized to 1. 
+Conversely, if the $IV$ length differs from 96 bits, an integer $s$ is calculated to determine the required zero-padding. 
+The counter block $J_0$ is then generated by passing the $IV$, the zero-padding, and a 64-bit representation of the $IV$'s length through the $\textsc{Ghash}_H()$ function.
+
+Following initialization, the ciphertext $C$ is produced using the $\textsc{Gctr}_K()$ routine, utilizing the incremented initial counter (which resolves to \texttt{02} for a 96-bit $IV$) and the plaintext $P$ as inputs \texttt{(line 9)}.
+
+Continuing the process, two integer values, $u$ and $v$, are calculated to determine the required zero-padding based on the lengths of the ciphertext and the AAD, respectively \texttt{(lines 10--11)}. 
+An intermediate accumulator block $S$ is then produced via the $\textsc{Ghash}_H()$ operation by evaluating the concatenation of the AAD, its padding, the ciphertext, its padding, and the 64-bit length representations of both the AAD and the ciphertext \texttt{(line 12)}. 
+Ultimately, the authentication tag $T$ is generated by encrypting $S$ with the original initial counter $J_0$, extracting only the $t$ most significant bits \texttt{(line 13)}.
+
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.95\textwidth]{images/GCM_encryption.png}
-    \caption[AES-GCM Authentication encryption scheme]{AES-GCM Authentication encryption scheme with authentication tag generation process \cite{imageGCM}.}
+    \includegraphics[width=0.78\textwidth]{images/GCM_encryption.png}
+    \caption[AES-GCM Authenticated Encryption Scheme]{AES-GCM Authenticated Encryption architecture detailing the data flow and tag generation process~\cite{imageGCM}.}
     \label{fig:gcm_encryption_arch}
 \end{figure}
 
+\FloatBarrier
+
+\paragraph{Authenticated Decryption Algorithm}
+The authenticated decryption algorithm shares the vast majority of its cryptographic logic with its encryption counterpart. 
+The primary operational differences reside in the initial validation checks—which verify that the bit-lengths of the $IV$, AAD, and ciphertext are supported, and that the provided tag matches the expected length $t$. 
+In addition, also the transposition of the input variable $C$ (ciphertext) in place of $P$ (plaintext) is a main differences.
+
+Crucially, after following the standard computational flow to produce a localized tag $T'$, the algorithm executes a constant-time comparison between $T'$ and the received tag $T$. 
+If the two tags match perfectly, the authentication succeeds, and the decrypted plaintext is released. 
+Otherwise, the message is deemed compromised, either through malicious tampering or transmission errors. 
+In this failure state, the algorithm immediately aborts and returns a $\textsc{Fail}$ error \texttt{(lines 17--18)}, strictly discarding the plaintext to prevent Chosen-Ciphertext Attacks (CCA).
+
+\begin{algorithm}[htbp]
+\small
+\caption{GCM Authenticated Decryption}
+\label{alg:gcm_ad}
+\begin{algorithmic}[1]
+\Procedure{GcmAuthenticatedDecrypt}{$K, IV, C, A, T, t$}
+    \If{bit lengths of $IV$, $A$, or $C$ are unsupported \textbf{or} $\text{len}(T) \neq t$}
+        \State \Return $\textsc{Fail}$
+    \EndIf
+    \State $H \gets \textsc{Ciph}_K(0^{128})$ \Comment{Generate the hash subkey $H$}
+    \If{$\text{len}(IV) = 96$}
+        \State $J_0 \gets IV \,\|\, 0^{31} \,\|\, 1$
+    \Else
+        \State $s \gets 128 \cdot \lceil \text{len}(IV)/128 \rceil - \text{len}(IV)$
+        \State $J_0 \gets \textsc{Ghash}_H(IV \,\|\, 0^{s+64} \,\|\, [\text{len}(IV)]_{64})$
+    \EndIf
+    \State $P \gets \textsc{Gctr}_K(\text{inc}_{32}(J_0), C)$ \Comment{Decrypt ciphertext $C$}
+    \State $u \gets 128 \cdot \lceil \text{len}(C)/128 \rceil - \text{len}(C)$
+    \State $v \gets 128 \cdot \lceil \text{len}(A)/128 \rceil - \text{len}(A)$
+    \State $S \gets \textsc{Ghash}_H(A \,\|\, 0^v \,\|\, C \,\|\, 0^u \,\|\, [\text{len}(A)]_{64} \,\|\, [\text{len}(C)]_{64})$
+    \State $T' \gets \text{MSB}_t(\textsc{Gctr}_K(J_0, S))$ \Comment{Compute expected authentication tag}
+    \If{$T = T'$}
+        \State \Return $P$ \Comment{Authentication succeeded}
+    \Else
+        \State \Return $\textsc{Fail}$ \Comment{Integrity check failed}
+    \EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
 
 
+\subsection{Tests for the GCM Embedded C Implementation}
+
+\paragraph{NIST Vector Tests}
+To rigorously verify the cryptographic correctness of the custom C implementation, a selected suite of test vectors was utilized \cite{vectorTests}. 
+These test vectors are provided by the \textit{Cryptographic Algorithm Validation Program (CAVP)}, established directly by NIST. 
+
+The suite contains tens of thousands of individual test cases for both the authenticated encryption and decryption processes. 
+Each test evaluates the algorithm against variable-length plaintexts, ciphertexts, IVs, and AADs, utilizing diverse 256-bit master keys and their corresponding expected authentication tags. 
+
+The execution of these tests yielded a 100\% success rate, demonstrating that the embedded implementation is mathematically sound and fully compliant with the FIPS and NIST standards.
+
+\paragraph{Channel Noise and SEU Simulation}
+Beyond formal cryptographic validation, a practical simulation was developed to replicate the effects of \textit{Additive White Gaussian Noise (AWGN)} and radiation-induced \textit{Single Event Upsets (SEUs)}, which represent critical concerns in SATCOM environments. 
+
+It is vital to verify that the AEAD architecture correctly identifies arbitrary bit-level message alterations caused by the harsh space environment. 
+To emulate a transmission error over a noisy channel, a random bit-flip was artificially injected into a valid ciphertext prior to the decryption phase. 
+
+\begin{lightterminal}
+Plaintext (429 byte): SAT-7 telemetry window 2041: the spacecraft is in nominal sun-pointing attitude and the Ka-band link remains locked with the ground station in Matera. The flight computer reports stable battery voltage, adequate thermal margins, and no corrected memory errors during the last pass. Payload data will be downlinked in two scheduled contact windows; the receiver shall request a repeat only if the authenticated packet check fails.
+AAD (95 byte): SAT-7|pass=2041|ground-station=Matera|band=Ka|channel=telemetry|priority=nominal|counter=000184
+Randomly flipped bit 1896 of the ciphertext.
+Received Tag: 518735e4ea1697d3dcf9f0bb69ae65e4
+ERROR: decryption failed as expected due to the bit flip.
+\end{lightterminal}
+
+With the baseline AES-256-GCM architecture fully implemented, theoretically analyzed, and functionally validated, the foundational framework of this study is established. 
+The next chapter will address the physical vulnerabilities of this standard implementation by integrating a chaotic injection mechanism into the S-Box. 
+Drawing inspiration from the foundational concepts proposed by Kumar et al. \cite{KumarPaper}, the following chapter explores a cryptographic "Machine Unlearning" approach, deliberately adapting it to break the deterministic power leakages exploited by advanced ML-based Side-Channel Attacks in SATCOM environments.
+
+
+\chapter[Chaotic Injection and Cryptographic Machine Unlearning]{Chaotic Injection and Cryptographic \\ Machine Unlearning}
 
 % New page for the bibliography
 \newpage
