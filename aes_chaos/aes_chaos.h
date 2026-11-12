@@ -21,8 +21,7 @@
 #endif
 
 // Define default parameters for the chaotic implementation.
-#define DEFAULT_GAMMA 255
-#define DEFAULT_DELTA 1
+#define DEFAULT_GAMMA 127
 
 // Define the chaotic map types.
 typedef enum {
@@ -46,8 +45,9 @@ struct LogisticMap {
 #define DEFAULT_LOGISTIC_P 3.75
 #define DEFAULT_LOGISTIC_X 0.5
 
-#define DEFAULT_CHAOS_LOGISTIC_ALPHA 2
-#define DEFAULT_CHAOS_LOGISTIC_BETA 0.1
+#define DEFAULT_CHAOS_LOGISTIC_ALPHA 0.5
+#define DEFAULT_CHAOS_LOGISTIC_BETA 0.01
+#define DEFAULT_DELTA_LOGISTIC 0.0298963362310997
 
 // Define the structures for the tent map and its default parameters.
 struct TentMap {
@@ -57,8 +57,9 @@ struct TentMap {
 #define DEFAULT_TENT_P 1.9998;
 #define DEFAULT_TENT_X 0.123;
 
-#define DEFAULT_CHAOS_TENT_ALPHA 0.1
-#define DEFAULT_CHAOS_TENT_BETA 0.01
+#define DEFAULT_CHAOS_TENT_ALPHA 0.01
+#define DEFAULT_CHAOS_TENT_BETA 0.001
+#define DEFAULT_DELTA_TENT 175.722264299733
 
 // Define the structures for the Henon map and its default parameters.
 struct HenonMap {
@@ -70,8 +71,9 @@ struct HenonMap {
 #define DEFAULT_HENON_X 0.1
 #define DEFAULT_HENON_Y 0.1
 
-#define DEFAULT_CHAOS_HENON_ALPHA 5
-#define DEFAULT_CHAOS_HENON_BETA 0.05
+#define DEFAULT_CHAOS_HENON_ALPHA 0.5
+#define DEFAULT_CHAOS_HENON_BETA 0.01
+#define DEFAULT_DELTA_HENON 0.0216112730659221
 
 
 struct ArnoldCatMap {
@@ -80,8 +82,9 @@ struct ArnoldCatMap {
 #define DEFAULT_ARNOLD_X 0.123
 #define DEFAULT_ARNOLD_Y 0.456
 
-#define DEFAULT_CHAOS_ARNOLD_ALPHA 0.1
-#define DEFAULT_CHAOS_ARNOLD_BETA 0.05
+#define DEFAULT_CHAOS_ARNOLD_ALPHA 0.05
+#define DEFAULT_CHAOS_ARNOLD_BETA 0.001
+#define DEFAULT_DELTA_ARNOLD 35.7718852427781
 
 struct SineMap {
   double x;
@@ -90,8 +93,9 @@ struct SineMap {
 #define DEFAULT_SINE_X 0.123
 #define DEFAULT_SINE_MU 0.99
 
-#define DEFAULT_CHAOS_SINE_ALPHA 0.1
-#define DEFAULT_CHAOS_SINE_BETA 0.5
+#define DEFAULT_CHAOS_SINE_ALPHA 0.03
+#define DEFAULT_CHAOS_SINE_BETA 0.001
+#define DEFAULT_DELTA_SINE 60.3030089578506
 
 struct ChebyshevMap {
   double x;
@@ -100,8 +104,9 @@ struct ChebyshevMap {
 #define DEFAULT_CHEBYSHEV_X 0.7654
 #define DEFAULT_CHEBYSHEV_MU 4
 
-#define DEFAULT_CHAOS_CHEBYSHEV_ALPHA 2
-#define DEFAULT_CHAOS_CHEBYSHEV_BETA 0.05
+#define DEFAULT_CHAOS_CHEBYSHEV_ALPHA 0.03
+#define DEFAULT_CHAOS_CHEBYSHEV_BETA 0.001
+#define DEFAULT_DELTA_CHEBYSHEV 28.4113089699826
 
 struct LorenzMap {
   double x, y, z;
@@ -115,8 +120,9 @@ struct LorenzMap {
 #define DEFAULT_LORENZ_RHO 28.0
 #define DEFAULT_LORENZ_BETA (8.0 / 3.0)
 
-#define DEFAULT_CHAOS_LORENZ_ALPHA 0.1
+#define DEFAULT_CHAOS_LORENZ_ALPHA 0.03
 #define DEFAULT_CHAOS_LORENZ_BETA 0.01
+#define DEFAULT_DELTA_LORENZ 2.13785733571773
 
 struct ChenMap {
   double x, y, z;
@@ -130,8 +136,9 @@ struct ChenMap {
 #define DEFAULT_CHEN_B 3.0
 #define DEFAULT_CHEN_C 28.0
 
-#define DEFAULT_CHAOS_CHEN_ALPHA 0.1
-#define DEFAULT_CHAOS_CHEN_BETA 0.01
+#define DEFAULT_CHAOS_CHEN_ALPHA 0.01
+#define DEFAULT_CHAOS_CHEN_BETA 0.005
+#define DEFAULT_DELTA_CHEN 17.1726706575056
 
 struct RosslerMap {
   double x, y, z;
@@ -145,8 +152,10 @@ struct RosslerMap {
 #define DEFAULT_ROSSLER_B 0.2
 #define DEFAULT_ROSSLER_C 5.7
 
-#define DEFAULT_CHAOS_ROSSLER_ALPHA 2
-#define DEFAULT_CHAOS_ROSSLER_BETA 0.05
+#define DEFAULT_CHAOS_ROSSLER_ALPHA 0.15
+#define DEFAULT_CHAOS_ROSSLER_BETA 0.03
+#define DEFAULT_DELTA_ROSSLER 1.02353420721125
+
 
 #define DEFAULT_DT 0.01
 
@@ -219,7 +228,10 @@ size_t AES_CHAOS_get_heap_size(ChaosMap map_type);
 void AES_CHAOS_init_ctx(struct AES_CHAOS_ctx* ctx, const uint8_t* key, ChaosMap map_type);
 void AES_CHAOS_free_ctx(struct AES_CHAOS_ctx* ctx);
 
-void AES_CHAOS_ctx_set_params(struct AES_CHAOS_ctx* ctx, double alfa, double beta);
+int AES_CHAOS_measure_w_range(ChaosMap map_type, const uint8_t* key, size_t iterations, double* min_w, double* max_w);
+int AES_CHAOS_measure_stability(ChaosMap map_type, const uint8_t* key, double alpha, double beta, double delta, size_t iterations, double* min_w, double* max_w, size_t* saturated_count, size_t* non_finite_count);
+
+void AES_CHAOS_ctx_set_params(struct AES_CHAOS_ctx* ctx, double alfa,  double beta, double delta);
 
 void AES_CHAOS_ECB_encrypt(struct AES_CHAOS_ctx* ctx, uint8_t* buf);
 

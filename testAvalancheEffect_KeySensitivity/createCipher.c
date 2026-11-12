@@ -60,8 +60,8 @@ int main(int argc, char *argv[])
     struct AES_GCM_result res_std = {.buf = text};
     struct AES_CHAOS_GCM_result res_chaos = {.buf = text};
 
-    if (argc == 8) {
-        AES_CHAOS_ctx_set_params(&ctx_chaos, atof(argv[6]), atof(argv[7]));
+    if (argc == 9) {
+        AES_CHAOS_ctx_set_params(&ctx_chaos, atof(argv[6]), atof(argv[7]), atof(argv[8]));
     }
 
     if (map_type != NONE) {

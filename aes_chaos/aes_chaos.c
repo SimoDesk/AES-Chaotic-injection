@@ -59,6 +59,7 @@ static const uint8_t Rcon[11] = {
 /*****************************************************************************/
 /* Private functions:                                                        */
 /*****************************************************************************/
+static void KeyExpansion(struct AES_CHAOS_ctx* ctx, const uint8_t* Key);
 
 
 /*****************************************************************************/
@@ -377,7 +378,6 @@ static void updateChaos(struct AES_CHAOS_ctx* ctx) {
   // Following the equation W(t+1) = W(t) + alpha * delta_w - beta * |W(t)|
   ctx->W_t = ctx->W_t + (ctx->alpha * delta_w) - (ctx->beta * fabs(ctx->W_t));
 
-
   // Compute the chaos modifier using the updated W_t and the parameters gamma and delta, and update the current S-box shift value accordingly.
   double chaos_modifier = ctx->gamma * tanh(ctx->delta * ctx->W_t);
   ctx->current_sbox_shift = (uint8_t)(int)chaos_modifier;
@@ -519,9 +519,13 @@ static uint8_t getChaoticSBoxValue_static(struct AES_CHAOS_ctx* ctx, uint8_t x) 
 }
 
 // Set the parameters alpha and beta for the chaotic map in the AES_CHAOS context. These parameters control the influence of the chaotic map on the encryption process.
-void AES_CHAOS_ctx_set_params(struct AES_CHAOS_ctx* ctx, double alfa, double beta) {
+void AES_CHAOS_ctx_set_params(struct AES_CHAOS_ctx* ctx, double alfa,
+                              double beta, double delta) {
   ctx->alpha = alfa;
   ctx->beta = beta;
+  ctx->delta = delta;
+  init_chaos(ctx, NULL, 0);
+  KeyExpansion(ctx, ctx->OriginalKey);
 }
 
 /*****************************************************************************/
@@ -598,7 +602,6 @@ void AES_CHAOS_init_ctx(struct AES_CHAOS_ctx* ctx, const uint8_t* key, ChaosMap 
   memcpy(ctx->OriginalKey, key, AES_CHAOS_KEYLEN);
   ctx->W_t = 0.0;
   ctx->gamma = DEFAULT_GAMMA;
-  ctx->delta = DEFAULT_DELTA;
 
   ctx->current_sbox_shift = 0;
 
@@ -607,46 +610,55 @@ void AES_CHAOS_init_ctx(struct AES_CHAOS_ctx* ctx, const uint8_t* key, ChaosMap 
       ctx->map_state = malloc(sizeof(struct LogisticMap));
       ctx->alpha = DEFAULT_CHAOS_LOGISTIC_ALPHA;
       ctx->beta = DEFAULT_CHAOS_LOGISTIC_BETA;
+      ctx->delta = DEFAULT_DELTA_LOGISTIC;
       break;
     case TENT_MAP:
       ctx->map_state = malloc(sizeof(struct TentMap));
       ctx->alpha = DEFAULT_CHAOS_TENT_ALPHA;
       ctx->beta = DEFAULT_CHAOS_TENT_BETA;
+      ctx->delta = DEFAULT_DELTA_TENT;
       break;
     case HENON_MAP:
       ctx->map_state = malloc(sizeof(struct HenonMap));
       ctx->alpha = DEFAULT_CHAOS_HENON_ALPHA;
       ctx->beta = DEFAULT_CHAOS_HENON_BETA;
+      ctx->delta = DEFAULT_DELTA_HENON;
       break;
     case ARNOLD_CAT_MAP:
       ctx->map_state = malloc(sizeof(struct ArnoldCatMap));
       ctx->alpha = DEFAULT_CHAOS_ARNOLD_ALPHA;
       ctx->beta = DEFAULT_CHAOS_ARNOLD_BETA;
+      ctx->delta = DEFAULT_DELTA_ARNOLD;
       break;
     case SINE_MAP:
       ctx->map_state = malloc(sizeof(struct SineMap));
       ctx->alpha = DEFAULT_CHAOS_SINE_ALPHA;
       ctx->beta = DEFAULT_CHAOS_SINE_BETA;
+      ctx->delta = DEFAULT_DELTA_SINE;
       break;
     case CHEBYSHEV_MAP:
       ctx->map_state = malloc(sizeof(struct ChebyshevMap));
       ctx->alpha = DEFAULT_CHAOS_CHEBYSHEV_ALPHA;
       ctx->beta = DEFAULT_CHAOS_CHEBYSHEV_BETA;
+      ctx->delta = DEFAULT_DELTA_CHEBYSHEV;
       break;
     case LORENZ_MAP:
       ctx->map_state = malloc(sizeof(struct LorenzMap));
       ctx->alpha = DEFAULT_CHAOS_LORENZ_ALPHA;
       ctx->beta = DEFAULT_CHAOS_LORENZ_BETA;
+      ctx->delta = DEFAULT_DELTA_LORENZ;
       break;
     case CHEN_MAP:
       ctx->map_state = malloc(sizeof(struct ChenMap));
       ctx->alpha = DEFAULT_CHAOS_CHEN_ALPHA;
       ctx->beta = DEFAULT_CHAOS_CHEN_BETA;
+      ctx->delta = DEFAULT_DELTA_CHEN;
       break;
     case ROSSLER_MAP:
       ctx->map_state = malloc(sizeof(struct RosslerMap));
       ctx->alpha = DEFAULT_CHAOS_ROSSLER_ALPHA;
       ctx->beta = DEFAULT_CHAOS_ROSSLER_BETA;
+      ctx->delta = DEFAULT_DELTA_ROSSLER;
       break;
     default:
       ctx->map_state = NULL;
@@ -664,6 +676,82 @@ void AES_CHAOS_free_ctx(struct AES_CHAOS_ctx* ctx) {
 
     ctx->map_state = NULL;
   }
+}
+
+// Measure the minimum and maximum values of W_t over a specified number of iterations for a given chaotic map and key. The results are stored in min_w and max_w.
+// This mesurement is used to calculate the best delta value for each chaotic map, which is crucial for ensuring the chaotic behavior of the system and the security of the encryption process.
+int AES_CHAOS_measure_w_range(ChaosMap map_type, const uint8_t* key, size_t iterations, double* min_w, double* max_w) {
+  if (key == NULL || iterations == 0 || min_w == NULL || max_w == NULL) {
+    return 0;
+  }
+
+  struct AES_CHAOS_ctx ctx;
+  AES_CHAOS_init_ctx(&ctx, key, map_type);
+
+  double minimum = ctx.W_t;
+  double maximum = ctx.W_t;
+
+  for (size_t i = 0; i < iterations; ++i) {
+    updateChaos(&ctx);
+    if (ctx.W_t < minimum) {
+      minimum = ctx.W_t;
+    }
+    if (ctx.W_t > maximum) {
+      maximum = ctx.W_t;
+    }
+  }
+
+  AES_CHAOS_free_ctx(&ctx);
+
+  *min_w = minimum;
+  *max_w = maximum;
+
+  return 1;
+}
+
+// Measure the stability of the chaotic map by counting the number of saturated and non-finite values of W_t over a specified number of iterations for a given chaotic map and key.
+// This measurement is used to assess the robustness of the chaotic system and its suitability for cryptographic applications.
+int AES_CHAOS_measure_stability(ChaosMap map_type, const uint8_t* key, double alpha, double beta, double delta, size_t iterations, double* min_w, double* max_w, size_t* saturated_count, size_t* non_finite_count) {
+  if (key == NULL || iterations == 0 || min_w == NULL || max_w == NULL || saturated_count == NULL || non_finite_count == NULL) {
+    return 0;
+  }
+
+  struct AES_CHAOS_ctx ctx;
+  AES_CHAOS_init_ctx(&ctx, key, map_type);
+  AES_CHAOS_ctx_set_params(&ctx, alpha, beta, delta);
+
+  double minimum = ctx.W_t;
+  double maximum = ctx.W_t;
+
+  size_t saturated = 0;
+  size_t non_finite = 0;
+
+  for (size_t i = 0; i < iterations; ++i) {
+    updateChaos(&ctx);
+    if (!isfinite(ctx.W_t)) {
+      non_finite++;
+      continue;
+    }
+    if (ctx.W_t < minimum) {
+      minimum = ctx.W_t;
+    }
+    if (ctx.W_t > maximum) {
+      maximum = ctx.W_t;
+    }
+    if (fabs(ctx.delta * ctx.W_t) > 2.0) {
+      saturated++;
+    }
+  }
+
+  AES_CHAOS_free_ctx(&ctx);
+
+  *min_w = minimum;
+  *max_w = maximum;
+
+  *saturated_count = saturated;
+  *non_finite_count = non_finite;
+  
+  return 1;
 }
 
 /*****************************************************************************/

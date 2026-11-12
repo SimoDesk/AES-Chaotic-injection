@@ -121,6 +121,9 @@ Utility per il cluster:
 			- lorenz
 			- chen
 			- rossler
+
+	- tutte le mappe fanno dei giri iniziali		
+
 	- valori di partenza della mappe derivati dalla chiave (risolve il problema della sincronizzazione tra Ground e Space segment + problemi di determinismo dovuti a seed comuni su macchine diverse)
 
 	- DUE opzioni di aggiornamento del Chaos: once per round / once per block

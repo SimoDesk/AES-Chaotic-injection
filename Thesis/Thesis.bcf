@@ -2431,6 +2431,20 @@
     <bcf:citekey order="56" intorder="1">imageGCM</bcf:citekey>
     <bcf:citekey order="57" intorder="1">vectorTests</bcf:citekey>
     <bcf:citekey order="58" intorder="1">KumarPaper</bcf:citekey>
+    <bcf:citekey order="59" intorder="1">KumarPaper</bcf:citekey>
+    <bcf:citekey order="60" intorder="1">KumarPaper</bcf:citekey>
+    <bcf:citekey order="61" intorder="1">KumarPaper</bcf:citekey>
+    <bcf:citekey order="62" intorder="1">tinyAES</bcf:citekey>
+    <bcf:citekey order="63" intorder="1">origineMappeCaotiche</bcf:citekey>
+    <bcf:citekey order="64" intorder="1">logisticTentDefaultParameters</bcf:citekey>
+    <bcf:citekey order="65" intorder="1">logisticTentDefaultParameters</bcf:citekey>
+    <bcf:citekey order="66" intorder="1">origineMappeCaotiche</bcf:citekey>
+    <bcf:citekey order="67" intorder="1">chebyshevDefaultParameters</bcf:citekey>
+    <bcf:citekey order="68" intorder="1">henonDefaultParameters</bcf:citekey>
+    <bcf:citekey order="69" intorder="1">KR4</bcf:citekey>
+    <bcf:citekey order="70" intorder="1">lorenzDefaultParameters</bcf:citekey>
+    <bcf:citekey order="71" intorder="1">chenDefaultParameters</bcf:citekey>
+    <bcf:citekey order="72" intorder="1">rosslerDefaultParameters</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="none">

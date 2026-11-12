@@ -818,6 +818,324 @@
       \verb https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/cavp-testing-block-cipher-modes
       \endverb
     \endentry
+    \entry{origineMappeCaotiche}{misc}{}{}
+      \name{author}{5}{}{%
+        {{hash=a4e3a45dc9e7d8801138131bf3223ef3}{%
+           family={Rashid},
+           familyi={R\bibinitperiod},
+           given={Farrukh\bibnamedelima Bin},
+           giveni={F\bibinitperiod\bibinitdelim B\bibinitperiod}}}%
+        {{hash=2270ca80ee132d170e836b6d3371c4fb}{%
+           family={Rankothge},
+           familyi={R\bibinitperiod},
+           given={Windhya},
+           giveni={W\bibinitperiod}}}%
+        {{hash=c1132381ce39fc29fb90f4e69ee993e4}{%
+           family={Sadeghi},
+           familyi={S\bibinitperiod},
+           given={Somayeh},
+           giveni={S\bibinitperiod}}}%
+        {{hash=54c30062a9a6568cf16a044c5dfb185c}{%
+           family={Mohammadian},
+           familyi={M\bibinitperiod},
+           given={Hesamodin},
+           giveni={H\bibinitperiod}}}%
+        {{hash=53b45fdb7a7170a99803956eff9656e4}{%
+           family={Ghorbani},
+           familyi={G\bibinitperiod},
+           given={Ali},
+           giveni={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{f86afe845857536ea4883bbd03763188}
+      \strng{fullhash}{2faf90f548d35c01c126d76bd17e9382}
+      \strng{fullhashraw}{2faf90f548d35c01c126d76bd17e9382}
+      \strng{bibnamehash}{f86afe845857536ea4883bbd03763188}
+      \strng{authorbibnamehash}{f86afe845857536ea4883bbd03763188}
+      \strng{authornamehash}{f86afe845857536ea4883bbd03763188}
+      \strng{authorfullhash}{2faf90f548d35c01c126d76bd17e9382}
+      \strng{authorfullhashraw}{2faf90f548d35c01c126d76bd17e9382}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprintclass}{cs.CR}
+      \field{eprinttype}{arXiv}
+      \field{title}{Privacy-Preserving for Images in Satellite Communications: A Comprehensive Review of Chaos-Based Encryption}
+      \field{year}{2024}
+      \verb{eprint}
+      \verb 2410.21177
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2410.21177
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2410.21177
+      \endverb
+    \endentry
+    \entry{logisticTentDefaultParameters}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=84e6e0ad61782a75a62d946e2c68ed62}{%
+           family={May},
+           familyi={M\bibinitperiod},
+           given={Robert},
+           giveni={R\bibinitperiod}}}%
+      }
+      \strng{namehash}{84e6e0ad61782a75a62d946e2c68ed62}
+      \strng{fullhash}{84e6e0ad61782a75a62d946e2c68ed62}
+      \strng{fullhashraw}{84e6e0ad61782a75a62d946e2c68ed62}
+      \strng{bibnamehash}{84e6e0ad61782a75a62d946e2c68ed62}
+      \strng{authorbibnamehash}{84e6e0ad61782a75a62d946e2c68ed62}
+      \strng{authornamehash}{84e6e0ad61782a75a62d946e2c68ed62}
+      \strng{authorfullhash}{84e6e0ad61782a75a62d946e2c68ed62}
+      \strng{authorfullhashraw}{84e6e0ad61782a75a62d946e2c68ed62}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{978-1-4419-2330-1}
+      \field{journaltitle}{Nature}
+      \field{month}{07}
+      \field{title}{Simple Mathematical Models With Very Complicated Dynamics}
+      \field{volume}{26}
+      \field{year}{1976}
+      \field{pages}{457}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1038/261459a0
+      \endverb
+    \endentry
+    \entry{chebyshevDefaultParameters}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=83b176b9f3e613991ca3941891f979cc}{%
+           family={Adler},
+           familyi={A\bibinitperiod},
+           given={Roy\bibnamedelima L.},
+           giveni={R\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+        {{hash=f3e4755c5ddde84a0399f493d1a5939c}{%
+           family={Rivlin},
+           familyi={R\bibinitperiod},
+           given={Theodore\bibnamedelima J.},
+           giveni={T\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+      }
+      \strng{namehash}{4c4395c8c071fb5a207f2269748d2c66}
+      \strng{fullhash}{4c4395c8c071fb5a207f2269748d2c66}
+      \strng{fullhashraw}{4c4395c8c071fb5a207f2269748d2c66}
+      \strng{bibnamehash}{4c4395c8c071fb5a207f2269748d2c66}
+      \strng{authorbibnamehash}{4c4395c8c071fb5a207f2269748d2c66}
+      \strng{authornamehash}{4c4395c8c071fb5a207f2269748d2c66}
+      \strng{authorfullhash}{4c4395c8c071fb5a207f2269748d2c66}
+      \strng{authorfullhashraw}{4c4395c8c071fb5a207f2269748d2c66}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Proceedings of the American Mathematical Society}
+      \field{number}{5}
+      \field{title}{Ergodic and Mixing Properties of Chebyshev Polynomials}
+      \field{volume}{15}
+      \field{year}{1964}
+      \field{pages}{794\bibrangedash 796}
+      \range{pages}{3}
+      \verb{doi}
+      \verb 10.2307/2034600
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.2307/2034600
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.2307/2034600
+      \endverb
+    \endentry
+    \entry{henonDefaultParameters}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=2aafb2d0d4cbb0bc974e6ff041616a42}{%
+           family={Hénon},
+           familyi={H\bibinitperiod},
+           given={Michel},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{2aafb2d0d4cbb0bc974e6ff041616a42}
+      \strng{fullhash}{2aafb2d0d4cbb0bc974e6ff041616a42}
+      \strng{fullhashraw}{2aafb2d0d4cbb0bc974e6ff041616a42}
+      \strng{bibnamehash}{2aafb2d0d4cbb0bc974e6ff041616a42}
+      \strng{authorbibnamehash}{2aafb2d0d4cbb0bc974e6ff041616a42}
+      \strng{authornamehash}{2aafb2d0d4cbb0bc974e6ff041616a42}
+      \strng{authorfullhash}{2aafb2d0d4cbb0bc974e6ff041616a42}
+      \strng{authorfullhashraw}{2aafb2d0d4cbb0bc974e6ff041616a42}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issn}{1432-0916}
+      \field{journaltitle}{Communications in Mathematical Physics}
+      \field{number}{1}
+      \field{title}{A Two-Dimensional Mapping with a Strange Attractor}
+      \field{volume}{50}
+      \field{year}{1976}
+      \field{pages}{69\bibrangedash 77}
+      \range{pages}{9}
+      \verb{doi}
+      \verb 10.1007/BF01608556
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1007/BF01608556
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1007/BF01608556
+      \endverb
+    \endentry
+    \entry{KR4}{book}{}{}
+      \name{author}{4}{}{%
+        {{hash=0eab1ccd4d6c57a2ff6794a4724ccafb}{%
+           family={Press},
+           familyi={P\bibinitperiod},
+           given={William\bibnamedelima H.},
+           giveni={W\bibinitperiod\bibinitdelim H\bibinitperiod}}}%
+        {{hash=ff8354846900d7ef6c94cb025f7e938c}{%
+           family={Teukolsky},
+           familyi={T\bibinitperiod},
+           given={Saul\bibnamedelima A.},
+           giveni={S\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+        {{hash=0bb298496cc38e45b21c576a005078a0}{%
+           family={Vetterling},
+           familyi={V\bibinitperiod},
+           given={William\bibnamedelima T.},
+           giveni={W\bibinitperiod\bibinitdelim T\bibinitperiod}}}%
+        {{hash=f40726c661611c8a024d53294b6e0ad0}{%
+           family={Flannery},
+           familyi={F\bibinitperiod},
+           given={Brian\bibnamedelima P.},
+           giveni={B\bibinitperiod\bibinitdelim P\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Cambridge, UK}%
+      }
+      \list{publisher}{1}{%
+        {Cambridge University Press}%
+      }
+      \strng{namehash}{618fa62f030076edf2937faa1b1684fb}
+      \strng{fullhash}{f75c24a04994b574cb620c685a1f8229}
+      \strng{fullhashraw}{f75c24a04994b574cb620c685a1f8229}
+      \strng{bibnamehash}{618fa62f030076edf2937faa1b1684fb}
+      \strng{authorbibnamehash}{618fa62f030076edf2937faa1b1684fb}
+      \strng{authornamehash}{618fa62f030076edf2937faa1b1684fb}
+      \strng{authorfullhash}{f75c24a04994b574cb620c685a1f8229}
+      \strng{authorfullhashraw}{f75c24a04994b574cb620c685a1f8229}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{2nd}
+      \field{isbn}{978-0-521-43108-8}
+      \field{title}{Numerical Recipes in C: The Art of Scientific Computing}
+      \field{year}{1992}
+    \endentry
+    \entry{lorenzDefaultParameters}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=b3eeab11b971bbf5ed269c4f19465b91}{%
+           family={Lorenz},
+           familyi={L\bibinitperiod},
+           given={Edward\bibnamedelima N.},
+           giveni={E\bibinitperiod\bibinitdelim N\bibinitperiod}}}%
+      }
+      \strng{namehash}{b3eeab11b971bbf5ed269c4f19465b91}
+      \strng{fullhash}{b3eeab11b971bbf5ed269c4f19465b91}
+      \strng{fullhashraw}{b3eeab11b971bbf5ed269c4f19465b91}
+      \strng{bibnamehash}{b3eeab11b971bbf5ed269c4f19465b91}
+      \strng{authorbibnamehash}{b3eeab11b971bbf5ed269c4f19465b91}
+      \strng{authornamehash}{b3eeab11b971bbf5ed269c4f19465b91}
+      \strng{authorfullhash}{b3eeab11b971bbf5ed269c4f19465b91}
+      \strng{authorfullhashraw}{b3eeab11b971bbf5ed269c4f19465b91}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of the Atmospheric Sciences}
+      \field{number}{2}
+      \field{title}{Deterministic Nonperiodic Flow}
+      \field{volume}{20}
+      \field{year}{1963}
+      \field{pages}{130\bibrangedash 141}
+      \range{pages}{12}
+      \verb{doi}
+      \verb 10.1175/1520-0469(1963)020<0130:DNF>2.0.CO;2
+      \endverb
+    \endentry
+    \entry{chenDefaultParameters}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=c2465aadc98c418b040e810d4f8c1b79}{%
+           family={Chen},
+           familyi={C\bibinitperiod},
+           given={Guanrong},
+           giveni={G\bibinitperiod}}}%
+        {{hash=c6c339eff0dc26e0b2624ae7b7bf9ecb}{%
+           family={Ueta},
+           familyi={U\bibinitperiod},
+           given={Tetsushi},
+           giveni={T\bibinitperiod}}}%
+      }
+      \strng{namehash}{0d54d13ffd2639799396b032c92b1a87}
+      \strng{fullhash}{0d54d13ffd2639799396b032c92b1a87}
+      \strng{fullhashraw}{0d54d13ffd2639799396b032c92b1a87}
+      \strng{bibnamehash}{0d54d13ffd2639799396b032c92b1a87}
+      \strng{authorbibnamehash}{0d54d13ffd2639799396b032c92b1a87}
+      \strng{authornamehash}{0d54d13ffd2639799396b032c92b1a87}
+      \strng{authorfullhash}{0d54d13ffd2639799396b032c92b1a87}
+      \strng{authorfullhashraw}{0d54d13ffd2639799396b032c92b1a87}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{International Journal of Bifurcation and Chaos - IJBC}
+      \field{month}{07}
+      \field{title}{Yet Another Chaotic Attractor}
+      \field{volume}{9}
+      \field{year}{1999}
+      \field{pages}{1465\bibrangedash 1466}
+      \range{pages}{2}
+      \verb{doi}
+      \verb 10.1142/S0218127499001024
+      \endverb
+    \endentry
+    \entry{rosslerDefaultParameters}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=935de4cb40cf3a77d150e43f80ba3059}{%
+           family={Rössler},
+           familyi={R\bibinitperiod},
+           given={O.E.},
+           giveni={O\bibinitperiod}}}%
+      }
+      \strng{namehash}{935de4cb40cf3a77d150e43f80ba3059}
+      \strng{fullhash}{935de4cb40cf3a77d150e43f80ba3059}
+      \strng{fullhashraw}{935de4cb40cf3a77d150e43f80ba3059}
+      \strng{bibnamehash}{935de4cb40cf3a77d150e43f80ba3059}
+      \strng{authorbibnamehash}{935de4cb40cf3a77d150e43f80ba3059}
+      \strng{authornamehash}{935de4cb40cf3a77d150e43f80ba3059}
+      \strng{authorfullhash}{935de4cb40cf3a77d150e43f80ba3059}
+      \strng{authorfullhashraw}{935de4cb40cf3a77d150e43f80ba3059}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{A prototype equation to the Lorenz model of turbulence contains just one (second-order) nonlinearity in one variable. The flow in state space allows for a “folded” Poincaré map (horseshoe map). Many more natural and artificial systems are governed by this type of equation.}
+      \field{issn}{0375-9601}
+      \field{journaltitle}{Physics Letters A}
+      \field{number}{5}
+      \field{title}{An equation for continuous chaos}
+      \field{volume}{57}
+      \field{year}{1976}
+      \field{pages}{397\bibrangedash 398}
+      \range{pages}{2}
+      \verb{doi}
+      \verb https://doi.org/10.1016/0375-9601(76)90101-8
+      \endverb
+      \verb{urlraw}
+      \verb https://www.sciencedirect.com/science/article/pii/0375960176901018
+      \endverb
+      \verb{url}
+      \verb https://www.sciencedirect.com/science/article/pii/0375960176901018
+      \endverb
+    \endentry
   \enddatalist
 \endrefsection
 \endinput

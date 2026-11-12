@@ -47,18 +47,24 @@ def load_df(path, col_name):
 
     return df
 
-def createPlots():
-    # Parse command-line arguments
+def createPlots(metric="hamming", output_dir=None):
+    # Use explicit arguments when called by the complete test workflow.
+    if output_dir is None:
+        output_dir = SCRIPT_DIR / "plots"
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--metric", choices=METRICS, default="hamming")
     parser.add_argument("--output-dir", type=Path, default=SCRIPT_DIR / "plots")
-    args = parser.parse_args()
+    args = parser.parse_args() if __name__ == "__main__" else None
+    if args is not None:
+        metric = args.metric
+        output_dir = args.output_dir
 
     # Create the output directory if it doesn't exist
-    args.output_dir.mkdir(parents=True, exist_ok=True)
+    output_dir.mkdir(parents=True, exist_ok=True)
 
     # Load the CSV files and prepare the data for plotting
-    col, ideal = METRICS[args.metric]
+    col, ideal = METRICS[metric]
     dfs = {name: load_df(path, col) for name, path in TEST_FILES.items()}
     vmax = max(1.0, max((df[col] - ideal).abs().max() for df in dfs.values()))
 
@@ -73,7 +79,9 @@ def createPlots():
 
         # Loop through the test types and create heatmaps for each
         for ax, (test_name, df) in zip(axes, dfs.items()):
-            grid = df[df["Mappa"] == m].pivot(index="alfa", columns="beta", values=col)
+            grid = df[df["Mappa"] == m].pivot_table(
+                index="alfa", columns="beta", values=col, aggfunc="mean"
+            )
             vals, devs = grid.to_numpy(), np.abs(grid.to_numpy() - ideal)
 
             img = ax.imshow(devs, cmap="RdYlGn_r", vmin=0, vmax=vmax, aspect="auto")
@@ -102,7 +110,7 @@ def createPlots():
         # Set the title for the entire figure and save it to the output directory
         fig.suptitle(f"{m} - {col}\nTarget: {ideal:g} | Cell text: value (absolute distance from target)", fontsize=14)
 
-        fig.savefig(args.output_dir / f"{m}_{args.metric}.png", dpi=160)
+        fig.savefig(output_dir / f"{m}_{metric}.png", dpi=160)
         
         plt.close(fig)
 
