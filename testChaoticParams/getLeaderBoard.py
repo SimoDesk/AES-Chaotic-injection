@@ -49,22 +49,13 @@ def createLeaderBoard(output_path=None):
     df["max_dev"] = np.maximum(df["dev_av"], df["dev_ks"]).round(4)
 
     # Calculate stability ratios and penalties based on the stability test results.
-    df["saturation_ratio"] = (
-        df["Saturated samples"] / df["Stability samples"]
-    )
-    df["non_finite_ratio"] = (
-        df["Non-finite samples"] / df["Stability samples"]
-    )
-    df["unstable_ratio"] = (
-        df["Unstable samples"] / df["Stability samples"]
-    )
+    df["saturation_ratio"] = (df["Saturated samples"] / df["Stability samples"])
+    df["non_finite_ratio"] = (df["Non-finite samples"] / df["Stability samples"])
+    df["unstable_ratio"] = (df["Unstable samples"] / df["Stability samples"])
     
     # Penalize saturation and invalid dynamics without changing the raw metrics.
-    df["stability_penalty"] = (
-        100.0 * df["saturation_ratio"]
-        + 1000.0 * df["non_finite_ratio"]
-        + 100.0 * df["unstable_ratio"]
-    )
+    df["stability_penalty"] = (100.0 * df["saturation_ratio"] + 1000.0 * df["non_finite_ratio"] + 100.0 * df["unstable_ratio"]
+                               )
     df["total_score"] = df["sum_dev"] + df["stability_penalty"].round(4)
 
 

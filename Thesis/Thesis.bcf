@@ -2445,6 +2445,9 @@
     <bcf:citekey order="70" intorder="1">lorenzDefaultParameters</bcf:citekey>
     <bcf:citekey order="71" intorder="1">chenDefaultParameters</bcf:citekey>
     <bcf:citekey order="72" intorder="1">rosslerDefaultParameters</bcf:citekey>
+    <bcf:citekey order="73" intorder="1">KeyAsSeed</bcf:citekey>
+    <bcf:citekey order="74" intorder="1">logisticTentDefaultParameters</bcf:citekey>
+    <bcf:citekey order="75" intorder="1">KumarPaper</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="none">

@@ -135,6 +135,10 @@
     \renewcommand{\headrulewidth}{0pt}  % No horizontal line in the header
 }
 
+% Enable numbers for subsubsection and let them show in the contents table
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
 % Bibliography management with biblatex
 \usepackage[backend=biber,style=numeric,sorting=none]{biblatex}
 \usepackage{xurl} % Allows line breaks in URLs in the bibliography
@@ -1239,10 +1243,14 @@ Received Tag: 518735e4ea1697d3dcf9f0bb69ae65e4
 ERROR: decryption failed as expected due to the bit flip.
 \end{lightterminal}
 
+\paragraph{Chaotic Injection overview}
 With the baseline AES-256-GCM architecture fully implemented, theoretically analyzed, and functionally validated, the foundational framework of this study is established. 
 The next chapter will address the physical vulnerabilities of this standard implementation by integrating a chaotic injection mechanism into the S-Box. 
 Drawing inspiration from the foundational concepts proposed by Kumar et al.~\cite{KumarPaper}, the following chapter explores a cryptographic "Machine Unlearning" approach, deliberately adapting it to break the deterministic power leakages exploited by advanced ML-based Side-Channel Attacks in SATCOM environments.
 
+% ====================================================================================================
+
+% ====================================================================================================
 
 \chapter[Chaotic Injection and Cryptographic Machine Unlearning]{Chaotic Injection and Cryptographic \\ Machine Unlearning}
 In recent years, the widespread accessibility of Machine Learning (ML) has transformed it into a severe cryptographic threat. 
@@ -1289,6 +1297,12 @@ In this formulation, the first term $(A \cdot x^{-1} \oplus C)$ represents the s
 The second term introduces the chaotic modulation: $\gamma$ controls the absolute strength of the chaotic perturbation, and $\delta$ scales the sensitivity of the chaos. 
 Finally, the hyperbolic tangent function ($\tanh$) is essential to ensure that the chaotic noise remains strictly bounded, preserving the algorithm's mathematical bijectivity and guaranteeing a correct decryption process.
 
+\paragraph{Chaotic Influence on Key Expansion}
+Furthermore, the injection of chaos is not strictly limited to the plaintext substitution phase. 
+Because the AES Key Expansion algorithm internally relies on the S-Box during the \textsc{SubWord} routine to generate the 14 round keys, the dynamic chaotic state inherently propagates into the key schedule as well. 
+This structural involvement implies that, in addition to the individual data bytes processed during standard encryption and decryption, the entire expanded key generation is continuously influenced by the chaotic perturbations, 
+thereby significantly increasing the unpredictability of the cryptographic state.
+
 \paragraph{Architectural Optimization: The Scalar Chaotic State}
 While the theoretical framework proposed by Kumar et al.~\cite{KumarPaper} conceptualizes $W(t)$ as a multidimensional weight matrix to maximize theoretical entropy, continuously evaluating and updating an entire matrix introduces severe computational and memory overheads. 
 Such complexity is inherently incompatible with the strict power budgets and memory limitations of lightweight SATCOM embedded systems.
@@ -1296,7 +1310,7 @@ Such complexity is inherently incompatible with the strict power budgets and mem
 To resolve this architectural bottleneck, this thesis introduces a critical optimization: the multidimensional matrix $W(t)$ is algorithmically collapsed into a single scalar chaotic variable. 
 Crucially, this scalar state continues to evolve according to the fundamental unlearning dynamics defined in Equation ~\ref{eq:chaotic_evolution}, thereby preserving the crucial role of the forgetting factor $\beta$.
 As will be demonstrated through empirical testing, tracking and updating a scalar value provides sufficient non-linear entropy to successfully mask the S-Box power signature. 
-By replacing resource-intensive matrix operations with a single scalar update per iteration, this custom implementation achieves the required cryptographic unlearning while rigorously preserving the efficiency dictated by the \texttt{tiny-aes-c}~\cite{tinyAES} baseline and space-grade microcontrollers.
+Therefore, this custom implementation achieves the required cryptographic unlearning while rigorously preserving the efficiency dictated by the \texttt{tiny-aes-c}~\cite{tinyAES} baseline and space-grade microcontrollers.
 
 Finally, in the theoretical model, the term $\Delta W$ in Equation ~\ref{eq:chaotic_evolution} is broadly defined as the weight adjustment derived from the system's learning process. 
 However, a symmetric block cipher like AES does not possess a traditional ML loss function or a backpropagation mechanism to calculate a literal "learning" gradient during the encryption phase.
@@ -1393,9 +1407,9 @@ Interestingly, this strictly linear algebraic map achieves chaotic mixing withou
 Differently from discrete maps, continuous chaotic systems are defined by ordinary differential equations (ODEs) that evolve seamlessly over continuous time. 
 This conceptual framework is inherently incompatible with the discrete, clock-driven architecture of standard microcontrollers.
 
-In order to address this architectural gap, the continuous ODEs must be discretized. In this study, each continuous map has been implemented utilizing the \textit{Fourth-Order Runge-Kutta method (RK4)}. 
+In order to address this architectural gap, the continuous ODEs must be discretized. In this study, each continuous map has been implemented utilizing the \textit{Fourth-Order Runge-Kutta method (RK4)}~\cite[p. 711]{KR4}. 
 This numerical integration technique provides a highly accurate approximation of the system's state evolution over a discrete time step $h$ (implemented in the C codebase as the variable \texttt{dt}). 
-The RK4 method calculates the next state by computing a weighted average of four incremental slopes (the $k$ variables) evaluated across the time step~\cite[p. 711]{KR4}:
+The RK4 method calculates the next state by computing a weighted average of four incremental slopes (the $k$ variables) evaluated across the time step:
 
 \begin{align}
     k_1 &= h f(x_n, y_n) \nonumber \\
@@ -1451,6 +1465,137 @@ The selected parameter values guaranteeing robust chaotic performance are $a = 0
     \end{cases}
     \label{eq:rossler_system}
 \end{equation}
+
+\section[Chaotic Initialization: Seed Derivation and Transient Elimination]{Chaotic Initialization: Seed Derivation and \\ Transient Elimination}
+
+In order to guarantee a high degree of key sensitivity and to prevent the forced insertion of fixed, static chaotic initial conditions, 
+it is mandatory to implement a secure mechanism that dynamically derives the initial chaotic state directly from secret cryptographic material, such as the Master Key and the Initialization Vector (IV).
+
+While the simplest approach would be to utilize the secret key as a seed for standard pseudo-random number generators (PRNGs), this introduces a severe vulnerability regarding communication synchronization. 
+The implementation of inherent standard library PRNGs (such as \texttt{rand()}) varies significantly across different operating systems and embedded architectures. 
+Consequently, executing the same PRNG function with an identical seed on two different hardware devices could yield completely different chaotic trajectories, immediately resulting in a fatal decryption failure.
+
+To address this architectural deterministic requirement, this study adopts a cross-platform, hash-derived seed system inspired by advanced image encryption research~\cite{KeyAsSeed}. 
+To maximize the seed's sensitivity to the specific session parameters, the input is derived from the concatenation of the following binary string:
+\begin{equation}
+    I = K \parallel \text{len}(IV)_{64} \parallel IV
+\end{equation}
+The chaotic seed is then obtained by computing the SHA-256 digest of $I$, utilizing the standardized implementation provided by \texttt{OpenSSL}. 
+
+The concatenation of the secret key $K$ and the $IV$ ensures that the resulting digest changes completely for every unique communication session, courtesy of the strict avalanche criterion inherent to the SHA-256 algorithm. 
+Furthermore, integrating a 64-bit representation of the IV length ($\text{len}(IV)_{64}$) between the two primary inputs acts as a cryptographic domain separator, ensuring that inputs with varying IV lengths cannot produce accidental structural collisions.
+
+Depending on the dimensionality of the selected chaotic map (1D, 2D, or 3D), one to three normalized floating-point values are sequentially extracted from 64-bit chunks of the resulting 256-bit digest. 
+The logic governing this deterministic extraction is detailed in Algorithm~\ref{alg:extract_seed}.
+
+\begin{algorithm}[htbp]
+\caption{Normalized Chaotic Value Extraction from SHA-256 Digest}
+\label{alg:extract_seed}
+\begin{algorithmic}[1]
+\Procedure{ExtractNormalizedValue}{$\text{hashDigest}$}
+    \State $\text{valInt} \gets 0$
+    \For{$i \gets 0$ \textbf{to} $7$} \Comment{Pack 8 bytes into a 64-bit unsigned integer}
+        \State $\text{valInt} \gets (\text{valInt} \ll 8) \lor \text{hashDigest}[i]$
+    \EndFor
+    \State $\text{val} \gets \dfrac{\text{valInt}}{2^{64} - 1}$ \Comment{Normalize to range $[0, 1]$}
+    \If{$\text{val} \in \{0.0, 0.5, 1.0\}$} \Comment{Avoid fixed points and degenerate orbits}
+        \State $\text{val} \gets \text{val} + 10^{-6}$
+    \EndIf
+    \State \Return $\text{val}$
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+As described in the pseudocode, a 64-bit unsigned integer (\texttt{valInt}) is constructed from the digest bytes (Lines 3--5) and subsequently normalized to a floating-point value in the closed interval $[0, 1]$. 
+Crucially, specific boundary conditions and midpoints ($0.0$, $0.5$, and $1.0$) are explicitly filtered and slightly perturbed ($+10^{-6}$). 
+This safety check is strictly required because initializing certain discrete functions (e.g., the Logistic or Tent maps) with these exact fixed points causes the mathematical system to collapse entirely, stripping it of its chaotic properties.
+
+\paragraph{Transient Phase Elimination (Chaos Burn-in)}
+A fundamental property of chaotic systems is the presence of an initial transient phase~\cite[p. 464]{logisticTentDefaultParameters}. 
+When a chaotic map is initialized, its earliest iterations may exhibit residual predictability before fully converging into its strange attractor. 
+To guarantee maximum non-linear entropy from the very first encrypted byte, the system must bypass this initial correlation.
+
+In this implementation, a "burn-in" mechanism is introduced: upon initialization, the chaotic map is iterated multiple times silently, updating its internal state without altering the S-Box. 
+For discrete maps, the system executes 500 pre-iterations to ensure deep chaotic diffusion. 
+Conversely, for continuous systems evaluated via RK4 numerical integration, the pre-iterations are strictly limited to 10. 
+This architectural distinction is necessary because continuous ODEs are inherently susceptible to floating-point drift; iterating them excessively without bounded constraints could lead to severe numerical instability or overflow on embedded CPUs.
+
+\section{Chaotic Update Trade-off and Hardware Leakage}
+The theoretical analysis presented by Kumar et al.~\cite{KumarPaper} entails updating the chaotic state $W(t)$ once per encryption round. 
+For an AES-256 cipher processing an $N$-block plaintext, this implies evaluating the chaotic map $14 \cdot N$ times due to the 14 rounds involved in the encryption of each block.
+
+While this frequent perturbation maximizes theoretical entropy, it is noteworthy that each chaotic update requires multiple floating-point operations. 
+On resource-constrained embedded systems, floating-point arithmetic consumes significantly more energy and clock cycles compared to standard integer calculations. 
+Since implementing a purely integer-based chaotic unlearning system presents severe mathematical challenges without degrading the strange attractor, 
+it is critical to investigate whether a reduction in the number of chaotic updates can preserve the defensive machine unlearning mechanism while drastically cutting energy requirements. 
+
+To this end, this study introduces and evaluates a \texttt{once-per-block} update strategy. 
+By evolving the chaotic state only once every 128 bits of plaintext, the overall operations are heavily reduced, potentially decreasing the encryption/decryption time and increasing the throughput.
+
+\paragraph{Physical Security and RAM Pre-computation}
+Crucially, the chosen update frequency profoundly impacts the system's resilience to micro-architectural power leakages. 
+In a standard C implementation where memory is constrained, the chaotic S-Box substitution is computed "on the fly" by reading the standard static LUT from memory (via an Assembly \texttt{LDR} instruction) and subsequently adding the chaotic shift (via an \texttt{ADD} instruction). 
+Theoretically, an attacker with an infinitely precise oscilloscope could isolate the power peak of the deterministic read a fraction of a nanosecond before the chaotic noise is injected. 
+
+In physical reality, this vulnerability is largely mitigated by signal convolution: the inherent capacitance of the circuit acts as a low-pass filter, physically merging the energy peaks of the two consecutive instructions into a single, unpredictable analog wave that defeats the ML classifier. 
+However, a definitive software countermeasure exists to entirely eliminate this temporal window: allocating a dynamic S-Box in RAM. 
+By pre-computing the entire 256-byte LUT with the chaotic shift applied \textit{before} the encryption begins, the cipher only performs standard memory reads of already-chaotic values.
+
+The viability of this ultimate defense is strictly tied to the update frequency. Rebuilding a 256-byte LUT in RAM involves 256 integer additions; doing this under the \texttt{once-per-block} strategy is highly efficient. 
+Conversely, attempting this pre-computation 14 times per block under the \texttt{once-per-round} paradigm would completely negate the performance gains achieved by collapsing the multidimensional weight matrix into a scalar.
+
+\paragraph{Transition to Performance Analysis}
+In the next chapter, following the selection and testing of the optimal weight-balancing parameters ($\alpha$, $\beta$, $\gamma$, and $\delta$), a comprehensive benchmark comparison between the \texttt{once-per-round} and \texttt{once-per-block} approaches will be presented. 
+This analysis will evaluate energy consumption, execution time, and throughput variations against the default standard AES implementation. 
+Finally, additional NIST statistical tests will be performed over the \texttt{once-per-block} implementation to verify that the chaotic alteration maintains the strict randomness properties required for a cryptographic cipher.
+
+
+% ====================================================================================================
+
+% ====================================================================================================
+
+
+\chapter{Experimental Evaluation and Performance Analysis}
+
+To properly assess the viability of altering a robust and standardized cryptographic framework such as AES, 
+it is mandatory to evaluate whether the proposed chaotic variations maintain the baseline security guarantees without severely jeopardizing critical operational metrics. 
+In the resource-constrained context of satellite communications, physical factors such as execution time, energy footprint, and data throughput are just as vital as the cryptographic strength itself.
+
+This chapter presents a comprehensive experimental analysis of the proposed chaotic AES architecture. 
+First, it details the rigorous empirical methodology utilized to tune the chaotic control parameters ($\alpha$, $\beta$, $\gamma$, and $\delta$). 
+Subsequently, it provides a benchmark comparison evaluating the \texttt{once-per-round} and \texttt{once-per-block} update strategies against the default AES-256-GCM implementation. 
+Finally, the selected chaotic configuration is subjected to the NIST Statistical Test Suite to formally verify that the pseudo-randomness and structural entropy of the modified cipher remain uncompromised.
+
+
+\section{Chaotic Parameter Selection and Tuning Methodology}
+Due to the vast topological differences and varying behaviors inherent to each chaotic map, employing a universal, fixed set of control parameters ($\alpha$ and $\beta$ in Equation~\ref{eq:chaotic_evolution}, and $\delta$ in Equation~\ref{eq:chaotic_sbox}) across all maps would inevitably lead to mathematical inconsistencies or a severe loss of cryptographic entropy.
+
+Each parameter must be meticulously balanced to maintain the scalar state within a dynamic, chaotic equilibrium:
+\begin{itemize}
+    \item \textbf{Learning Rate ($\alpha$):} Disproportionately high values of $\alpha$ would completely overwhelm the forgetting factor, 
+    causing the chaotic weight to diverge rapidly toward infinity (triggering \texttt{NaN} or overflow faults in embedded architectures). 
+    Conversely, excessively low values would mathematically flatten the chaotic perturbation, effectively reverting the implementation to a standard, deterministic AES S-Box.
+    
+    \item \textbf{Forgetting Factor ($\beta$):} Acting as the systemic dampener, an excessively high $\beta$ would aggressively nullify the chaotic contributions of $\alpha$, forcing the scalar weight to rapidly collapse to zero. 
+    On the other hand, a $\beta$ that is too small would leave $\alpha$ unleashed, once again leading the system to mathematical divergence.
+    
+    \item \textbf{Sensitivity Multiplier ($\delta$):} Extreme values for $\delta$ would force the hyperbolic tangent ($\tanh$) function into saturation, 
+    clamping its output strictly to its asymptotic limits of $+1$ or $-1$. This clipping effect flattens the chaotic addend to a static $+\gamma$ or $-\gamma$. 
+    Conversely, values approaching zero would severely compress the function's output, rendering the chaotic modulation negligible.
+\end{itemize}
+
+However, unlike the highly sensitive variables discussed above, the absolute \textbf{perturbation amplitude} $\gamma$ can be statically fixed for all chaotic maps without compromising the system's dynamic functionality. 
+Because the ultimate output of the chaotic modulation evaluates to an 8-bit integer addition applied to the S-Box value, $\gamma$ physically dictates the maximum possible chaotic shift radius. 
+By defining $\gamma = 127$ (the median value of the modulo 256 space), the system guarantees maximum bidirectional diffusion, ensuring that the chaotic alteration remains robustly active across the entire byte spectrum, avoiding boundary constraints introduced by extreme values such as 1 or 255.
+
+
+% ====================================================================================================
+
+% ====================================================================================================
+
+
+\chapter{ML-based side-channel attack simulation}
+
 
 % New page for the bibliography
 \newpage

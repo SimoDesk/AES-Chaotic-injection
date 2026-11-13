@@ -1136,6 +1136,67 @@
       \verb https://www.sciencedirect.com/science/article/pii/0375960176901018
       \endverb
     \endentry
+    \entry{KeyAsSeed}{article}{}{}
+      \name{author}{7}{}{%
+        {{hash=1f3b1cda5958871ed1b84d967e250e37}{%
+           family={Safdar\bibnamedelima Gill},
+           familyi={S\bibinitperiod\bibinitdelim G\bibinitperiod},
+           given={Hammad},
+           giveni={H\bibinitperiod}}}%
+        {{hash=5414a644e1fcea4f57b6797bbaec008f}{%
+           family={Amjad},
+           familyi={A\bibinitperiod},
+           given={Madiha},
+           giveni={M\bibinitperiod}}}%
+        {{hash=14bfcb3f3b384e3503cf66b0d017b6ca}{%
+           family={Faheem},
+           familyi={F\bibinitperiod},
+           given={Muhammad},
+           giveni={M\bibinitperiod}}}%
+        {{hash=6a544daa64494ce3eba68c1a5c338844}{%
+           family={Ur\bibnamedelima Rehman},
+           familyi={U\bibinitperiod\bibinitdelim R\bibinitperiod},
+           given={Aqeel},
+           giveni={A\bibinitperiod}}}%
+        {{hash=4306ffa20759327f265d9fabcc9062ea}{%
+           family={Rana},
+           familyi={R\bibinitperiod},
+           given={Umber},
+           giveni={U\bibinitperiod}}}%
+        {{hash=f22aec688d267c82524cf8dcec79bc89}{%
+           family={Rehman\bibnamedelima Khan},
+           familyi={R\bibinitperiod\bibinitdelim K\bibinitperiod},
+           given={Amjad},
+           giveni={A\bibinitperiod}}}%
+        {{hash=1b9ab3cb7dc8ec3450d11b4fac2ae0e1}{%
+           family={Nawaz\bibnamedelima Bashir},
+           familyi={N\bibinitperiod\bibinitdelim B\bibinitperiod},
+           given={Rab},
+           giveni={R\bibinitperiod}}}%
+      }
+      \strng{namehash}{f1fcbf1fdd967b27830d804702447967}
+      \strng{fullhash}{397d3727f0d988512c527a15d16ef1d5}
+      \strng{fullhashraw}{397d3727f0d988512c527a15d16ef1d5}
+      \strng{bibnamehash}{f1fcbf1fdd967b27830d804702447967}
+      \strng{authorbibnamehash}{f1fcbf1fdd967b27830d804702447967}
+      \strng{authornamehash}{f1fcbf1fdd967b27830d804702447967}
+      \strng{authorfullhash}{397d3727f0d988512c527a15d16ef1d5}
+      \strng{authorfullhashraw}{397d3727f0d988512c527a15d16ef1d5}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{IEEE Access}
+      \field{title}{A Normalized Exponential Piecewise Chaotic System (NEPCS) and DNA Image Cryptography Using SHA-256}
+      \field{volume}{13}
+      \field{year}{2025}
+      \field{pages}{110392\bibrangedash 110417}
+      \range{pages}{26}
+      \verb{doi}
+      \verb 10.1109/ACCESS.2025.3582318
+      \endverb
+      \keyw{Encryption;Chaotic communication;Logistics;DNA;Entropy;NIST;Aerospace electronics;Sensitivity;Correlation;Ciphers;1D chaos;normalized exponential piecewise chaotic system (NEPCS);DNA;image encryption;CBC}
+    \endentry
   \enddatalist
 \endrefsection
 \endinput

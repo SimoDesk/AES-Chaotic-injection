@@ -311,23 +311,23 @@ static void extractSeedFromKey(struct AES_CHAOS_ctx* ctx, const uint8_t* iv, siz
 }
 
 // Extract a normalized seed value from the provided SHA-256 hash digest wich in range (0, 1) and is not exactly 0, 0.5, or 1 to avoid potential issues with certain chaotic maps.
-static double extractNormalizedSeedFromHash(const uint8_t* hashDigest) {
+static double extractNormalizedValueFromHash(const uint8_t* hashDigest) {
 
   // Use the first 8 bytes of the hash digest to create a 64-bit integer
-  uint64_t seedInt = 0;
+  uint64_t valInt = 0;
   for (int i = 0; i < 8; i++) {
-      seedInt = (seedInt << 8) | hashDigest[i];
+      valInt = (valInt << 8) | hashDigest[i];
   }
 
   // Normalize the 64-bit integer to a double in the range (0, 1)
-  double seed = (double)seedInt / (double)UINT64_MAX;
+  double val = (double)valInt / (double)UINT64_MAX;
 
   // Ensure the seed is not exactly 0, 0.5, or 1 to avoid potential issues with certain chaotic maps
-  if(seed == 0.0 || seed == 0.5 || seed == 1.0) {
-      seed += 0.000001;
+  if(val == 0.0 || val == 0.5 || val == 1.0) {
+      val += 0.000001;
   }
 
-  return seed;
+  return val;
 }
 
 /*****************************************************************************/
@@ -390,9 +390,9 @@ static void init_chaos(struct AES_CHAOS_ctx* ctx, const uint8_t* iv, size_t iv_l
     uint8_t hashDigest[32];
     extractSeedFromKey(ctx, iv, iv_len, hashDigest);
 
-    double extracted_x = extractNormalizedSeedFromHash(hashDigest);
-    double extracted_y = extractNormalizedSeedFromHash(hashDigest + 8);
-    double extracted_z = extractNormalizedSeedFromHash(hashDigest + 16);
+    double extracted_x = extractNormalizedValueFromHash(hashDigest);
+    double extracted_y = extractNormalizedValueFromHash(hashDigest + 8);
+    double extracted_z = extractNormalizedValueFromHash(hashDigest + 16);
 
     switch (ctx->map) {
         case LOGISTIC_MAP:

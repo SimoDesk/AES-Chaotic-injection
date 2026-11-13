@@ -43,22 +43,32 @@
 \contentsline {subsection}{\numberline {3.2.5}Tests for the GCM Embedded C Implementation}{29}{subsection.3.2.5}%
 \contentsline {paragraph}{NIST Vector Tests}{29}{paragraph*.18}%
 \contentsline {paragraph}{Channel Noise and SEU Simulation}{30}{paragraph*.19}%
+\contentsline {paragraph}{Chaotic Injection overview}{30}{paragraph*.20}%
 \contentsline {chapter}{\numberline {4}Chaotic Injection and Cryptographic Machine Unlearning}{31}{chapter.4}%
-\contentsline {paragraph}{Mathematical Modeling of the Chaotic S-Box}{31}{paragraph*.20}%
-\contentsline {paragraph}{Architectural Optimization: The Scalar Chaotic State}{32}{paragraph*.21}%
+\contentsline {paragraph}{Mathematical Modeling of the Chaotic S-Box}{31}{paragraph*.21}%
+\contentsline {paragraph}{Chaotic Influence on Key Expansion}{32}{paragraph*.22}%
+\contentsline {paragraph}{Architectural Optimization: The Scalar Chaotic State}{32}{paragraph*.23}%
 \contentsline {section}{\numberline {4.1}Taxonomy of the Implemented Chaotic Maps}{33}{section.4.1}%
 \contentsline {subsection}{\numberline {4.1.1}Discrete Chaotic Systems}{33}{subsection.4.1.1}%
-\contentsline {subsubsection}{One-Dimensional Maps}{33}{subsubsection*.22}%
-\contentsline {paragraph}{Logistic Map}{33}{paragraph*.23}%
-\contentsline {paragraph}{Tent Map}{33}{paragraph*.24}%
-\contentsline {paragraph}{Sine Map}{34}{paragraph*.25}%
-\contentsline {paragraph}{Chebyshev Map}{34}{paragraph*.26}%
-\contentsline {subsubsection}{Two-Dimensional Maps}{34}{subsubsection*.27}%
+\contentsline {subsubsection}{\numberline {4.1.1.1}One-Dimensional Maps}{33}{subsubsection.4.1.1.1}%
+\contentsline {paragraph}{Logistic Map}{33}{paragraph*.24}%
+\contentsline {paragraph}{Tent Map}{33}{paragraph*.25}%
+\contentsline {paragraph}{Sine Map}{34}{paragraph*.26}%
+\contentsline {paragraph}{Chebyshev Map}{34}{paragraph*.27}%
+\contentsline {subsubsection}{\numberline {4.1.1.2}Two-Dimensional Maps}{34}{subsubsection.4.1.1.2}%
 \contentsline {paragraph}{Hénon Map}{34}{paragraph*.28}%
 \contentsline {paragraph}{Arnold's Cat Map}{34}{paragraph*.29}%
 \contentsline {subsection}{\numberline {4.1.2}Continuous Chaotic Systems}{34}{subsection.4.1.2}%
-\contentsline {subsubsection}{Three-Dimensional Maps}{35}{subsubsection*.30}%
-\contentsline {paragraph}{Lorenz Map}{35}{paragraph*.31}%
-\contentsline {paragraph}{Chen Map}{35}{paragraph*.32}%
-\contentsline {paragraph}{Rössler Map}{36}{paragraph*.33}%
-\contentsline {chapter}{Bibliography}{37}{chapter*.34}%
+\contentsline {subsubsection}{\numberline {4.1.2.1}Three-Dimensional Maps}{35}{subsubsection.4.1.2.1}%
+\contentsline {paragraph}{Lorenz Map}{35}{paragraph*.30}%
+\contentsline {paragraph}{Chen Map}{35}{paragraph*.31}%
+\contentsline {paragraph}{Rössler Map}{36}{paragraph*.32}%
+\contentsline {section}{\numberline {4.2}Chaotic Initialization: Seed Derivation and Transient Elimination}{36}{section.4.2}%
+\contentsline {paragraph}{Transient Phase Elimination (Chaos Burn-in)}{37}{paragraph*.33}%
+\contentsline {section}{\numberline {4.3}Chaotic Update Trade-off and Hardware Leakage}{37}{section.4.3}%
+\contentsline {paragraph}{Physical Security and RAM Pre-computation}{38}{paragraph*.34}%
+\contentsline {paragraph}{Transition to Performance Analysis}{38}{paragraph*.35}%
+\contentsline {chapter}{\numberline {5}Experimental Evaluation and Performance Analysis}{39}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Chaotic Parameter Selection and Tuning Methodology}{39}{section.5.1}%
+\contentsline {chapter}{\numberline {6}ML-based side-channel attack simulation}{41}{chapter.6}%
+\contentsline {chapter}{Bibliography}{42}{chapter*.36}%

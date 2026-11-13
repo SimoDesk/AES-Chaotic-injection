@@ -120,9 +120,7 @@ Utility per il cluster:
 			- Runge-Kutta 4th order method per approssimare le funzioni continue con alto grado di precisione
 			- lorenz
 			- chen
-			- rossler
-
-	- tutte le mappe fanno dei giri iniziali		
+			- rossler	
 
 	- valori di partenza della mappe derivati dalla chiave (risolve il problema della sincronizzazione tra Ground e Space segment + problemi di determinismo dovuti a seed comuni su macchine diverse)
 
@@ -145,7 +143,7 @@ Utility per il cluster:
 		- successo medio sui test
 		- uniformità dei p-value
 
-- Attacco side-channel alla S-box channel con ML
+- Attacco side-channel alla S-box con ML
 	- cos'è, quali sono le superfici di attacco nelle SATCM e perché è una minaccia
 		- supply chain attack
 		- attacchi alla ground station
@@ -176,3 +174,19 @@ Utility per il cluster:
 	- Studi futuri
 		- Implementazione su FPGA rad-hard per accelerare ancora di più i calcoli e renderli più realistici /
 		  ottimizzare l'implementazione a basso livello a mo' di OpenSSL per avere un paragone alla pari con gli algoritmi moderni.
+
+
+? ? ?
+4. La vulnerabilità del doppio ciclo di clock (S-Box LUT)
+Problema: Nel codice C, l'operazione sbox[x] + shift esegue prima una lettura in memoria (deterministica) e poi un'addizione (caotica). 
+Un attaccante con un oscilloscopio perfetto potrebbe isolare il consumo energetico della sola lettura prima della perturbazione.
+
+Soluzione: Due difese. A livello fisico, la convoluzione del segnale analogico (effetto passa-basso del circuito) fonde temporalmente il consumo delle due istruzioni in un'unica "onda" irriconoscibile per la Random Forest. 
+A livello software (contromisura perfetta), si potrebbe pre-caricare l'intera LUT in RAM all'inizio del blocco, sommando lo scalare caotico a tutti i 256 elementi una volta sola.
+
+
+5. Uso della RAM e Ottimizzazione
+Problema: Pre-calcolare i 256 valori caotici in RAM non è computazionalmente pesante quanto la matrice scartata all'inizio? E perché non si fa nell'AES standard?
+
+Soluzione: Pre-calcolare lo shift significa fare 256 banalissime addizioni intere, un'operazione infinitamente più leggera rispetto a ricalcolare equazioni caotiche con il Runge-Kutta per decine di pesi neurali. 
+Inoltre, spostare la LUT in RAM in un AES standard non offre alcuna sicurezza, perché l'AES base rimane comunque deterministico, sprecando solo preziosa memoria.
