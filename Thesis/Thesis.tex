@@ -45,6 +45,9 @@
 % Load package for adjusting the width of text blocks
 \usepackage{fancyhdr}
 
+% Used in tables
+\usepackage{booktabs}
+
 % Redefine the chapter title format and spacing
 \usepackage{titlesec}
 \titleformat{\chapter}[display]
@@ -183,8 +186,8 @@
         {\LARGE \color{sapienzaRed}
         Secure Satellite Communication: \\
         Performance and cryptographic analysis of \\
-        chaotic injected AES resistant to side-channel attacks targeting the S-box via \\
-        machine unlearning
+        chaotic injected AES resistant to side-channel attacks \\ 
+        targeting the S-box via machine unlearning
         \par}
 
         \vspace{4cm}
@@ -1588,14 +1591,158 @@ However, unlike the highly sensitive variables discussed above, the absolute \te
 Because the ultimate output of the chaotic modulation evaluates to an 8-bit integer addition applied to the S-Box value, $\gamma$ physically dictates the maximum possible chaotic shift radius. 
 By defining $\gamma = 127$ (the median value of the modulo 256 space), the system guarantees maximum bidirectional diffusion, ensuring that the chaotic alteration remains robustly active across the entire byte spectrum, avoiding boundary constraints introduced by extreme values such as 1 or 255.
 
+Consequently, the empirical selection process investigates a strict grid of parameters, comprising 10 discrete options for $\alpha$ and 8 for $\beta$, yielding 80 unique combinations per chaotic map. 
+For each $(\alpha, \beta)$ pair, the evaluation framework dynamically determines the optimal $\delta$ multiplier. This is achieved by scouting the chaotic sequence over a bounded window of 100 iterations. 
+This initial sampling phase acts as a vital diagnostic tool to determine whether a specific parameter combination drives the chaotic state to non-finite extremes (\texttt{NaN}) or continuously saturates the hyperbolic tangent function. 
+Ultimately, each parameter triplet is evaluated based on a cumulative score derived from the sum of its cryptographic performance metrics and a weighted stability penalty.
+
+To optimize the substantial computational workload, the evaluation is divided into two distinct testing phases. 
+The initial \textit{screening phase} executes 500 tests per configuration to quickly filter out severely underperforming pairs and construct a preliminary leaderboard. 
+Subsequently, a highly restricted subset of the top-ranking pairs is subjected to a rigorous \textit{confirmation phase} comprising 2,000 iterations. 
+The final optimal parameters for each map are extracted exclusively from this high-resolution confirmation dataset.
+
+\subsection{Evaluation Metrics: Key Sensitivity and Avalanche Effect}
+Two of the primary cryptographic properties dictating the performance score are the \textit{Key Sensitivity (KS)} and the \textit{Avalanche Effect (AE)}. 
+These metrics are fundamentally rooted in the \textit{Strict Avalanche Criterion (SAC)}, originally defined by Webster and Tavares~\cite{SAC}. 
+
+For a robust block cipher operating on 128-bit blocks, such as the standard AES validated by NIST~\cite{AES} and detailed by its creators Daemen and Rijmen~\cite{OriginalAesPaper}, the SAC dictates that any single-bit alteration in the input (whether in the plaintext or the key) must yield a state where every output bit changes with a probability of exactly 50\%. 
+Consequently, the theoretical baseline for a pristine AES-256 implementation is an output Hamming distance of exactly 64 differing bits.
+
+Building upon this baseline, Key Sensitivity specifically measures the difference between two ciphertexts generated from the exact same plaintext, using a key that differs by only a single flipped bit. 
+The fundamental cryptographic objective is that the chaotic injection must not degrade this property, maintaining the cascading alteration of exactly 64 bits in the 128-bit ciphertext block.
+
+Similarly, the Avalanche Effect measures the variation between two ciphertexts deriving from the exact same key, but where the input plaintext differs by a single flipped bit. 
+This test maintains the identical objective of a strict 64-bit variation.
+
+The empirical evaluation of each parameter pair relies on calculating the average absolute deviation from this perfect 64-bit target across all test iterations. 
+The cumulative deviation is defined as:
+\begin{equation}
+    dev_{\text{sum}} = dev_{\text{ks}} + dev_{\text{ae}}
+\end{equation}
+where $dev_{\text{ks}}$ is the Key Sensitivity deviation and $dev_{\text{ae}}$ is the Avalanche Effect deviation. 
+A smaller $dev_{\text{sum}}$ indicates a cryptographic behavior closer to the theoretical ideal.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.78\textwidth]{images/logistic_hamming.png}
+    \caption{Logistic map tests results on the first phase}
+    \label{fig:logisticParams}
+\end{figure}
+
+\subsection{Stability Penalty System and Final Ranking}
+To categorically avoid the selection of mathematically dangerous configurations that could degrade the cipher in edge cases, a penalty system was introduced. 
+The penalty evaluates the system's structural integrity over the initial stability iterations, computing a weighted score based on three specific failure modes:
+\begin{equation}
+    P_{\text{stability}} = 100 \cdot R_{\text{saturation}} + 100 \cdot R_{\text{unstable}} + 1000 \cdot R_{\text{non-finite}}
+\end{equation}
+Where the penalty ratios ($R$) represent the number of failing samples over the total observed samples:
+\begin{itemize}
+    \item \textbf{Saturation Ratio ($R_{\text{saturation}}$):} Weighted at 100, this metric penalizes cases where the chaotic output is clamped to the asymptotic limits of the $\tanh$ function, thereby losing its dynamic behavior.
+    
+    \item \textbf{Instability Ratio ($R_{\text{unstable}}$):} Also weighted at 100, it reports algorithmic anomalies, such as the chaotic orbit unnaturally converging to a fixed structural limit.
+    
+    \item \textbf{Collapse Ratio ($R_{\text{non-finite}}$):} Heavily weighted at 1000, this is the most critical penalty. It targets combinations that cause the chaotic state to mathematically explode, resulting in \texttt{NaN} or \texttt{Infinity} values which would cause a catastrophic failure in an embedded CPU.
+\end{itemize}
+
+The final sorting metric (\texttt{total\_score}) is calculated by summing the absolute deviation ($dev_{\text{sum}}$) and the stability penalty ($P_{\text{stability}}$). 
+The parameter pairs are ranked in strictly ascending order, prioritizing the lowest total score. 
+In the event of a tie, the algorithm first prefers the pair with the lowest $dev_{\text{sum}}$. 
+As a final tie-breaker, the framework selects the pair minimizing the maximum individual deviation, evaluated as $\max(dev_{\text{ks}}, dev_{\text{ae}})$, ensuring the highest worst-case performance guarantee for the chosen chaotic map.
+
+\subsection{Selection Results and Parameter Assignment}
+Following the rigorous Phase 2 confirmation iterations and the application of the mathematical stability penalties, the system isolated a single definitive set of parameters for each chaotic map. 
+The final selected triads ($\alpha$, $\beta$, $\delta$) are detailed in Table~\ref{tab:chaotic_params_ranking}.
+
+\begin{table}[htbp]
+    \centering
+    \small
+    \setlength{\tabcolsep}{5.5pt}
+    \begin{tabular}{lccccccc}
+        \toprule
+        \textbf{Map} & $\boldsymbol{\alpha}$ & $\boldsymbol{\beta}$ & $\boldsymbol{\delta}$ & $\overline{\textbf{HD}}_{\textbf{ks}}$ & $\textbf{Dev}_{\textbf{ks}}$ & $\overline{\textbf{HD}}_{\textbf{ae}}$ & $\textbf{Dev}_{\textbf{ae}}$ \\
+        \midrule
+        Logistic     & 0.50 & 0.010 &   0.0299 & 64.0413 & 0.0413 & 63.9720 & 0.0280 \\
+        Tent         & 0.01 & 0.001 & 175.7223 & 64.0737 & 0.0737 & 64.1071 & 0.1071 \\
+        Sine         & 0.03 & 0.001 &  60.3030 & 63.9724 & 0.0276 & 63.9224 & 0.0776 \\
+        Chebyshev    & 0.03 & 0.001 &  28.4113 & 63.9660 & 0.0340 & 64.0588 & 0.0588 \\
+        H\'enon      & 0.50 & 0.010 &   0.0216 & 64.0671 & 0.0671 & 63.9941 & 0.0059 \\
+        Arnold       & 0.05 & 0.001 &  35.7719 & 63.9375 & 0.0625 & 64.0744 & 0.0744 \\
+        Lorenz       & 0.03 & 0.010 &   2.1379 & 63.8746 & 0.1254 & 64.0437 & 0.0437 \\
+        Chen         & 0.01 & 0.005 &  17.1727 & 64.1033 & 0.1033 & 63.9121 & 0.0879 \\
+        R\"ossler    & 0.15 & 0.030 &   1.0235 & 63.9765 & 0.0235 & 63.9887 & 0.0113 \\
+        \bottomrule
+    \end{tabular}
+    \caption{Optimal parameters ($\alpha$, $\beta$, $\delta$) and corresponding Key Sensitivity ($\text{HD}_{\text{ks}}$) and Avalanche Effect ($\text{HD}_{\text{ae}}$) Hamming Distances with their respective absolute deviations from the ideal 64-bit value.}
+    \label{tab:chaotic_params_ranking}
+\end{table}
+
+As highlighted by the empirical data in Table~\ref{tab:chaotic_params_ranking}, every chaotic system, when initialized with its optimized parameter set, achieved statistically near-ideal cryptographic diffusion. 
+The absolute deviations from the perfect 64-bit target strictly remained below a fraction of a single bit (maximum deviation $\approx 0.12$) across all tested architectures. 
+
+This evidence definitively proves that integrating a scalar chaotic injection into the substitution routine does not degrade the strict bijectivity and fundamental security properties of the standardized AES cipher. 
+Consequently, these specific optimized values have been hardcoded into the C implementation, acting as the default operational constants for all subsequent performance benchmarks and Side-Channel security evaluations.
+
+\section{Benchmark and SWaP analysis}
+
+\section{Random properties preservations}
+
 
 % ====================================================================================================
 
 % ====================================================================================================
 
 
-\chapter{ML-based side-channel attack simulation}
+\chapter[ML-based side-channel attack simulation]{ML-based side-channel attack \\ simulation}
 
+As the ultimate pragmatic validation of the proposed Machine Unlearning architecture, this chapter introduces a dedicated Machine Learning-based Side-Channel Attack (SCA) 
+aiming for complete cryptographic key recovery. 
+
+The threat model specifically targets the micro-architectural vulnerability introduced by the static Look-Up Table (LUT) execution of the AES-256-GCM S-Box. 
+By detailing a custom Divide-and-Conquer cryptanalysis technique, this chapter first demonstrates the devastating effectiveness of the profiling attack against the standard deterministic cipher. 
+Subsequently, the exact same offensive methodology is deployed against the chaotic-injected variant, empirically proving that the scalar perturbation is sufficient to completely neutralize the threat and immunize the simulated SATCOM infrastructure.
+
+\section{Threat Model and Physical Leakage}
+The architectural focus of the chaotic injection proposed by Kumar et al.~\cite{KumarPaper} is specifically tailored to counter side-channel threats targeting microcontrollers that rely on a Look-Up Table (LUT) to execute the AES \textsc{SubBytes} transformation. 
+In these standard software implementations, every byte substitution requires the CPU to execute a deterministic read operation from the memory module holding the S-Box array.
+
+The fundamental vulnerability of this architecture lies in the physical properties of the underlying hardware. 
+In standard \texttt{Complementary Metal-Oxide-Semiconductor (CMOS)} technology, logic transitions, specifically charging capacitance of a data bus wire from a logic `0` to a logic `1`, require a measurable draw of electrical current. 
+Consequently, as extensively formalized by Mangard et al. in their foundational side-channel analysis~\cite{HW_PROPOZIONALE_CONSUMO}, the power consumed during a memory transfer is directly proportional to the \textit{Hamming Weight (HW)} of the data word being moved. 
+By observing the power trace of the LUT memory access, an attacker can directly infer the Hamming Weight of the substituted byte.
+
+Conversely, modern high-end processors mitigate this vulnerability by utilizing dedicated cryptographic hardware extensions (such as AES-NI). 
+These modules calculate the Galois Field $\mathrm{GF}(2^8)$ arithmetic dynamically in hardware logic gates within a few clock cycles, entirely bypassing the memory bus and nullifying the LUT leakage. 
+However, deploying dedicated dynamic cryptographic hardware significantly increases the energy-per-bit consumption. 
+While power constraints are generally not an issue for terrestrial Ground Stations, this overhead is strictly prohibitive for the space segment (satellites) and lightweight end-user devices. 
+Constrained nodes such as handheld satellite phones, remote VSAT (Very Small Aperture Terminal) ground sensors, and IoT satellite transceivers simply cannot sustain the power requirements of dynamic hardware calculation, 
+rendering the software LUT implementation a strictly necessary architectural compromise.
+
+This rigid hardware constraint leaves the SATCOM infrastructure critically exposed to physical cryptanalysis. 
+As briefly introduced in Chapter 2, an attacker can harvest this power leakage through multiple vectors. 
+In modern \textit{Satellite-as-a-Service (SataaS)} architectures, inadequate logical isolation might allow malicious co-resident software to sample the shared hardware's power fluctuations. 
+On a higher operational level, highly sophisticated adversaries could leverage supply-chain attacks to embed hardware trojans into the satellite's components prior to launch, establishing a covert physical monitoring channel. 
+Most commonly, however, the most vulnerable attack surfaces are the remote, unattended end-user terminals (e.g., environmental IoT sensors or compromised satellite phones), which can be physically captured and probed with an oscilloscope to completely extract the network's cryptographic keys.
+
+To rigorously simulate this threat model, this study adopts a standardized side-channel proof-of-concept methodology. 
+Instead of relying on analog traces captured by a physical oscilloscope, this simulation utilizes the Hamming Weight of the S-Box output byte as a deterministic proxy for the power consumption. 
+As validated by foundational Machine Learning cryptanalysis frameworks such as the ASCAD database by Prouff et al.~\cite{HW_proof-of-concept}, targeting the mathematically pure HW provides an ideal baseline to evaluate the absolute classification capabilities of the ML model.
+
+\section{Attack Choices and Theoretical Comparison}
+The cryptanalysis methodology proposed in this thesis emerges as a direct consequence of a critical analysis of the threat model exposed by Kumar et al.~\cite{KumarPaper}. 
+In their foundational research, the authors employed machine learning techniques to analyze physical leakages, specifically the power consumption derived from the S-Box substitution, to perform a classification attack. 
+Their primary objective was to analyze simulated, intercepted ciphertexts to infer high-level intelligence, such as classifying the specific type of message being transmitted (e.g., distinguishing between telemetry data and mission-critical payloads).
+
+However, this thesis deliberately diverges from the methodology pursued in the reference paper due to a severe cryptographic limitation inherent in their simulated environment. 
+In order to successfully perform a classification attack directly on ciphertexts, the ML model requires that identical plaintext blocks encrypted during different communication sessions produce the exact same ciphertext output, allowing the algorithm to recognize static structural patterns. 
+This deterministic behavior is only achievable by utilizing deprecated and deeply insecure modes of operation, such as the Electronic Codebook (ECB). 
+
+Deploying an ECB-like architecture is completely unrealistic for a critical and highly regulated environment such as SATCOM, 
+effectively confining such an attack model to a purely theoretical exercise. 
+Therefore, this study chooses to strictly adhere to current aerospace communication standards by employing the AES-256-GCM architecture. 
+Operating within this robust, non-deterministic framework, this thesis simulates a significantly more devastating threat vector: complete cryptographic key recovery.
+
+Ultimately, while the operational goals differ radically from the reference literature, successfully executing this advanced key recovery attack against the baseline AES-256-GCM will serve as the perfect benchmark. 
+It will conclusively demonstrate that the proposed chaotic-injected implementation is capable of blinding the ML classifier, preventing it from exploiting physical leakages to extract any usable information.
 
 % New page for the bibliography
 \newpage

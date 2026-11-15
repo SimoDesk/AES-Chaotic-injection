@@ -412,10 +412,7 @@ def main():
 
         # After running phase 1 tests, create plots and generate the leaderboard for the results.
         createPlots(output_dir=Path(RESULTS_DIR) / "phase_1" / "plots")
-        createLeaderBoard(
-            output_path=os.path.join(RESULTS_DIR, "phase_1",
-                                     "ranking_alfa_beta.csv")
-        )
+        createLeaderBoard(output_path=os.path.join(RESULTS_DIR, "phase_1",  "ranking_alfa_beta.csv"))
 
     # Phase 2 uses the ranking from phase 1 to select the top N pairs of (alfa, beta) for each map and runs the confirmation tests.
     if phase in ("2", "all"):
@@ -435,10 +432,7 @@ def main():
 
         # Execute phase 2 tests for the selected top N pairs of (alfa, beta) for each map.
         execute_phase(2, phase_two_pairs, args.tests or CONFIRMATION_TESTS)
-        createLeaderBoard(
-            output_path=os.path.join(RESULTS_DIR, "phase_2",
-                                     "ranking_alfa_beta.csv")
-        )
+        createLeaderBoard(output_path=os.path.join(RESULTS_DIR, "phase_2", "ranking_alfa_beta.csv"))
 
 
 if __name__ == "__main__":

@@ -1197,6 +1197,169 @@
       \endverb
       \keyw{Encryption;Chaotic communication;Logistics;DNA;Entropy;NIST;Aerospace electronics;Sensitivity;Correlation;Ciphers;1D chaos;normalized exponential piecewise chaotic system (NEPCS);DNA;image encryption;CBC}
     \endentry
+    \entry{SAC}{inproceedings}{}{}
+      \name{author}{2}{}{%
+        {{hash=d61a6c1ee7c3b43ebb151c5361cac0f4}{%
+           family={Webster},
+           familyi={W\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod}}}%
+        {{hash=246e1b9d509a223849acaaec454606da}{%
+           family={Tavares},
+           familyi={T\bibinitperiod},
+           given={Stafford},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{9c182ff93612d841e03fc443b37977dd}
+      \strng{fullhash}{9c182ff93612d841e03fc443b37977dd}
+      \strng{fullhashraw}{9c182ff93612d841e03fc443b37977dd}
+      \strng{bibnamehash}{9c182ff93612d841e03fc443b37977dd}
+      \strng{authorbibnamehash}{9c182ff93612d841e03fc443b37977dd}
+      \strng{authornamehash}{9c182ff93612d841e03fc443b37977dd}
+      \strng{authorfullhash}{9c182ff93612d841e03fc443b37977dd}
+      \strng{authorfullhashraw}{9c182ff93612d841e03fc443b37977dd}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{978-3-540-16463-0}
+      \field{month}{02}
+      \field{title}{On the design of S-Boxes}
+      \field{year}{1970}
+      \verb{doi}
+      \verb 10.1007/3-540-39799-X_41
+      \endverb
+    \endentry
+    \entry{OriginalAesPaper}{book}{}{}
+      \name{author}{2}{}{%
+        {{hash=ce9c20302c5a545e289c41661ac58c43}{%
+           family={Daemen},
+           familyi={D\bibinitperiod},
+           given={Joan},
+           giveni={J\bibinitperiod}}}%
+        {{hash=d2e51b6dbeb039e27ea5d1a6f5d63302}{%
+           family={Rijmen},
+           familyi={R\bibinitperiod},
+           given={Vincent},
+           giveni={V\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Springer Science \& Business Media}%
+      }
+      \strng{namehash}{3967038944da1152e0568c52ebc551ab}
+      \strng{fullhash}{3967038944da1152e0568c52ebc551ab}
+      \strng{fullhashraw}{3967038944da1152e0568c52ebc551ab}
+      \strng{bibnamehash}{3967038944da1152e0568c52ebc551ab}
+      \strng{authorbibnamehash}{3967038944da1152e0568c52ebc551ab}
+      \strng{authornamehash}{3967038944da1152e0568c52ebc551ab}
+      \strng{authorfullhash}{3967038944da1152e0568c52ebc551ab}
+      \strng{authorfullhashraw}{3967038944da1152e0568c52ebc551ab}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{The Design of Rijndael: AES-the Advanced Encryption Standard}
+      \field{year}{2002}
+      \verb{urlraw}
+      \verb https://cs.ru.nl/~joan/papers/JDA_VRI_Rijndael_2002.pdf
+      \endverb
+      \verb{url}
+      \verb https://cs.ru.nl/~joan/papers/JDA_VRI_Rijndael_2002.pdf
+      \endverb
+    \endentry
+    \entry{HW_PROPOZIONALE_CONSUMO}{book}{}{}
+      \name{author}{3}{}{%
+        {{hash=1cdffbc482347edefd718f61814abbc3}{%
+           family={Mangard},
+           familyi={M\bibinitperiod},
+           given={Stefan},
+           giveni={S\bibinitperiod}}}%
+        {{hash=cf7c0382045f06385a28d0235a0bbc97}{%
+           family={Oswald},
+           familyi={O\bibinitperiod},
+           given={Elisabeth},
+           giveni={E\bibinitperiod}}}%
+        {{hash=34c7d868028eb76ef7d90c1f3ba5c8ec}{%
+           family={Popp},
+           familyi={P\bibinitperiod},
+           given={Thomas},
+           giveni={T\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Springer}%
+      }
+      \strng{namehash}{c6527fca10514b5b57a9540f156dce07}
+      \strng{fullhash}{c6527fca10514b5b57a9540f156dce07}
+      \strng{fullhashraw}{c6527fca10514b5b57a9540f156dce07}
+      \strng{bibnamehash}{c6527fca10514b5b57a9540f156dce07}
+      \strng{authorbibnamehash}{c6527fca10514b5b57a9540f156dce07}
+      \strng{authornamehash}{c6527fca10514b5b57a9540f156dce07}
+      \strng{authorfullhash}{c6527fca10514b5b57a9540f156dce07}
+      \strng{authorfullhashraw}{c6527fca10514b5b57a9540f156dce07}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{978-0-387-38162-6}
+      \field{title}{Power Analysis Attacks: Revealing the Secrets of Smart Cards}
+      \field{year}{2007}
+      \verb{doi}
+      \verb 10.1007/978-0-387-38162-6
+      \endverb
+    \endentry
+    \entry{HW_proof-of-concept}{article}{}{}
+      \name{author}{5}{}{%
+        {{hash=57116418049ffffb40e17b399648030d}{%
+           family={Prouff},
+           familyi={P\bibinitperiod},
+           given={Emmanuel},
+           giveni={E\bibinitperiod}}}%
+        {{hash=ea541397d0c2f47909bedbd7cadf989a}{%
+           family={Strullu},
+           familyi={S\bibinitperiod},
+           given={Rémi},
+           giveni={R\bibinitperiod}}}%
+        {{hash=1545b88b2e4e3a4afa3916e70650d88c}{%
+           family={Benadjila},
+           familyi={B\bibinitperiod},
+           given={Ryad},
+           giveni={R\bibinitperiod}}}%
+        {{hash=b3cf2e1342d5e73111683063da80c2ec}{%
+           family={Cagli},
+           familyi={C\bibinitperiod},
+           given={Eleonora},
+           giveni={E\bibinitperiod}}}%
+        {{hash=26b9a2549fbe1b135e66fa64d4d3ed61}{%
+           family={Dumas},
+           familyi={D\bibinitperiod},
+           given={Cécile},
+           giveni={C\bibinitperiod}}}%
+      }
+      \strng{namehash}{b3438b97552a969d44d404d0d97d500e}
+      \strng{fullhash}{c55264c85f5fe8b51f381a6d643179f6}
+      \strng{fullhashraw}{c55264c85f5fe8b51f381a6d643179f6}
+      \strng{bibnamehash}{b3438b97552a969d44d404d0d97d500e}
+      \strng{authorbibnamehash}{b3438b97552a969d44d404d0d97d500e}
+      \strng{authornamehash}{b3438b97552a969d44d404d0d97d500e}
+      \strng{authorfullhash}{c55264c85f5fe8b51f381a6d643179f6}
+      \strng{authorfullhashraw}{c55264c85f5fe8b51f381a6d643179f6}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{IACR Cryptol. ePrint Arch.}
+      \field{title}{Study of Deep Learning Techniques for Side-Channel Analysis and Introduction to ASCAD Database}
+      \field{volume}{2018}
+      \field{year}{2018}
+      \field{pages}{53}
+      \range{pages}{1}
+      \verb{urlraw}
+      \verb https://api.semanticscholar.org/CorpusID:41991837
+      \endverb
+      \verb{url}
+      \verb https://api.semanticscholar.org/CorpusID:41991837
+      \endverb
+    \endentry
   \enddatalist
 \endrefsection
 \endinput

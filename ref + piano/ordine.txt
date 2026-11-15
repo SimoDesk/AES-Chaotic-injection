@@ -148,7 +148,6 @@ Utility per il cluster:
 		- supply chain attack
 		- attacchi alla ground station
 		- attacchi ai Satellite-as-a-Service con sistemi di ascolto sw
-	- perché l'AES standard è vulnerabile mentre la versione con iniezione caotica no
 	- confronto con l'attacco del paper
 	- l'attacco in analisi (Key recovery completo con ML misto a un approccio divide et impera + brute force)
 		- logica di attacco punta a raccogliere le misurazioni dei consumi di potenza in uscita dalla s-box e usare un modello ML per predirre il valore corretto 
@@ -166,6 +165,7 @@ Utility per il cluster:
 			  corrente e viene chiesto allo stesso modello di determinare quali sarebbero i 4 byte corrispondenti in K2 se quello corrente ipotizzato di K1 fosse giusto. 
 			  Fatto per ogni byte otteniamo 4*256 = 2^32 combinazioni di chiave, tra le quali ci sarà anche quella corretta.
 	- Success Rates standard VS chaos (per blocco)
+		- perché l'AES standard è vulnerabile mentre la versione con iniezione caotica no
 		- confronto anche per round per verificare il funzionamento della resistenza anche dell'approccio più leggero + analisi dei trade-off
 
 - Conclusioni
