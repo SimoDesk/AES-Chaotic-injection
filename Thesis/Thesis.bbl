@@ -1267,6 +1267,136 @@
       \verb https://cs.ru.nl/~joan/papers/JDA_VRI_Rijndael_2002.pdf
       \endverb
     \endentry
+    \entry{NISTRandomnessTestSuite}{report}{}{}
+      \name{author}{12}{}{%
+        {{hash=ddda76aa96553e3d4c700fdf3c6b9132}{%
+           family={Bassham},
+           familyi={B\bibinitperiod},
+           given={Lawrence\bibnamedelima E.},
+           giveni={L\bibinitperiod\bibinitdelim E\bibinitperiod}}}%
+        {{hash=420ad5e4d55032fa412b7b1b55c98eec}{%
+           family={Rukhin},
+           familyi={R\bibinitperiod},
+           given={Andrew\bibnamedelima L.},
+           giveni={A\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+        {{hash=90028662b3ed507a8c93ed6762876b17}{%
+           family={Soto},
+           familyi={S\bibinitperiod},
+           given={Juan},
+           giveni={J\bibinitperiod}}}%
+        {{hash=ab8269bb60342d75ec11f70397754714}{%
+           family={Nechvatal},
+           familyi={N\bibinitperiod},
+           given={James\bibnamedelima R.},
+           giveni={J\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
+        {{hash=ca376fc04ea53d83064671af57950b5f}{%
+           family={Smid},
+           familyi={S\bibinitperiod},
+           given={Miles\bibnamedelima E.},
+           giveni={M\bibinitperiod\bibinitdelim E\bibinitperiod}}}%
+        {{hash=63ed5a56320d6e2df4f62be5b4147bab}{%
+           family={Barker},
+           familyi={B\bibinitperiod},
+           given={Elaine\bibnamedelima B.},
+           giveni={E\bibinitperiod\bibinitdelim B\bibinitperiod}}}%
+        {{hash=af1bc76bdb6ff71ebe31c920b2914df1}{%
+           family={Leigh},
+           familyi={L\bibinitperiod},
+           given={Stefan\bibnamedelima D.},
+           giveni={S\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+        {{hash=c7e5acee60d9d633145f69ced9a5d25e}{%
+           family={Levenson},
+           familyi={L\bibinitperiod},
+           given={Mark},
+           giveni={M\bibinitperiod}}}%
+        {{hash=76250ce2b996dc8662fbce6a07a63d80}{%
+           family={Vangel},
+           familyi={V\bibinitperiod},
+           given={Mark},
+           giveni={M\bibinitperiod}}}%
+        {{hash=ec7d99b7f9992f0037a5d7f636913abf}{%
+           family={Banks},
+           familyi={B\bibinitperiod},
+           given={David\bibnamedelima L.},
+           giveni={D\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+        {{hash=34ae85bbe7a5388e4adfb8e87c28195a}{%
+           family={Heckert},
+           familyi={H\bibinitperiod},
+           given={Nathanael\bibnamedelima A.},
+           giveni={N\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+        {{hash=76900d8d6e91f218f537e31b8152aafc}{%
+           family={Dray},
+           familyi={D\bibinitperiod},
+           given={James\bibnamedelima F.},
+           giveni={J\bibinitperiod\bibinitdelim F\bibinitperiod}}}%
+      }
+      \list{institution}{2}{%
+        {National Institute of Standards}%
+        {Technology (NIST)}%
+      }
+      \list{location}{1}{%
+        {Gaithersburg, MD}%
+      }
+      \strng{namehash}{9b43868a80b5e88c99c9346d846d66c9}
+      \strng{fullhash}{1e1aab1ef0b2ddc6b02f6fd7c55b9fa5}
+      \strng{fullhashraw}{1e1aab1ef0b2ddc6b02f6fd7c55b9fa5}
+      \strng{bibnamehash}{9b43868a80b5e88c99c9346d846d66c9}
+      \strng{authorbibnamehash}{9b43868a80b5e88c99c9346d846d66c9}
+      \strng{authornamehash}{9b43868a80b5e88c99c9346d846d66c9}
+      \strng{authorfullhash}{1e1aab1ef0b2ddc6b02f6fd7c55b9fa5}
+      \strng{authorfullhashraw}{1e1aab1ef0b2ddc6b02f6fd7c55b9fa5}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{4}
+      \field{number}{800-22, Rev. 1a}
+      \field{title}{{A Statistical Test Suite for Random and Pseudorandom Number Generators for Cryptographic Applications}}
+      \field{type}{NIST Special Publication}
+      \field{year}{2010}
+      \verb{doi}
+      \verb 10.6028/NIST.SP.800-22r1a
+      \endverb
+      \verb{urlraw}
+      \verb https://csrc.nist.gov/pubs/sp/800/22/r1a/final
+      \endverb
+      \verb{url}
+      \verb https://csrc.nist.gov/pubs/sp/800/22/r1a/final
+      \endverb
+    \endentry
+    \entry{stevenang2020randomness_testsuite}{software}{}{}
+      \name{author}{1}{}{%
+        {{hash=409922cd52d50dfecba01fdb9a389146}{%
+           family={Ang},
+           familyi={A\bibinitperiod},
+           given={Steven},
+           giveni={S\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {GitHub}%
+      }
+      \strng{namehash}{409922cd52d50dfecba01fdb9a389146}
+      \strng{fullhash}{409922cd52d50dfecba01fdb9a389146}
+      \strng{fullhashraw}{409922cd52d50dfecba01fdb9a389146}
+      \strng{bibnamehash}{409922cd52d50dfecba01fdb9a389146}
+      \strng{authorbibnamehash}{409922cd52d50dfecba01fdb9a389146}
+      \strng{authornamehash}{409922cd52d50dfecba01fdb9a389146}
+      \strng{authorfullhash}{409922cd52d50dfecba01fdb9a389146}
+      \strng{authorfullhashraw}{409922cd52d50dfecba01fdb9a389146}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{GitHub repository}
+      \field{title}{{randomness\_testsuite}: A {Python} Implementation of the {NIST SP 800-22 Rev 1a} Test Suite}
+      \field{year}{2020}
+      \verb{urlraw}
+      \verb https://github.com/stevenang/randomness_testsuite
+      \endverb
+      \verb{url}
+      \verb https://github.com/stevenang/randomness_testsuite
+      \endverb
+    \endentry
     \entry{HW_PROPOZIONALE_CONSUMO}{book}{}{}
       \name{author}{3}{}{%
         {{hash=1cdffbc482347edefd718f61814abbc3}{%

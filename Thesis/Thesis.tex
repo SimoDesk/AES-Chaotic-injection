@@ -45,8 +45,12 @@
 % Load package for adjusting the width of text blocks
 \usepackage{fancyhdr}
 
+% Used for images one right to another
+\usepackage{subcaption}
+
 % Used in tables
 \usepackage{booktabs}
+\usepackage{multirow}
 
 % Redefine the chapter title format and spacing
 \usepackage{titlesec}
@@ -198,7 +202,7 @@
         Bachelor's Degree in Computer Science
         \par}
 
-        \vspace{0.8cm}
+        \vspace{1.5cm}
 
         % My name and ID number
         {\normalsize
@@ -206,7 +210,7 @@
         ID number 2116496
         \par}
 
-        \vspace{0.8cm}
+        \vspace{1.5cm}
 
         % Advisor information
         {\normalsize
@@ -272,7 +276,7 @@ Furthermore, this study aims to analyze the integration of various chaotic maps 
 These configurations will be rigorously benchmarked to evaluate execution time and energy consumption, thereby identifying the optimal solution for the resource-constrained SATCOM environment. 
 Concurrently, statistical and cryptographic tests will verify that altering the standard encryption algorithm does not degrade its fundamental cryptographic properties.
 
-Building upon these analyses, the thesis proposes an architectural optimization tailored for satellite communications. 
+Building upon these analysis, the thesis proposes an architectural optimization tailored for satellite communications. 
 A comprehensive comparison will be provided between the baseline chaotic algorithm proposed by Kumar et al. and a modified iteration engineered to yield superior performance metrics, 
 rendering it highly appropriate for space applications.
 
@@ -1062,6 +1066,14 @@ Due to the bit-reflected nature of the data, the highest degree coefficient ($x^
 If this bit is 0, a simple right shift is sufficient. However, if the LSB is 1, the subsequent right shift would cause an overflow outside the finite field. 
 To mathematically correct this, the shifted result is immediately XORed with the irreducible polynomial $R$ \texttt{(line 12)}, seamlessly reducing the value back into the valid finite field space.
 
+\paragraph{Additional Challenges of GCM}
+As highlighted in the section detailing the S-Box substitution, executing repeated algebraic operations natively within a Galois Field (in this case, $\mathrm{GF}(2^{128})$ for the GHASH multiplication) imposes a significant computational and energetic overhead. 
+This mathematical burden is often incompatible with the strict power budgets of resource-constrained devices, such as space-segment satellite components.
+
+To address this critical efficiency bottleneck, these embedded architectures typically adopt a structural compromise remarkably similar to the S-Box implementation: leveraging pre-computed Look-Up Tables (LUTs). 
+Specifically, the Shoup's method or the 4-bit table-driven approach pre-calculates the polynomial multiplications, allowing the device to perform the GCM authentication via fast memory lookups and XOR operations rather than dynamic arithmetic. 
+Alternatively, modern architectures might utilize dedicated hardware instructions (such as the \texttt{PCLMULQDQ} instruction in x86 environments) to perform carry-less multiplications directly in the silicon logic, minimizing the energy-per-bit cost while bypassing the memory constraints.
+
 
 \subsection{\texorpdfstring{$\text{GHASH}$}{GHASH} Function}
 The generation of the authentication tag is the theoretical core of the GCM architecture, and the $\text{GHASH}$ function serves as the mathematical engine utilized by the main encryption algorithm to achieve this integrity guarantee.
@@ -1558,7 +1570,7 @@ Finally, additional NIST statistical tests will be performed over the \texttt{on
 % ====================================================================================================
 
 
-\chapter{Experimental Evaluation and Performance Analysis}
+\chapter[Experimental Evaluation and Performance Analysis]{Experimental Evaluation and \\ Performance Analysis}
 
 To properly assess the viability of altering a robust and standardized cryptographic framework such as AES, 
 it is mandatory to evaluate whether the proposed chaotic variations maintain the baseline security guarantees without severely jeopardizing critical operational metrics. 
@@ -1682,10 +1694,238 @@ The absolute deviations from the perfect 64-bit target strictly remained below a
 This evidence definitively proves that integrating a scalar chaotic injection into the substitution routine does not degrade the strict bijectivity and fundamental security properties of the standardized AES cipher. 
 Consequently, these specific optimized values have been hardcoded into the C implementation, acting as the default operational constants for all subsequent performance benchmarks and Side-Channel security evaluations.
 
+
+\section{Randomness Properties Preservation}
+Following the derivation of the optimal chaotic parameters, the subsequent validation phase entails the application of the official NIST Statistical Test Suite (SP 800-22 Rev 1a)~\cite{NISTRandomnessTestSuite}. 
+This standard framework comprises 15 distinct statistical tests (effectively 16, as the Cumulative Sums test is evaluated across two modes) specifically designed to assess the randomness of pseudo random number generators. 
+
+In modern cryptographic literature, this suite is also rigorously employed to verify that the ciphertexts produced by symmetric encryption algorithms remain statistically indistinguishable from pure, unpredictable noise. 
+Consequently, this study utilizes the NIST suite to formally prove that the chaotic modifications injected into the AES implementation preserve the pristine random properties characteristic of the unaltered baseline algorithm.
+
+For the practical execution of the statistical analysis, this study integrates an open-source Python implementation of the NIST suite~\cite{stevenang2020randomness_testsuite}. 
+To feed the analysis, exactly 1,000,000 bits (125,000 bytes) of ciphertext are generated for each map, evaluating them against the entire battery of tests.
+
+\subsection{Evaluation Schemes and Metrics}
+To interpret the results returned by each of the statistical tests, specific evaluation schemes are employed strictly adhering to the official NIST methodology~\cite{NISTRandomnessTestSuite}, 
+which bases its validation upon \texttt{P-value} significance states. 
+
+A \texttt{P-value} is a continuous variable within the interval $[0, 1]$. 
+To successfully pass an individual statistical test, the returned \texttt{P-value} must be greater than or equal to the significance level $\alpha = 0.01$. 
+By defining this threshold, the NIST standard explicitly acknowledges the probabilistic nature of the evaluation, accepting a 1\% mathematical probability that an inherently random sequence might be incorrectly flagged as a failure (Type I error).
+
+Crucially, the overall validation of a cryptographic system cannot depend on a single evaluated sequence. 
+Instead, an entire set of independently generated sequences must be analyzed to produce a statistically significant distribution capable of absorbing the 1\% error threshold. 
+For the purpose of this study, the evaluation metric is established over a sequence count of 100 iterations for each chaotic map.
+
+To prevent the application of an overly rigid "one-out, all-out" policy, where a single sequence failure would inexplicably compromise the entire cipher,
+the assessment relies on the NIST proportion margin formula:
+\begin{equation}
+    \text{Margin} = 3 \cdot \sqrt{\frac{\text{Target}_{\text{prop}} \cdot (1 - \text{Target}_{\text{prop}})}{\text{Sequence}_{\text{count}}}}
+\end{equation}
+where $\text{Target}_{\text{prop}} = 1 - \alpha = 0.99$ and $\text{Sequence}_{\text{count}}$ is statically set to $100$. Evaluating the equation yields the absolute acceptance boundaries:
+\begin{align*}
+    \text{Lower Bound} &= 0.99 - 0.029849 \approx 0.9601 \\
+    \text{Upper Bound} &= 0.99 + 0.029849 \approx 1.0198 \quad (\text{capped at } 1.0)
+\end{align*}
+Therefore, an individual NIST test is considered globally successful for a specific chaotic map only if at least 96\% of the 100 generated sequences yield a \texttt{P-value} $\ge 0.01$.
+
+\paragraph{P-value Uniformity Analysis (Chi-Squared Test)}
+Beyond achieving the minimum passing proportion, official NIST guidelines mandate that an optimal cryptosystem must produce a statistically uniform distribution of \texttt{P-values} across all tested sequences. 
+
+To formally verify this uniformity, a $\chi^2$ (Chi-Squared) goodness-of-fit test is executed over the results. 
+The 100 obtained \texttt{P-values} are partitioned into 10 equally spaced sub-intervals between 0 and 1. 
+The empirical frequency of values falling into each bucket is then statistically compared against the ideal expected distribution ($E_i = \frac{\text{Sequence}_{\text{count}}}{10}$). 
+Ultimately, an incomplete gamma function evaluates the $\chi^2$ statistic to calculate a final $P\text{-value}_{\text{uniformity}}$. 
+The uniformity test is strictly considered successful only if this resultant value is greater than or equal to the secondary threshold of $\alpha_{\text{uniformity}} = 0.0001$.
+
+\subsection{Statistical Results and Randomness Validation}
+Following the execution of the complete NIST Statistical Test Suite, consisting of 100 iterations for each map, the empirical results confirm the robust cryptographic integrity of the chaotic architectures. 
+To provide a comprehensive overview of the cipher's performance across the entire testing spectrum, Figure~\ref{fig:NIST_heatmap} presents a heatmap detailing the overall success trends.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1.1\textwidth]{images/success_rate_heatmap.png}
+    \caption{Heatmap illustrating the percentage of successful sequences for each NIST statistical test across the baseline AES and the chaotic map variants.}
+    \label{fig:NIST_heatmap}
+\end{figure}
+
+As highlighted by the average success rate comparison in Figure~\ref{fig:NIST_results}, the chaotic systems maintain exceptionally high randomness properties. 
+Notably, the Chebyshev map stands out, achieving an average success rate of 99.44\%, slightly surpassing the 98.97\% baseline of the standard AES. 
+Conversely, the remaining chaotic maps exhibit marginally lower scores compared to the default cipher, with the Arnold Cat map recording the lowest average at 98.43\%. 
+However, it is crucial to emphasize that all implementations drastically exceed the mathematically required lower bound of 96.01\%, solidifying the overall chaotic alteration as a definitive success.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/average_success_rate.png}
+    \caption{Average NIST success rate comparison between the standard AES implementation and the chaotic variants.}
+    \label{fig:NIST_results}
+\end{figure}
+
+Continuing with the P-value uniformity analysis, Figure~\ref{fig:NIST_p-val} illustrates a highly satisfactory distribution for each chaotic map. 
+While minor local frequency variations are visually observable, such as a slightly more fluctuating distribution in the Chen and Hénon systems, alongside a noticeable initial frequency spike in the Lorenz system, these variations remain well within statistical tolerances. 
+The dedicated $\chi^2$ uniformity evaluation confirmed a 100\% pass rate across all implementations, formally validating that the P-values are sufficiently and evenly distributed.
+
+Finally, the vertical red dashed line in Figure~\ref{fig:NIST_p-val} represents the $\alpha = 0.01$ rejection threshold. 
+The histograms clearly demonstrate that only a mathematically expected, minor subset of tests fell below this limit for each chaotic system, identically mirroring the behavior of the standard AES. 
+This provides a textbook empirical observation of the Type I error (false positive) rate formally acknowledged by the NIST standard.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1\textwidth]{images/p_value_distributions.png}
+    \caption{Frequency distributions of P-values for each cryptographic configuration, visually confirming the required statistical uniformity.}
+    \label{fig:NIST_p-val}
+\end{figure}
+
 \section{Benchmark and SWaP analysis}
+Before evaluating the physical performance metrics of the embedded implementation, a brief theoretical premise regarding the cipher's mathematical cryptanalysis resistance is required. 
+In the foundational study by Kumar et al.~\cite{KumarPaper}, the authors benchmarked chaotic S-Boxes against linear and differential cryptanalysis using the Logistic and Hénon maps as their primary case studies. 
 
-\section{Random properties preservations}
+As reported in their theoretical analysis, dynamically perturbing the S-Box introduces a \\ marginal mathematical trade-off: individual chaotic maps cause a slight fluctuation in the \textit{Non-Linearity (NL)} score (dipping from the standard 112 to approximately 108-110) and a minor increase in \textit{Differential Uniformity (DU)} (from the baseline 4.0 to 5.0-6.0). 
+In cryptographic engineering, this represents a well-documented and acceptable compromise: a minimal relaxation of theoretical algebraic bounds in exchange for a massive increase in micro-architectural side-channel resilience. 
 
+Because the scalar optimization proposed in this thesis applies the exact same bounded mathematical perturbation (via the $\gamma \cdot \tanh$ limiter) across all evaluated maps, these marginal DU and NL fluctuations are inherently inherited. 
+Furthermore, the near-perfect Avalanche Effect and strict NIST randomness scores obtained in the previous sections provide robust empirical confirmation that the cipher's structural integrity remains highly secure. 
+
+Consequently, rather than replicating the theoretical algebraic cryptanalysis already validated by the reference literature, the focal point of this evaluation shifts entirely to the physical and architectural viability of the cipher. 
+The primary objective of the following benchmarks is to quantitatively analyze the computational trade-offs, specifically execution time, data throughput, and relative energy consumption, between the baseline AES-256-GCM, the theoretical \texttt{once-per-round} chaotic update, 
+and the highly optimized \texttt{once-per-block} strategy introduced in this study.
+
+Such performance analysis is essential for delicate contexts such as SATCOM, which are subject to strict \texttt{SWaP} (Size, Weight, and Power) constraints due to the adverse environments in which they operate.
+
+The empirical measurements for this study were executed on a university computing cluster, utilizing an AMD EPYC 7301 16-Core Processor (x86\_64). 
+The node features a dual-socket architecture (32 physical cores total), of which 8 cores were strictly allocated for the concurrent measurements running on Ubuntu 24.04.2 LTS. 
+
+Crucially, the compiled implementation was deliberately restricted to a pure software execution paradigm. 
+By bypassing the hardware-accelerated instructions typically used for high-speed $\mathrm{GF}(2^{128})$ arithmetic (GCM authentication) and standard AES substitutions.
+Consequently, the objective of these benchmarks is not to record the absolute maximum speed achievable on enterprise hardware, but rather to extract the relative performance delta (i.e. the overhead)
+between the baseline AES implementation and the chaotic injected variants.
+
+For both the proposed chaos-update implementation once-per-round and once-per-block, the measurement are based on 1000 iteration
+over a fixed weight payload of 5MB.
+
+\subsection{Once-per-Round Update Benchmarks}
+As detailed in Table~\ref{tab:table_opr}, the \texttt{once-per-round} chaotic update strategy introduces an expected, quantifiable increase in the total execution time for both the encryption and decryption phases, with a consequent reduction in data throughput. 
+The magnitude of this overhead scales directly with the mathematical complexity of the chosen chaotic map.
+
+\begin{table}[htbp]
+    \centering
+    \footnotesize
+    \setlength{\tabcolsep}{6pt}
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{llcccccc}
+        \toprule
+        \textbf{Map} & \textbf{Phase} & \textbf{Total Time (s)} & \textbf{Avg. Time (s)} & \textbf{Std. Dev. (s)} & \textbf{Throughput (MB/s)} & \textbf{Time Overhead} & \textbf{Throughput Overhead} \\
+        \midrule
+        AES-GCM standard         & Encryption & 1680.54 & 1.68 & 0.01 & 2.98 &   0.00\% &   0.00\% \\
+        AES-GCM standard         & Decryption & 1659.08 & 1.66 & 0.02 & 3.01 &   0.00\% &   0.00\% \\ \midrule
+        AES-GCM Logistic Map     & Encryption & 1754.95 & 1.75 & 0.01 & 2.85 &  +4.43\% &  -4.24\% \\
+        AES-GCM Logistic Map     & Decryption & 1742.39 & 1.74 & 0.01 & 2.87 &  +5.02\% &  -4.78\% \\ \midrule
+        AES-GCM Tent Map         & Encryption & 1770.57 & 1.77 & 0.01 & 2.82 &  +5.36\% &  -5.08\% \\
+        AES-GCM Tent Map         & Decryption & 1755.87 & 1.76 & 0.02 & 2.85 &  +5.83\% &  -5.51\% \\ \midrule
+        AES-GCM Sine Map         & Encryption & 1866.97 & 1.87 & 0.01 & 2.68 & +11.09\% &  -9.99\% \\
+        AES-GCM Sine Map         & Decryption & 1883.58 & 1.88 & 0.01 & 2.65 & +13.53\% & -11.92\% \\ \midrule
+        AES-GCM Chebyshev Map    & Encryption & 2023.80 & 2.02 & 0.01 & 2.47 & +20.43\% & -16.96\% \\
+        AES-GCM Chebyshev Map    & Decryption & 2042.37 & 2.04 & 0.00 & 2.45 & +23.10\% & -18.77\% \\ \midrule
+        AES-GCM H\'enon Map      & Encryption & 1754.79 & 1.75 & 0.01 & 2.85 &  +4.42\% &  -4.23\% \\
+        AES-GCM H\'enon Map      & Decryption & 1771.92 & 1.77 & 0.00 & 2.82 &  +6.80\% &  -6.37\% \\ \midrule
+        AES-GCM Arnold Cat Map   & Encryption & 1822.31 & 1.82 & 0.01 & 2.74 &  +8.44\% &  -7.78\% \\
+        AES-GCM Arnold Cat Map   & Decryption & 1810.85 & 1.81 & 0.01 & 2.76 &  +9.15\% &  -8.38\% \\ \midrule
+        AES-GCM Lorenz Map       & Encryption & 2078.60 & 2.08 & 0.02 & 2.41 & +23.69\% & -19.15\% \\
+        AES-GCM Lorenz Map       & Decryption & 2101.50 & 2.10 & 0.00 & 2.38 & +26.67\% & -21.05\% \\ \midrule
+        AES-GCM Chen Map         & Encryption & 2081.55 & 2.08 & 0.01 & 2.40 & +23.86\% & -19.26\% \\
+        AES-GCM Chen Map         & Decryption & 2067.99 & 2.07 & 0.02 & 2.42 & +24.65\% & -19.77\% \\ \midrule
+        AES-GCM R\"ossler Map    & Encryption & 2049.63 & 2.05 & 0.01 & 2.44 & +21.96\% & -18.01\% \\
+        AES-GCM R\"ossler Map    & Decryption & 2059.12 & 2.06 & 0.00 & 2.43 & +24.11\% & -19.43\% \\
+        \bottomrule
+    \end{tabular}%
+    }
+    \caption{Execution time, throughput, and relative performance overhead across standard AES-256-GCM and chaotic map configurations during encryption and decryption in Once-per-round mode (1000 iterations, 5.0 MB payload).}
+    \label{tab:table_opr}
+\end{table}
+
+Visually supported by Figure~\ref{fig:opr_time}, the empirical data reveals clear performance tiers based on the architectural dimensionality of the maps. 
+The simpler one-dimensional systems (Logistic and Tent) prove highly efficient, maintaining a stable time overhead of only $\approx 4.5\%$ to $5.5\%$. 
+The two-dimensional discrete maps (Hénon and Arnold Cat) exhibit a similar lightweight profile, with Hénon actually matching the Logistic map's performance ($+4.42\%$). 
+
+Conversely, the Sine and Chebyshev equations introduce steeper penalties (up to $+23\%$), largely due to the heavy reliance on the host CPU's Floating-Point Unit (FPU) to compute complex trigonometric functions dynamically. 
+Finally, as mathematically expected, the three-dimensional continuous ODE maps (Lorenz, Chen, Rössler) demand the highest execution overhead (up to $+26.67\%$), severely degrading the system's throughput.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{images/Time_opr.png}
+    \caption{Average execution time comparison for the \texttt{once-per-round} chaotic injection architecture against the standard AES baseline.}
+    \label{fig:opr_time}
+\end{figure}
+
+\paragraph{Execution Time as an Energy Proxy}
+Due to the restricted execution privileges on the shared cluster architecture, direct hardware telemetry (such as reading the CPU's RAPL registers to extract the exact Joule dissipation) was unavailable. 
+However, in embedded engineering, execution time serves as a highly reliable linear proxy for energy consumption. 
+
+Assuming that the active power draw ($P_{\text{active}}$) of the processor remains relatively constant while the single thread maximizes the core utilization to execute the cipher, 
+the total energy consumed ($E = P_{\text{active}} \times t$) becomes directly proportional to the total execution time. 
+Consequently, the time overhead percentages recorded in Table~\ref{tab:table_opr} translate strictly into energetic overheads. 
+Implementing the \texttt{once-per-round} Rössler map, for example, would drain the satellite's battery $\approx 24\%$ faster than the standard AES algorithm. 
+This significant energy penalty highlights the critical necessity of introducing the optimized \texttt{once-per-block} updating strategy.
+
+\paragraph{Memory Footprint and SWaP Viability}
+To complete the architectural profiling of the \\ \texttt{once-per-round} implementation, it is imperative to analyze its memory footprint, a critical metric for devices subjected to strict SWaP constraints. 
+Figure~\ref{fig:memory_footprint} illustrates the combined Stack and Heap memory usage for each configuration during execution.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{images/Memory_Footprint.png}
+    \caption{Memory footprint analysis detailing Stack and Heap usage across the standard AES and chaotic configurations.}
+    \label{fig:memory_footprint}
+\end{figure}
+
+The empirical measurements reveal a highly efficient memory utilization. 
+The baseline AES implementation operates almost entirely within the Stack ($\approx 472$ Bytes). The introduction of the chaotic maps introduces a deterministic, mathematically proportional memory overhead allocated in the Heap. 
+Specifically, one-dimensional maps (e.g., Logistic, Tent) require a mere 16 additional bytes to store their state parameters. 
+This requirement logically scales to 32 bytes for the two-dimensional Hénon map, and peaks at exactly 56 extra bytes for the complex three-dimensional continuous systems (Lorenz, Chen, Rössler), which must continuously track multiple spatial coordinates.
+
+It is important to contextualize that this dynamic Heap allocation is primarily an artifact of the modular testing environment, designed to swap chaotic parameters at runtime. 
+In a production-grade firmware deployed on a satellite, these parameters would be statically compiled into the Stack or flash memory. 
+Regardless of the allocation strategy, a maximum memory overhead of 56 Bytes is absolutely negligible even for the most constrained embedded microcontrollers, confirming that the chaotic injection satisfies the "Size" requirement of the aerospace SWaP paradigm flawlessly.
+
+\subsection{Once-per-Block Update Benchmarks}
+Lastly, the same set of benchmark have been performed over the "once-per-block" optimization of the chaotic injection, showing its
+results in table \ref{tab:table_opb}
+
+\begin{table}[htbp]
+    \centering
+    \footnotesize
+    \setlength{\tabcolsep}{4.5pt}
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{llcccccc}
+        \toprule
+        \textbf{Map} & \textbf{Phase} & \textbf{Total Time (s)} & \textbf{Avg. Time (s)} & \textbf{Std. Dev. (s)} & \textbf{Throughput (MB/s)} & \textbf{Time Overhead} & \textbf{Throughput Overhead} \\
+        \midrule
+        AES-GCM standard         & Encryption & 1656.78 & 1.66 & 0.01 & 3.02 &   0.00\% &   0.00\% \\
+        AES-GCM standard         & Decryption & 1652.02 & 1.65 & 0.01 & 3.03 &   0.00\% &   0.00\% \\ \midrule
+        AES-GCM Logistic Map     & Encryption & 1666.82 & 1.67 & 0.01 & 3.00 &  +0.61\% &  -0.60\% \\
+        AES-GCM Logistic Map     & Decryption & 1675.54 & 1.68 & 0.01 & 2.98 &  +1.42\% &  -1.40\% \\ \midrule
+        AES-GCM Tent Map         & Encryption & 1665.86 & 1.67 & 0.02 & 3.00 &  +0.55\% &  -0.54\% \\
+        AES-GCM Tent Map         & Decryption & 1680.35 & 1.68 & 0.01 & 2.98 &  +1.71\% &  -1.69\% \\ \midrule
+        AES-GCM Sine Map         & Encryption & 1686.06 & 1.69 & 0.00 & 2.97 &  +1.77\% &  -1.74\% \\
+        AES-GCM Sine Map         & Decryption & 1685.73 & 1.69 & 0.01 & 2.97 &  +2.04\% &  -2.00\% \\ \midrule
+        AES-GCM Chebyshev Map    & Encryption & 1691.12 & 1.69 & 0.02 & 2.96 &  +2.07\% &  -2.03\% \\
+        AES-GCM Chebyshev Map    & Decryption & 1701.57 & 1.70 & 0.00 & 2.94 &  +3.00\% &  -2.91\% \\ \midrule
+        AES-GCM H\'enon Map      & Encryption & 1674.95 & 1.67 & 0.00 & 2.99 &  +1.10\% &  -1.08\% \\
+        AES-GCM H\'enon Map      & Decryption & 1670.29 & 1.67 & 0.03 & 2.99 &  +1.11\% &  -1.09\% \\ \midrule
+        AES-GCM Arnold Cat Map   & Encryption & 1681.14 & 1.68 & 0.00 & 2.97 &  +1.47\% &  -1.45\% \\
+        AES-GCM Arnold Cat Map   & Decryption & 1686.57 & 1.69 & 0.02 & 2.96 &  +2.09\% &  -2.05\% \\ \midrule
+        AES-GCM Lorenz Map       & Encryption & 1703.94 & 1.70 & 0.01 & 2.93 &  +2.85\% &  -2.77\% \\
+        AES-GCM Lorenz Map       & Decryption & 1718.94 & 1.72 & 0.01 & 2.91 &  +4.05\% &  -3.89\% \\ \midrule
+        AES-GCM Chen Map         & Encryption & 1664.71 & 1.66 & 0.06 & 3.00 &  +0.48\% &  -0.48\% \\
+        AES-GCM Chen Map         & Decryption & 1702.31 & 1.70 & 0.01 & 2.94 &  +3.04\% &  -2.95\% \\ \midrule
+        AES-GCM R\"ossler Map    & Encryption & 1681.62 & 1.68 & 0.05 & 2.97 &  +1.50\% &  -1.48\% \\
+        AES-GCM R\"ossler Map    & Decryption & 1704.87 & 1.70 & 0.00 & 2.93 &  +3.20\% &  -3.10\% \\
+        \bottomrule
+    \end{tabular}%
+    }
+    \caption{Execution time, throughput, and relative performance overhead across standard AES-256-GCM and chaotic map configurations during encryption and decryption in Once-per-block mode (1000 iterations, 5.0 MB payload).}
+    \label{tab:table_opb}
+\end{table}
 
 % ====================================================================================================
 
