@@ -1,14 +1,14 @@
 # Fdb version 4
-["biber Thesis"] 1794847022.12552 "Thesis.bcf" "Thesis.bbl" "Thesis" 1794849435.23083 0
-  "Thesis.bcf" 1794849435.12778 113685 bc166ab58bd3a2519024aa873e912ac3 "pdflatex"
+["biber Thesis"] 0 "Thesis.bcf" "Thesis.bbl" "Thesis" 1794934592.46626 -1
+  "Thesis.bcf" 1794934592.36419 113685 bc166ab58bd3a2519024aa873e912ac3 "pdflatex"
   "references.bib" 1794778272.84959 24017 0b8451f0431c108e5ee2c75121bb42dd ""
   (generated)
   "Thesis.bbl"
   "Thesis.blg"
   (rewritten before read)
-["pdflatex"] 1794849431.68368 "/home/simodesk/Documenti/tirocinio/AES-Chaotic-injection/Thesis/Thesis.tex" "Thesis.pdf" "Thesis" 1794849435.23108 0
+["pdflatex"] 1794934588.69568 "/home/simodesk/Documenti/tirocinio/AES-Chaotic-injection/Thesis/Thesis.tex" "Thesis.pdf" "Thesis" 1794934592.46651 0
   "/etc/texmf/web2c/texmf.cnf" 1793624639.97428 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/simodesk/Documenti/tirocinio/AES-Chaotic-injection/Thesis/Thesis.tex" 1794849427.9345 151392 276a93d59286b45f187a5a9cdcd86a65 ""
+  "/home/simodesk/Documenti/tirocinio/AES-Chaotic-injection/Thesis/Thesis.tex" 1794934584.52881 164829 f98ebd47bcfeea9c8f1e27f6b3519d9a ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/adobe/symbol/psyr.tfm" 1136768653 1408 5937f58aa508ea2cea4901c07d10f5fe ""
@@ -268,17 +268,18 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1769369718 41603 27f93b3067076450172040dcd57ca8b3 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1793624664 5541477 3118940318599480888143717dd32d64 ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1793624706 3640839 892460ea349d91aa43e7a6e499b6218e ""
-  "Thesis.aux" 1794849435.12191 29080 1cec974bfd2871f376039e459400257c "pdflatex"
-  "Thesis.bbl" 1794847022.76339 65724 56b06bccaa68ebc078cec1f5149f33e9 "biber Thesis"
-  "Thesis.listing" 1794849433.63422 713 2d771dad8f0e47c323bd871926f3aead "pdflatex"
-  "Thesis.out" 1794849435.1263 11428 475d422824e4f32ee028f162bf50e268 "pdflatex"
-  "Thesis.run.xml" 1794849435.12912 2350 f7074ee95bb26fb241c6ac8c80c34e08 "pdflatex"
-  "Thesis.tex" 1794849427.9345 151392 276a93d59286b45f187a5a9cdcd86a65 ""
-  "Thesis.toc" 1794849435.12912 7882 c1b6863f8648a57583cae2ed02e29786 "pdflatex"
+  "Thesis.aux" 1794934592.35719 31242 58ac7b0a963148fa5a96f470bd89adae "pdflatex"
+  "Thesis.bbl" 1794926115.96108 65724 56b06bccaa68ebc078cec1f5149f33e9 "biber Thesis"
+  "Thesis.listing" 1794934591.93691 393 32aab4a607cb6bb405b07da58bc2c949 "pdflatex"
+  "Thesis.out" 1794934592.36319 12213 b381c19b48047db71d623e3594d31bcd "pdflatex"
+  "Thesis.run.xml" 1794934592.36526 2350 f7074ee95bb26fb241c6ac8c80c34e08 "pdflatex"
+  "Thesis.tex" 1794934584.52881 164829 f98ebd47bcfeea9c8f1e27f6b3519d9a ""
+  "Thesis.toc" 1794934592.36526 8470 4b19260236b548bab1007d4d4768a496 "pdflatex"
   "images/AES.png" 1794142998.8847 74562 f54862dbfa7f8bcfdc3ecb2b1fe2e5b8 ""
   "images/GCM_encryption.png" 1794327901.85171 76416 abaaff7f31813f09c91e418b2789ea81 ""
   "images/Memory_Footprint.png" 1794848702.21525 197408 2caf42bf1abb17c5565521ae9d2a4701 ""
   "images/Sbox.png" 1794153140.72345 33975 9b1b5d9adcef9f6efd88542f7728a2cf ""
+  "images/Time_opb.png" 1794914871.05979 187868 3745e8ec1fe6c1e2bec749794b3fe8ec ""
   "images/Time_opr.png" 1794848440.03746 188408 9448aea65c5422d7038136ffeadb0850 ""
   "images/average_success_rate.png" 1794840098.42121 104120 94ec14f9478c9c592e0eab55bda0b26a ""
   "images/logistic_hamming.png" 1794778272.84944 443578 5e04b46a2caef2af8b56fb7344037812 ""

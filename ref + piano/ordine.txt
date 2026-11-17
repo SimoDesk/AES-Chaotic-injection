@@ -70,6 +70,7 @@ Utility per il cluster:
 	- aggiungere in 3.2 delle citazioni per il ECB e il CTR
 	- Mettere la mia repo nell'introduzione
 	- serve citazione \paragraph{Additional Challenges of GCM}
+	- citazioni per come funziona la random forest ?
 
 ######################################################################
 
@@ -137,8 +138,6 @@ Utility per il cluster:
 		- misurazioni su pc classici e non FPGA, ma comunque indicativi
 		- confronti soluzione per Block con soluzione per Round
 		- confronti con AES standard
-		- Throughput da confrontare con i classici datalink satellitari (banda S o banda X), verificando se l'algoritmo è sufficientemente veloce per crittografare la telemetria in tempo reale
-		(TT&C - Telemetry, Tracking, and Command) senza creare latenza.
 
 	- convalidazione randomica con i test nist (chaos perfetto a livello teorico ma può cadere in loop in implementazione informatica, perciò controllo)
 		- successo medio sui test

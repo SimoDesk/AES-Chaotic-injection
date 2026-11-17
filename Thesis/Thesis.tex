@@ -77,8 +77,8 @@
     listing only,
     arc=2mm,
     boxrule=0.7pt,
-    top=0.8pt,                 % Riduci il margine interno sopra il codice
-    bottom=0.8pt,              % Riduci il margine interno sotto il codice
+    top=0.8pt,                 
+    bottom=0.8pt,              
     colback=codebg,
     colframe=codeframe,
     title=\textbf{Listing \thetcbcounter:} #2,
@@ -1781,7 +1781,7 @@ Before evaluating the physical performance metrics of the embedded implementatio
 In the foundational study by Kumar et al.~\cite{KumarPaper}, the authors benchmarked chaotic S-Boxes against linear and differential cryptanalysis using the Logistic and Hénon maps as their primary case studies. 
 
 As reported in their theoretical analysis, dynamically perturbing the S-Box introduces a \\ marginal mathematical trade-off: individual chaotic maps cause a slight fluctuation in the \textit{Non-Linearity (NL)} score (dipping from the standard 112 to approximately 108-110) and a minor increase in \textit{Differential Uniformity (DU)} (from the baseline 4.0 to 5.0-6.0). 
-In cryptographic engineering, this represents a well-documented and acceptable compromise: a minimal relaxation of theoretical algebraic bounds in exchange for a massive increase in micro-architectural side-channel resilience. 
+In cryptographic engineering, this represents a well-documented and acceptable compromise: a minimal reduction of theoretical algebraic bounds in exchange for a massive increase in micro-architectural side-channel resilience. 
 
 Because the scalar optimization proposed in this thesis applies the exact same bounded mathematical perturbation (via the $\gamma \cdot \tanh$ limiter) across all evaluated maps, these marginal DU and NL fluctuations are inherently inherited. 
 Furthermore, the near-perfect Avalanche Effect and strict NIST randomness scores obtained in the previous sections provide robust empirical confirmation that the cipher's structural integrity remains highly secure. 
@@ -1795,9 +1795,7 @@ Such performance analysis is essential for delicate contexts such as SATCOM, whi
 The empirical measurements for this study were executed on a university computing cluster, utilizing an AMD EPYC 7301 16-Core Processor (x86\_64). 
 The node features a dual-socket architecture (32 physical cores total), of which 8 cores were strictly allocated for the concurrent measurements running on Ubuntu 24.04.2 LTS. 
 
-Crucially, the compiled implementation was deliberately restricted to a pure software execution paradigm. 
-By bypassing the hardware-accelerated instructions typically used for high-speed $\mathrm{GF}(2^{128})$ arithmetic (GCM authentication) and standard AES substitutions.
-Consequently, the objective of these benchmarks is not to record the absolute maximum speed achievable on enterprise hardware, but rather to extract the relative performance delta (i.e. the overhead)
+The objective of these benchmarks is not to record the absolute maximum speed achievable on enterprise hardware, but rather to extract the relative performance delta (i.e. the overhead)
 between the baseline AES implementation and the chaotic injected variants.
 
 For both the proposed chaos-update implementation once-per-round and once-per-block, the measurement are based on 1000 iteration
@@ -1852,7 +1850,7 @@ Finally, as mathematically expected, the three-dimensional continuous ODE maps (
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\textwidth]{images/Time_opr.png}
+    \includegraphics[width=0.9\textwidth]{images/Time_opr.png}
     \caption{Average execution time comparison for the \texttt{once-per-round} chaotic injection architecture against the standard AES baseline.}
     \label{fig:opr_time}
 \end{figure}
@@ -1888,8 +1886,8 @@ In a production-grade firmware deployed on a satellite, these parameters would b
 Regardless of the allocation strategy, a maximum memory overhead of 56 Bytes is absolutely negligible even for the most constrained embedded microcontrollers, confirming that the chaotic injection satisfies the "Size" requirement of the aerospace SWaP paradigm flawlessly.
 
 \subsection{Once-per-Block Update Benchmarks}
-Lastly, the same set of benchmark have been performed over the "once-per-block" optimization of the chaotic injection, showing its
-results in table \ref{tab:table_opb}
+Finally, the exact same empirical benchmark suite was executed against the newly proposed \texttt{once-per-block} chaotic update strategy. 
+The execution times and throughput measurements are detailed in Table~\ref{tab:table_opb}.
 
 \begin{table}[htbp]
     \centering
@@ -1923,9 +1921,65 @@ results in table \ref{tab:table_opb}
         \bottomrule
     \end{tabular}%
     }
-    \caption{Execution time, throughput, and relative performance overhead across standard AES-256-GCM and chaotic map configurations during encryption and decryption in Once-per-block mode (1000 iterations, 5.0 MB payload).}
+    \caption{Execution time, throughput, and relative performance overhead across standard AES-256-GCM and chaotic map configurations during encryption and decryption in the \texttt{once-per-block} mode (1000 iterations, 5.0 MB payload).}
     \label{tab:table_opb}
 \end{table}
+
+By structurally reducing the frequency of chaotic state updates from 14 times per block (14 rounds in AES-256) down to a single instance, the entire set of implementations registers a drastic reduction in computational overhead. 
+The one-dimensional baseline maps (Logistic and Tent) achieve near-zero performance degradation, peaking at a negligible $+0.61\%$ encryption time overhead. 
+More importantly, the mathematically prohibitive trigonometric maps (Sine and Chebyshev) managed to heavily compress their maximum time augmentation down to $\approx 2\% - 3\%$, a radical improvement compared to the $+23\%$ penalty suffered in the previous configuration. 
+Even the highly complex three-dimensional continuous ODEs (Lorenz, Chen, Rössler) effectively neutralized their CPU demand, falling within a maximum $+4\%$ time overhead boundary.
+
+Figure~\ref{fig:opb_time} provides a visual representation of this performance optimization. 
+By maintaining the same vertical axis limits as Figure~\ref{fig:opr_time}, the sheer scale of the computational gain becomes immediately apparent, with the chaotic implementations now performing almost indistinguishably from the AES baseline.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/Time_opb.png}
+    \caption{Average execution time comparison for the \texttt{once-per-block} chaotic injection architecture against the standard AES baseline.}
+    \label{fig:opb_time}
+\end{figure}
+
+\paragraph{Energy and Memory Optimization Strategy}
+Applying the same constant-power proxy assumptions established in the previous section, the energetic savings yielded by this architectural adjustment are substantial. 
+For instance, the Rössler map, which previously exhibited a simulated $\approx 24\%$ energy penalty, now limits the satellite's battery drain to a highly sustainable $\approx 3.2\%$ overhead. 
+
+Crucially, this temporal and energetic optimization is achieved without imposing any supplementary memory footprint. 
+In the embedded C codebase, transitioning between the two strategies requires exclusively repositioning the \textsc{updateChaos()} function call outside the block's main `for` loop, as illustrated in the code~\ref{lst:chaosUpdate}.
+
+\begin{clisting}[label={lst:chaosUpdate}]{Chaos update architectural repositioning}
+static void Cipher(struct AES_CHAOS_ctx* ctx, state_t* state, const uint8_t* RoundKey) {
+  // Strategy: Once-per-block chaos update
+  updateChaos(ctx);
+
+  uint8_t round = 0;
+  AddRoundKey(0, state, RoundKey);
+
+  for (round = 1; ; ++round)
+  {
+    // Strategy: Once-per-round chaos update
+    // updateChaos(ctx);
+    
+    SubBytes(ctx, state);
+    // ...
+  }
+  AddRoundKey(Nr, state, RoundKey);
+}
+\end{clisting}
+
+Because this modification merely relocates the called function within the \textsc{Cipher()} frame, the maximum Stack size remains perfectly invariant. 
+Consequently, the dynamic Heap allocation also mirrors the exact lightweight parameters analyzed in Figure~\ref{fig:memory_footprint}. 
+This definitively proves that the \texttt{once-per-block} chaotic update strategy mathematically immunizes the cipher without violating the size, weight, or power (SWaP) constraints of SATCOM devices.
+
+\paragraph{Transitioning to Empirical Side-Channel Cryptanalysis}
+Having successfully parameterized the chaotic systems, validated their strict cryptographic randomness, and proven the high performance architectural viability of the \texttt{once-per-block} implementation, 
+the foundational setup of this research is complete. 
+
+The subsequent chapter will transition from defensive optimization to offensive cryptanalysis. 
+A highly specialized Machine Learning model will be used to execute a catastrophic key recovery attack against the S-Box power leakage. 
+This exact model will then be deployed against both the standard AES and the optimized chaotic variant, 
+empirically demonstrating the real-world physical resilience provided by the chaotic scalar perturbation.
+
 
 % ====================================================================================================
 
@@ -1983,6 +2037,102 @@ Operating within this robust, non-deterministic framework, this thesis simulates
 
 Ultimately, while the operational goals differ radically from the reference literature, successfully executing this advanced key recovery attack against the baseline AES-256-GCM will serve as the perfect benchmark. 
 It will conclusively demonstrate that the proposed chaotic-injected implementation is capable of blinding the ML classifier, preventing it from exploiting physical leakages to extract any usable information.
+
+\section{The Machine Learning-Assisted Attack}
+The proposed cryptanalysis is a two-phase procedure that leverages the physical energy leakage of the S-Box to achieve a complete cryptographic key recovery. 
+To render this theoretical micro-architectural vulnerability practically exploitable against the AES-256-GCM architecture, a Machine Learning classifier is employed as the core analytical engine.
+
+\subsection{Profiling Phase and Data Collection}
+Executing an ML-based Side-Channel Attack fundamentally requires a robust profiling phase, during which the classifier is trained on a substantial dataset to learn the hidden correlations between the physical leakages and the internal cryptographic states. 
+In this threat model, aligning with standard profiling attack methodologies, the attacker is assumed to possess a "clone device" identical to the target satellite hardware. 
+This allows the attacker to freely encrypt known data, monitor the hardware, and perfectly label the resulting leakages.
+
+The profiling dataset generated for this study consists of 15,000 distinct communication traces. 
+As illustrated in Table~\ref{tab:training_data_sample}, each entry perfectly mirrors the information an attacker could intercept during a real SATCOM transmission: 
+the public Initialization Vector (IV) and the corresponding sequence of physical leakages captured at the output of the S-Box substitution (represented by the Hamming Weight, HW). 
+In a real-world physical attack, these discrete HW integers would simply be substituted by the analog voltage measurements extracted from an oscilloscope.
+
+\begin{table}[htbp]
+    \centering
+    \footnotesize
+    \setlength{\tabcolsep}{3.5pt}
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{lcccccccccccc}
+        \toprule
+        \textbf{IV} & $\textbf{HW}_{\textbf{0}}$ & $\boldsymbol{\dots}$ & $\textbf{HW}_{\textbf{14}}$ & $\textbf{HW}_{\textbf{15}}$ & $\boldsymbol{\dots}$ & $\textbf{HW}_{\textbf{31}}$ & $\textbf{Target}_{\textbf{0}}$ & $\boldsymbol{\dots}$ & $\textbf{Target}_{\textbf{14}}$ & $\textbf{Target}_{\textbf{15}}$ & $\boldsymbol{\dots}$ & $\textbf{Target}_{\textbf{31}}$ \\
+        \midrule
+        {\scriptsize\texttt{8003709c39fc04246a7cea47}} & 5 & $\dots$ & 2 & 4 & $\dots$ & 4 & 188 & $\dots$ & 160 & 114 & $\dots$ & 226 \\
+        {\scriptsize\texttt{7960e910e31d36bb3155aead}} & 2 & $\dots$ & 2 & 4 & $\dots$ & 4 &  12 & $\dots$ & 160 & 114 & $\dots$ & 139 \\
+        {\scriptsize\texttt{62394bd9749faeb04fd48a1e}} & 4 & $\dots$ & 2 & 4 & $\dots$ & 7 & 184 & $\dots$ & 160 & 114 & $\dots$ & 127 \\
+        $\vdots$ & $\vdots$ & $\ddots$ & $\vdots$ & $\vdots$ & $\ddots$ & $\vdots$ & $\vdots$ & $\ddots$ & $\vdots$ & $\vdots$ & $\ddots$ & $\vdots$ \\
+        \bottomrule
+    \end{tabular}%
+    }
+    \caption{Sample entries from the clone device's training dataset, displaying the public Initialization Vector (IV), sequential Hamming Weight features ($\text{HW}_0 \dots \text{HW}_{31}$), and the definitive target ciphertext byte values ($\text{Target}_0 \dots \text{Target}_{31}$).}
+    \label{tab:training_data_sample}
+\end{table}
+
+To enable supervised learning, the profiling set also contains the definitive internal target values (\texttt{Target}) corresponding to each captured Hamming Weight. 
+By mapping the intercepted IVs and HWs to these known targets, the ML algorithm can continually evaluate its classification accuracy, 
+iteratively adjusting its internal decision pathways to minimize the error rate and build a highly accurate leakage profile.
+
+Finally, during the active exploitation phase, the trained ML classifier is fed a structurally identical dataset harvested directly from the victim device. 
+Crucially, this operational dataset is completely lacking of the internal target labels. 
+Instead, the model must autonomously predict these unknown cryptographic variables by correlating the intercepted public IVs and the physical power leakages against its established profiling parameters.
+
+\subsection{The Selected ML Architecture: Random Forest}
+To execute the cryptanalysis phase, this study implements a \texttt{Random Forest} classifier, deployed within the Python simulation environment via the \textsc{scikit-learn} library. 
+As part of the ensemble learning family, the Random Forest algorithm is exceptionally suited for analyzing discrete, tabular datasets characterized by non-linear relationships, which perfectly describes the correlation between S-Box byte substitutions and hardware leakage. 
+
+While Deep Neural Networks (DNNs) are heavily featured in modern side-channel literature, they were deliberately discarded for this specific threat model. 
+Neural Networks require larger profiling datasets to converge accurately and demand significantly heavier computational resources. 
+Given the restricted 15,000-trace training set available in this simulation, a Random Forest guarantees superior classification accuracy with a fraction of the computational overhead, drastically outperforming a DNN under strict data availability constraints.
+
+Architecturally, a Random Forest operates by constructing a multitude of independent binary decision trees during the training phase. 
+When an input vector (the features) is fed into the system, each individual tree processes the data through a hierarchical sequence of logical conditions (nodes). 
+Depending on whether the input satisfies these conditions, it traverses different branches until it reaches a terminal node (leaf), which represents that single tree's prediction.
+The robustness of the Random Forest relies on three fundamental mechanisms:
+\begin{itemize}
+    \item \textbf{Bagging (Bootstrap Aggregating):} Instead of training every tree on the exact same dataset, each tree is fed a slightly different, randomly sampled subset of the original profiling data. 
+    This forces individual trees to specialize in different mathematical patterns.
+
+    \item \textbf{Feature Randomness:} Similarly, at every internal node split, the algorithm only considers a random subset of the available features (the HW values) rather than the entire array. 
+    This structural variance ensures that the trees do not correlate with one another, preventing them from collectively anchoring onto a single dominant feature.
+
+    \item \textbf{Ensemble Voting:} During the active attack phase, every tree in the forest independently outputs a prediction. 
+    The final classification is determined by aggregating these individual decisions into a collective vote. 
+    In the deployed Python simulation, the \textsc{predict()} function returns the absolute majority vote, 
+    while the \textsc{predict\_proba()} method calculates the statistical probability distribution across all 256 possible byte values. 
+    This probability vector is critical for the subsequent statistical aggregation.
+\end{itemize}
+
+To train the classifier, the model is fed a bidimensional matrix of \texttt{features} (the hardware leakages, structured with traces as rows and byte positions as columns), 
+rigidly mapped against their corresponding \texttt{labels} (the known target internal states). 
+The model is then compiled using the \textsc{fit} function, strictly adhering to the following hyperparameter configuration to maximize accuracy while preventing structural memorization:
+\begin{itemize}
+    \item \texttt{n\_estimators = 100}: The forest comprises exactly 100 independent decision trees, selected as the optimal equilibrium between computational speed and statistical accuracy.
+    
+    \item \texttt{max\_depth = 8}: The maximum hierarchical depth of any tree is capped at 8 layers. This structurally prevents the algorithm from endlessly branching to memorize the training data (\textit{overfitting}), forcing the model to learn generalized, robust physical leakage correlations.
+    
+    \item \texttt{min\_samples\_split = 10} and \texttt{min\_samples\_leaf = 20}: As secondary anti-overfitting mechanisms, an internal node requires at least 10 samples to authorize a further split, and any resulting terminal leaf must encompass a minimum of 20 samples. 
+    This prevents the creation of hyperspecific, irrelevant branches driven by analog noise.
+
+    \item \texttt{random\_state}: A fixed procedural seed is initialized to guarantee the absolute reproducibility of the simulated attack.
+\end{itemize}
+
+\paragraph{Maximum Likelihood Estimation (MLE)}
+In a real-world physical cryptanalysis scenario, relying on the classification of a single intercepted communication is highly prone to errors. 
+The analog noise inherent in the hardware measurements could easily mask the true target value, causing the classifier to output an incorrect majority vote. 
+
+To surgically bypass this physical limitation, the attack implements a Maximum Likelihood Estimation (MLE) algorithm. 
+Instead of analyzing a single message, the attacker intercepts a batch of $N$ communications encrypted under the exact same unknown key. 
+For every intercepted trace, the Random Forest utilizes the \textsc{predict\_proba()} function to generate a probability distribution array across all 256 possible byte candidates. 
+
+The MLE algorithm then aggregates these discrete arrays, summing the logarithmic probabilities of each candidate across all $N$ traces. 
+The candidate byte that accumulates the highest overall statistical probability is definitively selected as the correct key fraction. 
+To ensure mathematical stability during the logarithmic summation, specifically to prevent undefined $\log(0)$ errors if the model assigns a flat $0\%$ probability to a candidate in a specific trace, 
+an epsilon smoothing technique is applied, injecting a minimal $10^{-9}$ variation into the probability arrays.
+
 
 % New page for the bibliography
 \newpage

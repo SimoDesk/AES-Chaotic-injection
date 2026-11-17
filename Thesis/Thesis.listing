@@ -1,5 +1,17 @@
-Plaintext (429 byte): SAT-7 telemetry window 2041: the spacecraft is in nominal sun-pointing attitude and the Ka-band link remains locked with the ground station in Matera. The flight computer reports stable battery voltage, adequate thermal margins, and no corrected memory errors during the last pass. Payload data will be downlinked in two scheduled contact windows; the receiver shall request a repeat only if the authenticated packet check fails.
-AAD (95 byte): SAT-7|pass=2041|ground-station=Matera|band=Ka|channel=telemetry|priority=nominal|counter=000184
-Randomly flipped bit 1896 of the ciphertext.
-Received Tag: 518735e4ea1697d3dcf9f0bb69ae65e4
-ERROR: decryption failed as expected due to the bit flip.
+static void Cipher(struct AES_CHAOS_ctx* ctx, state_t* state, const uint8_t* RoundKey) {
+  // Strategy: Once-per-block chaos update
+  updateChaos(ctx);
+
+  uint8_t round = 0;
+  AddRoundKey(0, state, RoundKey);
+
+  for (round = 1; ; ++round)
+  {
+    // Strategy: Once-per-round chaos update
+    // updateChaos(ctx);
+
+    SubBytes(ctx, state);
+    // ...
+  }
+  AddRoundKey(Nr, state, RoundKey);
+}
