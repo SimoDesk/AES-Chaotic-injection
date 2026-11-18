@@ -1,17 +1,10 @@
-static void Cipher(struct AES_CHAOS_ctx* ctx, state_t* state, const uint8_t* RoundKey) {
-  // Strategy: Once-per-block chaos update
-  updateChaos(ctx);
-
-  uint8_t round = 0;
-  AddRoundKey(0, state, RoundKey);
-
-  for (round = 1; ; ++round)
-  {
-    // Strategy: Once-per-round chaos update
-    // updateChaos(ctx);
-
-    SubBytes(ctx, state);
-    // ...
-  }
-  AddRoundKey(Nr, state, RoundKey);
-}
+--- Phase 1: First 12 Bytes Extraction ---
+Byte 0 under analysis...  -> Found: 0f
+Byte 1 under analysis...  -> Found: db (WRONG)
+[...]
+Byte 11 under analysis... -> Found: f4 (WRONG)
+[*] Found K1 portion: 0fdb909c238b57fb1ef27af4
+--- Phase 2: Divide-and-Conquer & Brute Force ---
+[*] Generating hypotheses for columns 0-3 based on HW leakage...
+[*] Hypotheses saved. Starting brute-force search...
+No key found after testing 19208000 keys.

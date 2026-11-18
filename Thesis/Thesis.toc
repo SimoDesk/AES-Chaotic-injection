@@ -1,95 +1,105 @@
 \babel@toc {english}{}\relax 
-\contentsline {chapter}{\numberline {1}Introduction}{4}{chapter.1}%
-\contentsline {section}{\numberline {1.1}Thesis Objective}{4}{section.1.1}%
-\contentsline {chapter}{\numberline {2}Background and State-of-the-Art of Satellite Communications}{5}{chapter.2}%
-\contentsline {section}{\numberline {2.1}SATCOM Architecture}{6}{section.2.1}%
-\contentsline {subsection}{\numberline {2.1.1}Space Segment}{7}{subsection.2.1.1}%
-\contentsline {subsection}{\numberline {2.1.2}Ground Segment}{7}{subsection.2.1.2}%
-\contentsline {subsection}{\numberline {2.1.3}Link Segment}{8}{subsection.2.1.3}%
-\contentsline {section}{\numberline {2.2}SATCOM Threats}{8}{section.2.2}%
-\contentsline {subsection}{\numberline {2.2.1}Space Segment Threats}{8}{subsection.2.2.1}%
-\contentsline {subsection}{\numberline {2.2.2}Ground Segment Threats}{9}{subsection.2.2.2}%
-\contentsline {subsection}{\numberline {2.2.3}Link Segment Threats}{9}{subsection.2.2.3}%
-\contentsline {subsection}{\numberline {2.2.4}An Emergent Threat: Machine Learning}{10}{subsection.2.2.4}%
-\contentsline {section}{\numberline {2.3}Defensive Strategies}{11}{section.2.3}%
-\contentsline {subsection}{\numberline {2.3.1}Physical Layer Security (PLS)}{11}{subsection.2.3.1}%
-\contentsline {subsection}{\numberline {2.3.2}Traditional Cryptography}{11}{subsection.2.3.2}%
-\contentsline {section}{\numberline {2.4}SATCOM Cryptographic State-of-the-Art: AES-256-GCM}{12}{section.2.4}%
-\contentsline {chapter}{\numberline {3}Algorithmic Foundations of AES-256-GCM}{14}{chapter.3}%
-\contentsline {section}{\numberline {3.1}AES-256}{14}{section.3.1}%
-\contentsline {subsection}{\numberline {3.1.1}Key Expansion}{15}{subsection.3.1.1}%
-\contentsline {subsection}{\numberline {3.1.2}State Matrix and Round Architecture}{16}{subsection.3.1.2}%
-\contentsline {subsection}{\numberline {3.1.3}SubBytes}{17}{subsection.3.1.3}%
-\contentsline {paragraph}{The Construction of the S-Box}{18}{paragraph*.5}%
-\contentsline {paragraph}{Vulnerability of the Software LUT Implementation}{18}{paragraph*.6}%
-\contentsline {subsection}{\numberline {3.1.4}ShiftRows}{18}{subsection.3.1.4}%
-\contentsline {subsection}{\numberline {3.1.5}MixColumns}{19}{subsection.3.1.5}%
-\contentsline {paragraph}{Software Implementation of GF($2^8$) Multiplication: xtime macro}{19}{paragraph*.7}%
-\contentsline {subsection}{\numberline {3.1.6}AddRoundKey}{21}{subsection.3.1.6}%
-\contentsline {section}{\numberline {3.2}Galois/Counter Mode (GCM)}{21}{section.3.2}%
-\contentsline {paragraph}{The GCM Extension: Authenticated Encryption and Integrity}{22}{paragraph*.8}%
-\contentsline {subsection}{\numberline {3.2.1}Key and IV Requirements}{23}{subsection.3.2.1}%
-\contentsline {paragraph}{Uniqueness and Forgery Attacks.}{23}{paragraph*.9}%
-\contentsline {paragraph}{Key Freshness and Establishment.}{23}{paragraph*.10}%
-\contentsline {paragraph}{IV Construction Methods.}{23}{paragraph*.11}%
-\contentsline {subsection}{\numberline {3.2.2}Multiplication in $\mathrm {GF}(2^{128})$}{24}{subsection.3.2.2}%
-\contentsline {paragraph}{Phase 1: Accumulation (Lines 6--8)}{25}{paragraph*.12}%
-\contentsline {paragraph}{Phase 2: Shift and Reduce (Lines 9--13)}{25}{paragraph*.13}%
-\contentsline {paragraph}{Additional Challenges of GCM}{25}{paragraph*.14}%
-\contentsline {subsection}{\numberline {3.2.3}$\text {GHASH}$ Function}{26}{subsection.3.2.3}%
-\contentsline {paragraph}{Embedded C Implementation and Memory Optimization.}{26}{paragraph*.15}%
-\contentsline {subsection}{\numberline {3.2.4}Authenticated Encryption and Decryption Algorithms}{27}{subsection.3.2.4}%
-\contentsline {paragraph}{Authenticated Encryption Algorithm}{27}{paragraph*.16}%
-\contentsline {paragraph}{Authenticated Decryption Algorithm}{29}{paragraph*.18}%
-\contentsline {subsection}{\numberline {3.2.5}Tests for the GCM Embedded C Implementation}{29}{subsection.3.2.5}%
-\contentsline {paragraph}{NIST Vector Tests}{29}{paragraph*.19}%
-\contentsline {paragraph}{Channel Noise and SEU Simulation}{29}{paragraph*.20}%
-\contentsline {paragraph}{Chaotic Injection overview}{30}{paragraph*.21}%
-\contentsline {chapter}{\numberline {4}Chaotic Injection and Cryptographic Machine Unlearning}{31}{chapter.4}%
-\contentsline {paragraph}{Mathematical Modeling of the Chaotic S-Box}{31}{paragraph*.22}%
-\contentsline {paragraph}{Chaotic Influence on Key Expansion}{32}{paragraph*.23}%
-\contentsline {paragraph}{Architectural Optimization: The Scalar Chaotic State}{32}{paragraph*.24}%
-\contentsline {section}{\numberline {4.1}Taxonomy of the Implemented Chaotic Maps}{33}{section.4.1}%
-\contentsline {subsection}{\numberline {4.1.1}Discrete Chaotic Systems}{33}{subsection.4.1.1}%
-\contentsline {subsubsection}{\numberline {4.1.1.1}One-Dimensional Maps}{33}{subsubsection.4.1.1.1}%
-\contentsline {paragraph}{Logistic Map}{33}{paragraph*.25}%
-\contentsline {paragraph}{Tent Map}{33}{paragraph*.26}%
-\contentsline {paragraph}{Sine Map}{34}{paragraph*.27}%
-\contentsline {paragraph}{Chebyshev Map}{34}{paragraph*.28}%
-\contentsline {subsubsection}{\numberline {4.1.1.2}Two-Dimensional Maps}{34}{subsubsection.4.1.1.2}%
-\contentsline {paragraph}{Hénon Map}{34}{paragraph*.29}%
-\contentsline {paragraph}{Arnold's Cat Map}{34}{paragraph*.30}%
-\contentsline {subsection}{\numberline {4.1.2}Continuous Chaotic Systems}{34}{subsection.4.1.2}%
-\contentsline {subsubsection}{\numberline {4.1.2.1}Three-Dimensional Maps}{35}{subsubsection.4.1.2.1}%
-\contentsline {paragraph}{Lorenz Map}{35}{paragraph*.31}%
-\contentsline {paragraph}{Chen Map}{35}{paragraph*.32}%
-\contentsline {paragraph}{Rössler Map}{36}{paragraph*.33}%
-\contentsline {section}{\numberline {4.2}Chaotic Initialization: Seed Derivation and Transient Elimination}{36}{section.4.2}%
-\contentsline {paragraph}{Transient Phase Elimination (Chaos Burn-in)}{37}{paragraph*.34}%
-\contentsline {section}{\numberline {4.3}Chaotic Update Trade-off and Hardware Leakage}{37}{section.4.3}%
-\contentsline {paragraph}{Physical Security and RAM Pre-computation}{38}{paragraph*.35}%
-\contentsline {paragraph}{Transition to Performance Analysis}{38}{paragraph*.36}%
-\contentsline {chapter}{\numberline {5}Experimental Evaluation and Performance Analysis}{39}{chapter.5}%
-\contentsline {section}{\numberline {5.1}Chaotic Parameter Selection and Tuning Methodology}{39}{section.5.1}%
-\contentsline {subsection}{\numberline {5.1.1}Evaluation Metrics: Key Sensitivity and Avalanche Effect}{40}{subsection.5.1.1}%
-\contentsline {subsection}{\numberline {5.1.2}Stability Penalty System and Final Ranking}{41}{subsection.5.1.2}%
-\contentsline {subsection}{\numberline {5.1.3}Selection Results and Parameter Assignment}{42}{subsection.5.1.3}%
-\contentsline {section}{\numberline {5.2}Randomness Properties Preservation}{42}{section.5.2}%
-\contentsline {subsection}{\numberline {5.2.1}Evaluation Schemes and Metrics}{43}{subsection.5.2.1}%
-\contentsline {paragraph}{P-value Uniformity Analysis (Chi-Squared Test)}{43}{paragraph*.39}%
-\contentsline {subsection}{\numberline {5.2.2}Statistical Results and Randomness Validation}{44}{subsection.5.2.2}%
-\contentsline {section}{\numberline {5.3}Benchmark and SWaP analysis}{46}{section.5.3}%
-\contentsline {subsection}{\numberline {5.3.1}Once-per-Round Update Benchmarks}{46}{subsection.5.3.1}%
-\contentsline {paragraph}{Execution Time as an Energy Proxy}{48}{paragraph*.45}%
-\contentsline {paragraph}{Memory Footprint and SWaP Viability}{48}{paragraph*.46}%
-\contentsline {subsection}{\numberline {5.3.2}Once-per-Block Update Benchmarks}{49}{subsection.5.3.2}%
-\contentsline {paragraph}{Energy and Memory Optimization Strategy}{50}{paragraph*.50}%
-\contentsline {paragraph}{Transitioning to Empirical Side-Channel Cryptanalysis}{51}{paragraph*.51}%
-\contentsline {chapter}{\numberline {6}ML-based side-channel attack simulation}{52}{chapter.6}%
-\contentsline {section}{\numberline {6.1}Threat Model and Physical Leakage}{52}{section.6.1}%
-\contentsline {section}{\numberline {6.2}Attack Choices and Theoretical Comparison}{53}{section.6.2}%
-\contentsline {section}{\numberline {6.3}The Machine Learning-Assisted Attack}{54}{section.6.3}%
-\contentsline {subsection}{\numberline {6.3.1}Profiling Phase and Data Collection}{54}{subsection.6.3.1}%
-\contentsline {subsection}{\numberline {6.3.2}The Selected ML Architecture: Random Forest}{55}{subsection.6.3.2}%
-\contentsline {paragraph}{Maximum Likelihood Estimation (MLE)}{56}{paragraph*.53}%
-\contentsline {chapter}{Bibliography}{57}{chapter*.54}%
+\contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Thesis Objective}{1}{section.1.1}%
+\contentsline {chapter}{\numberline {2}Background and State-of-the-Art of Satellite Communications}{2}{chapter.2}%
+\contentsline {section}{\numberline {2.1}SATCOM Architecture}{3}{section.2.1}%
+\contentsline {subsection}{\numberline {2.1.1}Space Segment}{4}{subsection.2.1.1}%
+\contentsline {subsection}{\numberline {2.1.2}Ground Segment}{4}{subsection.2.1.2}%
+\contentsline {subsection}{\numberline {2.1.3}Link Segment}{5}{subsection.2.1.3}%
+\contentsline {section}{\numberline {2.2}SATCOM Threats}{5}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}Space Segment Threats}{5}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}Ground Segment Threats}{6}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}Link Segment Threats}{6}{subsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.2.4}An Emergent Threat: Machine Learning}{7}{subsection.2.2.4}%
+\contentsline {section}{\numberline {2.3}Defensive Strategies}{8}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}Physical Layer Security (PLS)}{8}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.2}Traditional Cryptography}{8}{subsection.2.3.2}%
+\contentsline {section}{\numberline {2.4}SATCOM Cryptographic State-of-the-Art: AES-256-GCM}{9}{section.2.4}%
+\contentsline {chapter}{\numberline {3}Algorithmic Foundations of AES-256-GCM}{11}{chapter.3}%
+\contentsline {section}{\numberline {3.1}AES-256}{11}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}Key Expansion}{12}{subsection.3.1.1}%
+\contentsline {subsection}{\numberline {3.1.2}State Matrix and Round Architecture}{13}{subsection.3.1.2}%
+\contentsline {subsection}{\numberline {3.1.3}SubBytes}{14}{subsection.3.1.3}%
+\contentsline {paragraph}{The Construction of the S-Box}{15}{paragraph*.5}%
+\contentsline {paragraph}{Vulnerability of the Software LUT Implementation}{15}{paragraph*.6}%
+\contentsline {subsection}{\numberline {3.1.4}ShiftRows}{15}{subsection.3.1.4}%
+\contentsline {subsection}{\numberline {3.1.5}MixColumns}{16}{subsection.3.1.5}%
+\contentsline {paragraph}{Software Implementation of GF($2^8$) Multiplication: xtime macro}{16}{paragraph*.7}%
+\contentsline {subsection}{\numberline {3.1.6}AddRoundKey}{18}{subsection.3.1.6}%
+\contentsline {section}{\numberline {3.2}Galois/Counter Mode (GCM)}{18}{section.3.2}%
+\contentsline {paragraph}{The GCM Extension: Authenticated Encryption and Integrity}{19}{paragraph*.8}%
+\contentsline {subsection}{\numberline {3.2.1}Key and IV Requirements}{20}{subsection.3.2.1}%
+\contentsline {paragraph}{Uniqueness and Forgery Attacks.}{20}{paragraph*.9}%
+\contentsline {paragraph}{Key Freshness and Establishment.}{20}{paragraph*.10}%
+\contentsline {paragraph}{IV Construction Methods.}{20}{paragraph*.11}%
+\contentsline {subsection}{\numberline {3.2.2}Multiplication in $\mathrm {GF}(2^{128})$}{21}{subsection.3.2.2}%
+\contentsline {paragraph}{Phase 1: Accumulation (Lines 6--8)}{22}{paragraph*.12}%
+\contentsline {paragraph}{Phase 2: Shift and Reduce (Lines 9--13)}{22}{paragraph*.13}%
+\contentsline {paragraph}{Additional Challenges of GCM}{22}{paragraph*.14}%
+\contentsline {subsection}{\numberline {3.2.3}$\text {GHASH}$ Function}{23}{subsection.3.2.3}%
+\contentsline {paragraph}{Embedded C Implementation and Memory Optimization.}{23}{paragraph*.15}%
+\contentsline {subsection}{\numberline {3.2.4}Authenticated Encryption and Decryption Algorithms}{24}{subsection.3.2.4}%
+\contentsline {paragraph}{Authenticated Encryption Algorithm}{24}{paragraph*.16}%
+\contentsline {paragraph}{Authenticated Decryption Algorithm}{26}{paragraph*.18}%
+\contentsline {subsection}{\numberline {3.2.5}Tests for the GCM Embedded C Implementation}{26}{subsection.3.2.5}%
+\contentsline {paragraph}{NIST Vector Tests}{26}{paragraph*.19}%
+\contentsline {paragraph}{Channel Noise and SEU Simulation}{26}{paragraph*.20}%
+\contentsline {paragraph}{Chaotic Injection overview}{27}{paragraph*.21}%
+\contentsline {chapter}{\numberline {4}Chaotic Injection and Cryptographic Machine Unlearning}{28}{chapter.4}%
+\contentsline {paragraph}{Mathematical Modeling of the Chaotic S-Box}{28}{paragraph*.22}%
+\contentsline {paragraph}{Chaotic Influence on Key Expansion}{29}{paragraph*.23}%
+\contentsline {paragraph}{Architectural Optimization: The Scalar Chaotic State}{29}{paragraph*.24}%
+\contentsline {section}{\numberline {4.1}Taxonomy of the Implemented Chaotic Maps}{30}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}Discrete Chaotic Systems}{30}{subsection.4.1.1}%
+\contentsline {subsubsection}{\numberline {4.1.1.1}One-Dimensional Maps}{30}{subsubsection.4.1.1.1}%
+\contentsline {paragraph}{Logistic Map}{30}{paragraph*.25}%
+\contentsline {paragraph}{Tent Map}{30}{paragraph*.26}%
+\contentsline {paragraph}{Sine Map}{31}{paragraph*.27}%
+\contentsline {paragraph}{Chebyshev Map}{31}{paragraph*.28}%
+\contentsline {subsubsection}{\numberline {4.1.1.2}Two-Dimensional Maps}{31}{subsubsection.4.1.1.2}%
+\contentsline {paragraph}{Hénon Map}{31}{paragraph*.29}%
+\contentsline {paragraph}{Arnold's Cat Map}{31}{paragraph*.30}%
+\contentsline {subsection}{\numberline {4.1.2}Continuous Chaotic Systems}{31}{subsection.4.1.2}%
+\contentsline {subsubsection}{\numberline {4.1.2.1}Three-Dimensional Maps}{32}{subsubsection.4.1.2.1}%
+\contentsline {paragraph}{Lorenz Map}{32}{paragraph*.31}%
+\contentsline {paragraph}{Chen Map}{32}{paragraph*.32}%
+\contentsline {paragraph}{Rössler Map}{33}{paragraph*.33}%
+\contentsline {section}{\numberline {4.2}Chaotic Initialization: Seed Derivation and Transient Elimination}{33}{section.4.2}%
+\contentsline {paragraph}{Transient Phase Elimination (Chaos Burn-in)}{34}{paragraph*.34}%
+\contentsline {section}{\numberline {4.3}Chaotic Update Trade-off and Hardware Leakage}{34}{section.4.3}%
+\contentsline {paragraph}{Physical Security and RAM Pre-computation}{35}{paragraph*.35}%
+\contentsline {paragraph}{Transition to Performance Analysis}{35}{paragraph*.36}%
+\contentsline {chapter}{\numberline {5}Experimental Evaluation and Performance Analysis}{36}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Chaotic Parameter Selection and Tuning Methodology}{36}{section.5.1}%
+\contentsline {subsection}{\numberline {5.1.1}Evaluation Metrics: Key Sensitivity and Avalanche Effect}{37}{subsection.5.1.1}%
+\contentsline {subsection}{\numberline {5.1.2}Stability Penalty System and Final Ranking}{38}{subsection.5.1.2}%
+\contentsline {subsection}{\numberline {5.1.3}Selection Results and Parameter Assignment}{39}{subsection.5.1.3}%
+\contentsline {section}{\numberline {5.2}Randomness Properties Preservation}{39}{section.5.2}%
+\contentsline {subsection}{\numberline {5.2.1}Evaluation Schemes and Metrics}{40}{subsection.5.2.1}%
+\contentsline {paragraph}{P-value Uniformity Analysis (Chi-Squared Test)}{40}{paragraph*.39}%
+\contentsline {subsection}{\numberline {5.2.2}Statistical Results and Randomness Validation}{41}{subsection.5.2.2}%
+\contentsline {section}{\numberline {5.3}Benchmark and SWaP analysis}{43}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}Once-per-Round Update Benchmarks}{43}{subsection.5.3.1}%
+\contentsline {paragraph}{Execution Time as an Energy Proxy}{45}{paragraph*.45}%
+\contentsline {paragraph}{Memory Footprint and SWaP Viability}{45}{paragraph*.46}%
+\contentsline {subsection}{\numberline {5.3.2}Once-per-Block Update Benchmarks}{46}{subsection.5.3.2}%
+\contentsline {paragraph}{Energy and Memory Optimization Strategy}{47}{paragraph*.50}%
+\contentsline {paragraph}{Transitioning to Empirical Side-Channel Cryptanalysis}{48}{paragraph*.51}%
+\contentsline {chapter}{\numberline {6}ML-based side-channel attack simulation}{49}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Threat Model and Physical Leakage}{49}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Attack Choices and Theoretical Comparison}{50}{section.6.2}%
+\contentsline {section}{\numberline {6.3}The Machine Learning-Assisted Attack}{51}{section.6.3}%
+\contentsline {subsection}{\numberline {6.3.1}Profiling Phase and Data Collection}{51}{subsection.6.3.1}%
+\contentsline {subsection}{\numberline {6.3.2}The Selected ML Architecture: Random Forest}{52}{subsection.6.3.2}%
+\contentsline {paragraph}{Maximum Likelihood Estimation (MLE)}{53}{paragraph*.54}%
+\contentsline {subsection}{\numberline {6.3.3}Attack Strategy and GCM Constraints}{54}{subsection.6.3.3}%
+\contentsline {paragraph}{Phase 1: Recovery of the First 12 Key Bytes}{55}{paragraph*.55}%
+\contentsline {paragraph}{Phase 2: Divide-and-Conquer Strategy}{56}{paragraph*.56}%
+\contentsline {paragraph}{Final Phase: Reduced Brute-Force and HW Optimization}{57}{paragraph*.57}%
+\contentsline {section}{\numberline {6.4}Empirical Attack Results}{58}{section.6.4}%
+\contentsline {paragraph}{Baseline Vulnerability: Standard AES-256-GCM}{58}{paragraph*.58}%
+\contentsline {paragraph}{Chaotic Resilience: Once-per-Block Implementation}{59}{paragraph*.60}%
+\contentsline {paragraph}{Average Success Rate across Chaotic Maps}{60}{paragraph*.62}%
+\contentsline {chapter}{\numberline {7}Conclusions}{61}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Future Work}{62}{section.7.1}%
+\contentsline {chapter}{Bibliography}{63}{chapter*.64}%

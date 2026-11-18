@@ -71,6 +71,8 @@ Utility per il cluster:
 	- Mettere la mia repo nell'introduzione
 	- serve citazione \paragraph{Additional Challenges of GCM}
 	- citazioni per come funziona la random forest ?
+	- in quanto il sistema di difesa è software è installabile anche su satelliti vecchi
+	- ricontrollo errori di battitura
 
 ######################################################################
 

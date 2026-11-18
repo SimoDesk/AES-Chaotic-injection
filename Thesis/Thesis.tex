@@ -45,12 +45,14 @@
 % Load package for adjusting the width of text blocks
 \usepackage{fancyhdr}
 
-% Used for images one right to another
-\usepackage{subcaption}
 
 % Used in tables
 \usepackage{booktabs}
 \usepackage{multirow}
+
+% used for tree
+\usepackage{tikz}
+\usetikzlibrary{positioning}
 
 % Redefine the chapter title format and spacing
 \usepackage{titlesec}
@@ -261,10 +263,12 @@ Author's email: \texttt{simo.desk04@gmail.com}
 
 
 % Contents page
+\pagenumbering{roman}
 \newpage
 \tableofcontents 
 
-\newpage
+\cleardoublepage
+\pagenumbering{arabic}
 
 \chapter{Introduction}
 
@@ -289,8 +293,6 @@ while simultaneously proving that the proposed chaotic implementation successful
 % ====================================================================================================
 
 % ====================================================================================================
-
-
 
 \chapter[Background and State-of-the-Art of Satellite Communications]{Background and State-of-the-Art of \\ Satellite Communications}Satellite communications (SATCOM) are vastly different from how they appeared just a few decades ago. 
 At that time, space-based communications were mainly represented by government activities, characterized by larger and more expensive satellites than the ones used today. 
@@ -2120,6 +2122,110 @@ The model is then compiled using the \textsc{fit} function, strictly adhering to
     \item \texttt{random\_state}: A fixed procedural seed is initialized to guarantee the absolute reproducibility of the simulated attack.
 \end{itemize}
 
+\begin{figure}[htbp]
+    \centering
+    \resizebox{\textwidth}{!}{%
+    \begin{tikzpicture}[
+        >=latex,
+        node/.style={
+            rectangle,
+            rounded corners=3pt,
+            draw=blue!50!black,
+            line width=0.75pt,
+            fill=blue!4,
+            align=center,
+            inner sep=6pt,
+            minimum width=4.0cm,
+            font=\scriptsize
+        },
+        leaf/.style={
+            rectangle,
+            rounded corners=3pt,
+            draw=teal!60!black,
+            line width=0.75pt,
+            fill=teal!6,
+            align=center,
+            inner sep=4pt,
+            text width=2.85cm,
+            font=\scriptsize
+        },
+        branch/.style={
+            fill=white,
+            inner sep=2pt,
+            font=\scriptsize\bfseries
+        },
+        edge/.style={
+            draw=black!70,
+            ->,
+            line width=0.75pt
+        }
+    ]
+        % --- ROOT NODE ---
+        \node[node, fill=blue!8, line width=0.9pt] (root) at (0, 0) {
+            \textbf{Root Node ($N = 5000$)}\\[2pt]
+            $2000\;\mathtt{0x12} \;\mid\; 1500\;\mathtt{0x4A} \;\mid\; 1500\;\mathtt{0xFF}$\\[3pt]
+            \textbf{Best Split:} $\text{HW}_0 \le 4.5$
+        };
+
+        % --- LEVEL 1 NODES ---
+        \node[node] (left) at (-3.8, -2.5) {
+            \textbf{Internal Node ($N = 2200$)}\\[2pt]
+            $1900\;\mathtt{0x12} \;\mid\; 300\;\mathtt{0x4A} \;\mid\; 0\;\mathtt{0xFF}$\\[3pt]
+            \textbf{Best Split:} $\text{HW}_0 \le 2.5$
+        };
+
+        \node[node] (right) at (3.8, -2.5) {
+            \textbf{Internal Node ($N = 2800$)}\\[2pt]
+            $100\;\mathtt{0x12} \;\mid\; 1200\;\mathtt{0x4A} \;\mid\; 1500\;\mathtt{0xFF}$\\[3pt]
+            \textbf{Best Split:} $\text{HW}_0 \le 6.5$
+        };
+
+        % --- LEVEL 2 (LEAVES) ---
+        \node[leaf] (leaf1) at (-5.7, -5.3) {
+            \textbf{Leaf 1 ($N = 1800$)}\\[2pt]
+            $1800\;\mathtt{0x12}$\\[2pt]
+            \textit{\color{teal!60!black}($\mathtt{0x12}: 100\%$)}
+        };
+
+        \node[leaf] (leaf2) at (-1.9, -5.3) {
+            \textbf{Leaf 2 ($N = 400$)}\\[2pt]
+            $100\;\mathtt{0x12} \;\mid\; 300\;\mathtt{0x4A}$\\[2pt]
+            \textit{\color{black!70}($\mathtt{0x12}: 25\%,\;\mathtt{0x4A}: 75\%$)}
+        };
+
+        \node[leaf] (leaf3) at (1.9, -5.3) {
+            \textbf{Leaf 3 ($N = 1250$)}\\[2pt]
+            $50\;\mathtt{0x12} \;\mid\; 1100\;\mathtt{0x4A}$\\
+            $100\;\mathtt{0xFF}$\\[2pt]
+            \textit{\color{black!70}($\mathtt{0x12}: 4\%,\;\mathtt{0x4A}: 88\%,$}\\
+            \textit{\color{black!70}$\mathtt{0xFF}: 8\%$)}
+        };
+
+        \node[leaf] (leaf4) at (5.7, -5.3) {
+            \textbf{Leaf 4 ($N = 1550$)}\\[2pt]
+            $50\;\mathtt{0x12} \;\mid\; 100\;\mathtt{0x4A}$\\
+            $1400\;\mathtt{0xFF}$\\[2pt]
+            \textit{\color{teal!60!black}($\mathtt{0x12}: 3\%,\;\mathtt{0x4A}: 7\%,$}\\
+            \textit{\color{teal!60!black}$\mathtt{0xFF}: 90\%$)}
+        };
+
+        % --- EDGES ---
+        \draw[edge] (root) -- (left) node[branch, text=teal!60!black, pos=0.45, left=3pt] {True};
+        \draw[edge] (root) -- (right) node[branch, text=red!65!black, pos=0.45, right=3pt] {False};
+
+        \draw[edge] (left) -- (leaf1) node[branch, text=teal!60!black, pos=0.45, left=2pt] {True};
+        \draw[edge] (left) -- (leaf2) node[branch, text=red!65!black, pos=0.45, right=2pt] {False};
+
+        \draw[edge] (right) -- (leaf3) node[branch, text=teal!60!black, pos=0.45, left=2pt] {True};
+        \draw[edge] (right) -- (leaf4) node[branch, text=red!65!black, pos=0.45, right=2pt] {False};
+
+    \end{tikzpicture}%
+    }
+    \caption{Decision tree training (profiling) process over $N = 5000$ labeled traces. 
+    At each internal node, the algorithm selects the Hamming Weight threshold ($\text{HW}_0 \le \tau$), partitioning the dataset into progressively purer leaf nodes.}
+    \label{fig:rf_tree_training}
+\end{figure}
+
 \paragraph{Maximum Likelihood Estimation (MLE)}
 In a real-world physical cryptanalysis scenario, relying on the classification of a single intercepted communication is highly prone to errors. 
 The analog noise inherent in the hardware measurements could easily mask the true target value, causing the classifier to output an incorrect majority vote. 
@@ -2132,6 +2238,365 @@ The MLE algorithm then aggregates these discrete arrays, summing the logarithmic
 The candidate byte that accumulates the highest overall statistical probability is definitively selected as the correct key fraction. 
 To ensure mathematical stability during the logarithmic summation, specifically to prevent undefined $\log(0)$ errors if the model assigns a flat $0\%$ probability to a candidate in a specific trace, 
 an epsilon smoothing technique is applied, injecting a minimal $10^{-9}$ variation into the probability arrays.
+
+
+\subsection{Attack Strategy and GCM Constraints}
+The initial cryptanalysis strategy leveraged the dataset's variance to train the ML classifier to directly predict the byte values exiting the first S-Box substitution. 
+Because this substitution occurs at the very beginning of the AES algorithm, the output of the $i$-th S-Box is defined as:
+
+\begin{equation}
+    S_{out}[i] = \textsc{SubBytes}(J_0[i] \oplus K_{P1}[i])
+\end{equation}
+
+where $J_0$ is the initial input block and $K_{P1}$ is the first half of the AES-256 master key. 
+If the Random Forest successfully predicts $S_{out}[i]$, the attacker can exploit the public state of the algorithm to mathematically reverse the operation. 
+Utilizing the \textsc{InvSubBytes}() function and the involutory property of the XOR operation ($A = B \oplus C \implies B = A \oplus C$), the secret key byte can be trivially recovered using the known public input block:
+
+\begin{equation}
+    K_{P1}[i] = J_0[i] \oplus \textsc{InvSubBytes}(S_{out}[i])
+\end{equation}
+
+However, two major structural challenges impede this straightforward key-recovery flow. 
+First, AES-256 utilizes a 32-byte master key. This means the initial \textsc{AddRoundKey()} operation only consumes the first 16 bytes ($K_{P1} = K[0:15]$). 
+The second half of the master key ($K_{P2} = K[16:31]$) is only injected during the subsequent first main round. 
+While this could theoretically be addressed by extending the ML attack to predict the outputs of the second round's \textsc{SubBytes}() operation and algebraically rolling back the state, the second issue presents a strict mathematical roadblock.
+
+Following SATCOM standards and the official NIST SP 800-38D specifications~\cite{GCM} for the GCM mode of operation, 
+the preferred Initialization Vector (IV) length is exactly 12 bytes. 
+To form the required 16-byte initial counter block ($J_0$) that enters the AES cipher, a fixed 32-bit counter is appended to the IV, 
+resulting in the structural concatenation: $J_0 = \mathit{IV} \parallel \mathtt{0x00000002}$. 
+
+While this deterministic padding is mathematically rigorous for standard encryption, it compromises the ML profiling phase. 
+Because the last four input bytes are artificially forced to be constant ($\mathtt{0x00, 0x00, 0x00, 0x02}$) across every single communication, and the target key $K_{P1}$ remains fixed, the resulting S-Box outputs for byte indexes 12 through 15 never change (as previously observable in the static final columns of Table~\ref{tab:training_data_sample}). 
+
+Machine Learning classifiers inherently rely on data variance to establish correlations and recognize physical leakage patterns. 
+The absolute staticity of these four bytes starves the Random Forest of any informational entropy, rendering it impossible to profile and predict the last four bytes of $K_{P1}$. 
+Consequently, without recovering the complete 16-byte $K_{P1}$, computing the internal cipher state forwards to attack the second round ($K_{P2}$) is impossible, mandating the adoption of a more advanced algebraic Divide-and-Conquer strategy.
+
+\paragraph{Phase 1: Recovery of the First 12 Key Bytes}
+After training the Random Forest on the profiling dataset, the active attack phase is initiated by feeding the model a highly constrained operational dataset, 
+typically containing only a hundred intercepted IVs and their corresponding physical power traces. 
+Through the implementation of the Maximum Likelihood Estimation (MLE) algorithm, the model processes each intercepted communication to generate a 256-element probability vector for each of the first 12 bytes. 
+Each index in this vector represents the statistical probability that the S-Box output corresponds to that specific byte value (e.g., $\mathbf{P}(S_{out}[i]) = [p_0, p_1, \dots, p_{255}]$).
+
+For each of the first 12 bytes of $K_{P1}$, the candidate value with the highest aggregated probability is selected as the definitive prediction. 
+This yields the following partially recovered state for the first S-Box output:
+\begin{equation}
+\text{Prediction\_S1}_{\text{out}} = \begin{bmatrix}
+    P_0 & P_4 & P_8 & X_{12} \\
+    P_1 & P_5 & P_9 & X_{13} \\
+    P_2 & P_6 & P_{10} & X_{14} \\
+    P_3 & P_7 & P_{11} & X_{15}
+\end{bmatrix}
+\end{equation}
+where $P_i$ represents the $i$-th predicted byte, and $X_i$ denotes the four unpredictable bytes severely masked by the fixed $\mathtt{0x00000002}$ suffix.
+
+Despite the missing column, the recovery of the first 12 key bytes remains entirely feasible. 
+Because both the \textsc{SubBytes}() (or $S^{-1}()$) and \textsc{AddRoundKey()} operations process the state matrix strictly byte-by-byte, 
+the spatial independence of the 16 bytes is rigorously preserved. 
+Since the initial input block is completely known ($J_0 = \mathit{IV} \parallel \mathtt{0x00000002}$), the first section of the key is trivially retrieved through a direct algebraic derivation. 
+Using the symbol $*$ to represent the unpredictable values, the extraction is mathematically formalized as follows:
+
+\begin{equation}
+\setlength{\arraycolsep}{3.5pt}
+\begin{gathered}
+    \text{Retrieved\_}K_{P1}[0:11] = J_0 \oplus \textsc{InvSubBytes}(\text{Prediction\_S1}_{\text{out}}) = \\[6pt]
+    = \begin{bmatrix}
+        J_0[0] & J_0[4] & J_0[8] & J_0[12] \\
+        J_0[1] & J_0[5] & J_0[9] & J_0[13] \\
+        J_0[2] & J_0[6] & J_0[10] & J_0[14] \\
+        J_0[3] & J_0[7] & J_0[11] & J_0[15]
+    \end{bmatrix}
+    \oplus
+    \textsc{InvSubBytes}
+    \begin{bmatrix}
+        P_0 & P_4 & P_8 & X_{12} \\
+        P_1 & P_5 & P_9 & X_{13} \\
+        P_2 & P_6 & P_{10} & X_{14} \\
+        P_3 & P_7 & P_{11} & X_{15}
+    \end{bmatrix} = \\[6pt]
+    = \begin{bmatrix}
+        J_0[0] \oplus S^{-1}(P_0) & J_0[4] \oplus S^{-1}(P_4) & J_0[8] \oplus S^{-1}(P_8) & * \\
+        J_0[1] \oplus S^{-1}(P_1) & J_0[5] \oplus S^{-1}(P_5) & J_0[9] \oplus S^{-1}(P_9) & * \\
+        J_0[2] \oplus S^{-1}(P_2) & J_0[6] \oplus S^{-1}(P_6) & J_0[10] \oplus S^{-1}(P_{10}) & * \\
+        J_0[3] \oplus S^{-1}(P_3) & J_0[7] \oplus S^{-1}(P_7) & J_0[11] \oplus S^{-1}(P_{11}) & *
+    \end{bmatrix}
+    = \begin{bmatrix}
+        K^R_0 & K^R_4 & K^R_8 & * \\
+        K^R_1 & K^R_5 & K^R_9 & * \\
+        K^R_2 & K^R_6 & K^R_{10} & * \\
+        K^R_3 & K^R_7 & K^R_{11} & *
+    \end{bmatrix}
+\end{gathered}
+\end{equation}
+
+\newpage
+
+\paragraph{Phase 2: Divide-and-Conquer Strategy}
+Now that the first 12 bytes of $K_{P1}$ have been successfully retrieved, the cryptanalysis transitions to its second phase: 
+recovering the remaining 20 bytes of the AES-256 state (comprising the 4 missing bytes of $K_{P1}$ and the entire 16-byte $K_{P2}$ round key).
+
+However, the incomplete state of $K_{P1}$ presents a critical algebraic roadblock for the direct recovery of $K_{P2}$. 
+This complication is structurally induced by the \textsc{ShiftRows()} and \textsc{MixColumns()} diffusion layers. 
+During the first round, the \textsc{ShiftRows()} operation scatters the four unknown bytes from the state's last column, distributing exactly one unknown byte into each of the four columns. 
+Subsequently, the \textsc{MixColumns()} routine processes these columns vertically, causing each single unknown byte of $K_{P1}$ to algebraically diffuse and "infect" an entire 4-byte column of the Round 1 output state ($State^{(1)}_{out}$).
+
+Because the input to the second round is now heavily entangled with the unknown variables of $K_{P1}$, it becomes impossible to perfectly compute $State^{(1)}_{out}$. 
+Consequently, even if a second Random Forest model perfectly predicts the S-Box outputs of the second round:
+\begin{equation}
+\text{Prediction\_S2}_{\text{out}} = \begin{bmatrix}
+    Q_0 & Q_4 & Q_8 & Q_{12} \\
+    Q_1 & Q_5 & Q_9 & Q_{13} \\
+    Q_2 & Q_6 & Q_{10} & Q_{14} \\
+    Q_3 & Q_7 & Q_{11} & Q_{15}
+\end{bmatrix}
+\end{equation}
+the attacker can no longer use the simple matrix involution:
+\begin{equation}
+\text{Retrieved\_}K_{P2} = State^{(1)}_{out} \oplus \textsc{InvSubBytes}(\text{Prediction\_S2}_{\text{out}})
+\end{equation}
+to trivially retrieve the second half of the key, as $State^{(1)}_{out}$ is no longer a known public variable.
+
+Nonetheless, the strict mathematical diffusion generated by the \textsc{ShiftRows()} and \textsc{MixColumns()} routines can be reverse-engineered to the attacker's advantage, 
+strategically reducing the search space to make a localized brute-force attack highly feasible. 
+
+This phase leverages the precise spatial permutation of the \textsc{ShiftRows()} operation. 
+As established in the standard AES architecture, this function shifts the four unknown variables ($X_i$) of $K_{P1}$ diagonally, 
+placing exactly one unknown variable into each of the four columns:
+\[
+\text{S1}_{\text{out}} = \begin{bmatrix}
+    B_0 & B_4 & B_8 & X_{12} \\
+    B_1 & B_5 & B_9 & X_{13} \\
+    B_2 & B_6 & B_{10} & X_{14} \\
+    B_3 & B_7 & B_{11} & X_{15}
+\end{bmatrix}
+\xrightarrow{\quad \textsc{ShiftRows} \quad}
+Shift_{\text{out}} = \begin{bmatrix}
+    B_0 & B_4 & B_8 & X_{12} \\
+    B_5 & B_9 & X_{13} & B_1 \\
+    B_{10} & X_{14} & B_2 & B_6 \\
+    X_{15} & B_3 & B_7 & B_{11}
+\end{bmatrix}
+\]
+This spatial distribution synergizes perfectly with the subsequent \textsc{MixColumns()} routine. 
+Because \textsc{MixColumns()} operates strictly on a column-by-column basis in $\mathrm{GF}(2^8)$, 
+where each output byte is algebraically influenced only by the four input bytes of its own column, the diffusion of the unknowns is rigidly isolated. 
+After \textsc{MixColumns()}, each column of the state depends exclusively on a \textit{single} unknown variable: $X_{15}$ for Column 0, $X_{14}$ for Column 1, $X_{13}$ for Column 2, and $X_{12}$ for Column 3. 
+
+Thanks to the byte-by-byte nature of the subsequent \textsc{AddRoundKey()} and \textsc{SubBytes()} operations, 
+this separation allows the attacker to execute a Divide-and-Conquer strategy. 
+Instead of attacking the state as a whole, the attacker can iteratively evaluate all 256 possible values for a single unknown variable per column, generating isolated partial key guesses.
+
+For instance, to generate the hypothesis set for the first column (Column 0), the attack iterates a hypothetical guess $i \in [0, 255]$ for the unknown variable $X_{15}$. 
+This guess is combined with the three known public bytes ($B_0, B_5, B_{10}$) and processed through the \textsc{MixColumns()} matrix multiplication:
+\[
+Shift_{\text{out}}[0] = \begin{bmatrix}
+    B_0 \\
+    B_5 \\
+    B_{10} \\
+    i
+\end{bmatrix}
+\xrightarrow{\quad \textsc{MixColumns} \quad}
+Mix_{\text{out}}[0] = \begin{bmatrix}
+    M_0 \\
+    M_1 \\
+    M_2 \\
+    M_3
+\end{bmatrix}
+\]
+
+Simultaneously, the first column of the second Random Forest prediction ($\text{Prediction\_S2}_{\text{out}}$) 
+is passed backwards through the \textsc{InvSubBytes()} function to obtain the theoretical output of the second \textsc{AddRoundKey()} layer:
+\begin{equation}
+    \textsc{AddRoundKey}_{\text{out}}[0] = S^{-1}\!\left(\text{Prediction\_S2}_{\text{out}}[0]\right)
+    = \begin{bmatrix}
+        S^{-1}(Q_0) \\
+        S^{-1}(Q_1) \\
+        S^{-1}(Q_2) \\
+        S^{-1}(Q_3)
+    \end{bmatrix}
+    = \begin{bmatrix}
+        A_0 \\
+        A_1 \\
+        A_2 \\
+        A_3
+    \end{bmatrix}
+\end{equation}
+
+By exploiting the involutory XOR property, a partial key prediction for $K_{P2}$, dependent on the specific guess $i$, is mathematically derived:
+\begin{equation}
+    K_{P2}[0:3]^{i} = \textsc{AddRoundKey}_{\text{out}}[0] \oplus Mix_{\text{out}}[0] 
+    = \begin{bmatrix}
+        K^{i}_{16} \\
+        K^{i}_{17} \\
+        K^{i}_{18} \\
+        K^{i}_{19}
+    \end{bmatrix}
+\end{equation}
+This partial $K_{P2}$ vector is cached and mapped to its corresponding guess $i$. 
+This process is repeated 256 times for Column 0, and subsequently repeated for the remaining three columns, resulting in four independent sets of 256 partial hypotheses.
+
+\paragraph{Final Phase: Reduced Brute-Force and HW Optimization}
+Ultimately, the Divide-and-Conquer phase yields a structured combinatorial space. 
+The final attack stage consists of aggregating one hypothesis from each of the four column sets to construct a full 32-byte candidate key:
+\[
+Key_{\text{candidate}} = K_{P1}[0:11] \parallel (X_{12}^h, X_{13}^l, X_{14}^j, X_{15}^i) \parallel (K_{P2}^{h}, K_{P2}^{l}, K_{P2}^{j}, K_{P2}^{i})
+\]
+Leveraging the Galois/Counter Mode (GCM), the attack validates the correct candidate by utilizing it to decrypt an eavesdropped ciphertext. 
+If the locally computed GMAC tag matches the intercepted authentication tag, the key is confirmed as mathematically correct.
+
+Through this methodology, the theoretical AES-256 search space is catastrophically reduced from an impossible $2^{256}$ down to $256^4 = 2^{32}$, 
+rendering the brute-force phase computationally trivial. 
+
+Furthermore, a significant micro-architectural optimization can be deployed to reduce this space even drastically further. 
+While the static nature of the $J_0$ padding prevents the Random Forest from predicting the exact byte values of $X_{12}\dots X_{15}$, 
+a physical side-channel trace still perfectly leaks the \textit{Hamming Weight} (HW) of those constant bytes. 
+By knowing exactly how many active bits ('1's) are present in the target byte, the attacker can preemptively filter the 256 iterations. 
+
+For instance, if the intercepted analog leakage indicates $\text{HW} = 1$, combinatorial mathematics dictates that only $\binom{8}{1} = 8$ bytes possess this property. 
+Even in the statistical worst-case scenario where the leakage indicates $\text{HW} = 4$, the number of viable candidates drops to exactly:
+\[
+    \binom{8}{4} = \frac{8!}{4!(8-4)!} = 70 \text{ candidates.}
+\]
+By dynamically filtering the Divide-and-Conquer loops based on the physical HW leakage, the maximum theoretical search space plummets from $2^{32}$ down to an absolute worst-case of $70^4 = 24010000$ iterations. 
+This final optimization guarantees a complete AES-256 key recovery in mere seconds on any standard personal computer, completely breaking the cipher's confidentiality.
+
+\section{Empirical Attack Results}
+\paragraph{Baseline Vulnerability: Standard AES-256-GCM}
+To establish a baseline, the ML-assisted cryptanalysis was first executed against the standard, unprotected AES-256-GCM implementation utilizing the known target key: \\
+\texttt{0f1080c9231bfcd6209f100ea59cf6722581ed9cca2d3dd7a3453c1e7f84ed8e}.
+
+The Random Forest model seamlessly recovered the first 12 bytes of $K_{P1}$ with extreme precision. 
+As illustrated in Figure~\ref{fig:std_attack}, the MLE algorithm perfectly isolated the correct byte value from the 256 candidates. 
+The statistical confidence of the model is evident in the logarithmic score disparity: 
+the correct value accumulated a score exceeding 1500, while all incorrect candidates remained suppressed below 500. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{images/standard_attack_res.png}
+    \caption{MLE probability scores for the Random Forest prediction of the first 12 key bytes on the standard AES-256-GCM architecture.}
+    \label{fig:std_attack}
+\end{figure}
+
+Following the successful Phase 1 extraction, the Divide-and-Conquer algorithm successfully profiled the Hamming Weights of the missing variables, 
+generating the hypotheses files. The brute-force phase immediately followed, confirming a complete and catastrophic key recovery in less than half of the worst-case search space.
+
+\begin{lightterminal}
+--- Phase 1: First 12 Bytes Extraction ---
+Byte 0 under analysis...  -> Found: 0f
+[...]
+Byte 11 under analysis... -> Found: 0e
+[*] Found K1 portion: 0f1080c9231bfcd6209f100e (MATCH)
+
+--- Phase 2: Divide-and-Conquer & Brute Force ---
+[*] Generating hypotheses for columns 0-3 based on HW leakage...
+[*] Hypotheses saved. Starting brute-force search...
+[!!!] MASTER KEY FOUND [!!!]
+Key: 0f1080c9231bfcd6209f100ea59cf6722581ed9cca2d3dd7a3453c1e7f84ed8e
+Progress: 544096 / 1229312 keys tested
+\end{lightterminal}
+
+\paragraph{Chaotic Resilience: Once-per-Block Implementation}
+Conversely, the exact same attack \\
+methodology, utilizing the identical key, IV set, and profiling parameters, was deployed against the AES variant protected by the \texttt{once-per-block} Logistic Map injection.
+
+The Phase 1 extraction failed entirely. As shown in Figure~\ref{fig:lgt_attack}, 
+the chaotic perturbation effectively masked the physical leakage, severely flattening the MLE probability distributions. 
+The model managed to correctly identify only two bytes out of twelve. Given the flattened score distributions ($\approx 400$ for all candidates), these two matches represent mere statistical variance (a $1/256$ baseline probability) rather than genuine model convergence. 
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.75\textwidth]{images/logistic_attack_res.png}
+    \caption{Flattened MLE probability scores for the prediction attempt on the chaotic-injected AES utilizing the \texttt{once-per-block} Logistic Map.}
+    \label{fig:lgt_attack}
+\end{figure}
+
+Because the Divide-and-Conquer algorithm strictly requires the absolute certainty of all first 12 bytes of $K_{P1}$ to correctly simulate the \textsc{MixColumns} algebraic diffusion, 
+providing it with an incorrect $K_{P1}$ fragment mathematically breaks the hypothesis generation. 
+Consequently, the ensuing brute-force search iterates over an entirely flawed state, resulting in a definitive failure to recover the key.
+
+\begin{lightterminal}
+--- Phase 1: First 12 Bytes Extraction ---
+Byte 0 under analysis...  -> Found: 0f
+Byte 1 under analysis...  -> Found: db (WRONG)
+[...]
+Byte 11 under analysis... -> Found: f4 (WRONG)
+[*] Found K1 portion: 0fdb909c238b57fb1ef27af4
+--- Phase 2: Divide-and-Conquer & Brute Force ---
+[*] Generating hypotheses for columns 0-3 based on HW leakage...
+[*] Hypotheses saved. Starting brute-force search...
+No key found after testing 19208000 keys.
+\end{lightterminal}
+
+\paragraph{Average Success Rate across Chaotic Maps}
+To formalize the ML classification resilience across the different dynamical systems, an automated iterative benchmark consisting of 1,000 independent attack executions was conducted for each map. 
+This extensive sampling nullifies the impact of isolated, statistically lucky guesses, yielding the true average prediction accuracy for the initial 12 bytes.
+
+\begin{table}[htbp]
+    \centering
+    \begin{tabular}{lc}
+        \toprule
+        \textbf{Chaotic Map} & \textbf{Average Success Rate (\%)} \\
+        \midrule
+        Standard (Unprotected) & 100.00 \\
+        \midrule
+        Logistic               &   0.91 \\
+        Tent                   &   0.32 \\
+        Sine                   &   0.30 \\
+        Chebyshev              &   0.31 \\
+        H\'enon                  &  25.14 \\
+        Arnold                 &   0.28 \\
+        Lorenz                 &  17.32 \\
+        Chen                   &   0.00 \\
+        R\"ossler                &   0.24 \\
+        \bottomrule
+    \end{tabular}
+    \caption{Average key recovery success rate (\%) across the baseline (unprotected) implementation and the evaluated chaotic maps.}
+    \label{tab:success_rates}
+\end{table}
+
+The empirical data reported in Table~\ref{tab:success_rates} demonstrates that the chaotic injection effectively neutralizes the profiling attack. 
+Maps such as Chen completely sever the correlation, yielding a $0.00\%$ success rate. 
+
+While the discrete H\'enon map exhibited the highest relative vulnerability with a $25.14\%$ success rate, this figure is highly misleading from a cryptographic perspective. 
+A $25\%$ accuracy on a 12-byte target equates to correctly predicting only 3 bytes on average. This leaves 9 bytes completely unknown in $K_{P1}$ alone, introducing an immediate internal search space of $256^9 \approx 4.7 \times 10^{21}$ combinations before the Phase 2 algorithm can even begin. 
+Therefore, even the weakest evaluated chaotic map successfully renders the side-channel key recovery computationally impossible, proving the absolute defensive viability of the \texttt{once-per-block} architecture.
+
+
+\chapter{Conclusions}
+As demonstrated through the empirical and analytical evaluations conducted in this thesis, 
+the chaotic S-Box injection mechanism proposed by Kumar et al.~\cite{KumarPaper} provides robust software-level resilience against Machine Learning-assisted Side-Channel Attacks targeting the AES \textsc{SubBytes} routine. 
+Crucially, this study proves that such cryptographic immunity is fully preserved even when collapsing the full chaotic state matrix into a single scalar perturbation weight, effectively neutralizing attacks that rely on the deterministic physical leakage of standard Look-Up Tables (LUTs).
+
+The computational benchmarks performed under the baseline \texttt{once-per-round} update strategy highlighted a clear trade-off between mathematical complexity and performance. 
+Lightweight one-dimensional discrete maps (such as Logistic and Tent) and two-dimensional maps (H\'enon and Arnold Cat) achieved strong side-channel resistance while maintaining a moderate time, throughput, and energy overhead, making them viable for resource-constrained environments. 
+Conversely, trigonometric maps and three-dimensional continuous ODE systems (Lorenz, Chen, R\"ossler) imposed excessive computational penalties (exceeding $+20\%$ overhead), rendering them unsuitable for strict aerospace SWaP (Size, Weight, and Power) budgets under this update frequency.
+
+To resolve this bottleneck, this thesis introduced and validated the \texttt{once-per-block} update optimization. 
+The empirical results proved that updating the chaotic state once per 128-bit block flattens the temporal and energetic overhead across all evaluated systems—bringing lightweight maps down to a negligible $\approx 0.5\% - 1.5\%$ penalty and complex 3D systems below $4\%$,
+while keeping the memory footprint completely invariant (at most 56 extra bytes).
+Most importantly, the offensive cryptanalysis confirmed that this architectural optimization does not compromise security: 
+while the Random Forest and Divide-and-Conquer attack achieved a $100\%$ key recovery rate on standard AES-256-GCM, it failed catastrophically against the \texttt{once-per-block} chaotic variants, 
+rendering complete key extraction computationally infeasible.
+
+Finally, due to its purely software-defined nature, this chaotic AES-256-GCM architecture offers a major operational advantage for the SATCOM domain. 
+It can be deployed via Over-the-Air (OTA) firmware updates onto legacy spacecraft and existing embedded end-user terminals without requiring any physical hardware modifications, 
+providing an immediate, cost-effective defense layer against modern side-channel threats.
+
+\section{Future Work}
+While this study establishes a solid proof-of-concept for lightweight chaotic masking in SATCOM, several research avenues remain open to transition this architecture toward flight-ready deployment:
+
+\begin{itemize}
+    \item \textbf{Physical Hardware and Oscilloscope Validation:} Moving beyond simulated Hamming Weight (HW) leakage models, future work should deploy the C codebase onto physical embedded targets to capture real analog power consumption and Electromagnetic traces via an oscilloscope. 
+    This would validate the cipher's resilience against real-world signal-to-noise ratios and hardware-specific leakage effects.
+
+    \item \textbf{Rad-Hard FPGA and Assembly Optimization:} Implementing the proposed chaotic cipher on radiation-hardened (rad-hard) FPGAs typically utilized in space segments would enable precise, 
+    hardware-level timing and Joule dissipation measurements. In parallel, rewriting the core chaotic routines using a hybrid C-Assembly approach, inspired by the OpenSSL cryptographic library, could push software execution efficiency even closer to native hardware speeds.
+
+    \item \textbf{Fixed-Point Arithmetic Migration:} To completely eliminate reliance on Floating-Point Units (FPUs), future iterations could translate the chaotic map equations from floating-point (\texttt{double}) to fixed-point integer arithmetic, further reducing energy consumption and execution latency.
+    
+    \item \textbf{Deep Learning-Based Cryptanalysis:} Finally, the \texttt{once-per-block} architecture should be stress-tested against more aggressive profiling adversaries utilizing Deep Learning models (such as Convolutional Neural Networks or Multi-Layer Perceptrons) trained on substantially larger datasets ($>100,000$ traces).
+\end{itemize}
 
 
 % New page for the bibliography

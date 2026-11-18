@@ -1,0 +1,1496 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global/global}
+    \entry{KumarPaper}{article}{}{}
+      \name{author}{7}{}{%
+        {{hash=044aa2387565d6d8aec479ba113e242d}{%
+           family={Kumar},
+           familyi={K\bibinitperiod},
+           given={Amit\bibnamedelima Krishan},
+           giveni={A\bibinitperiod\bibinitdelim K\bibinitperiod}}}%
+        {{hash=fc09c3b0823f92f9cd133fb6df0e5b69}{%
+           family={Quan},
+           familyi={Q\bibinitperiod},
+           given={Craig},
+           giveni={C\bibinitperiod}}}%
+        {{hash=7111cc3c1b7fb78907e4a93cc58aac9e}{%
+           family={Houniola},
+           familyi={H\bibinitperiod},
+           given={Maximillan},
+           giveni={M\bibinitperiod}}}%
+        {{hash=67ffcfb856f5e615226641d8a21d1843}{%
+           family={Singh},
+           familyi={S\bibinitperiod},
+           given={Satyanand\bibnamedelima S.},
+           giveni={S\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
+        {{hash=796d9f081943d2b83b2de5f3dbc3040c}{%
+           family={Kumar},
+           familyi={K\bibinitperiod},
+           given={Rahul\bibnamedelima R.},
+           giveni={R\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
+        {{hash=85d2f2b20b900e90d5a2d81c2100c503}{%
+           family={Assaf},
+           familyi={A\bibinitperiod},
+           given={Mansour\bibnamedelima H.},
+           giveni={M\bibinitperiod\bibinitdelim H\bibinitperiod}}}%
+        {{hash=7e3576ffe8b83100181050ed0a37722e}{%
+           family={Kumar},
+           familyi={K\bibinitperiod},
+           given={Sushil},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{3b1391f2129e2ebe835f78093a41f61a}
+      \strng{fullhash}{9f4c9a2f6cfaa2ee249a96e0293d3a4b}
+      \strng{fullhashraw}{9f4c9a2f6cfaa2ee249a96e0293d3a4b}
+      \strng{bibnamehash}{3b1391f2129e2ebe835f78093a41f61a}
+      \strng{authorbibnamehash}{3b1391f2129e2ebe835f78093a41f61a}
+      \strng{authornamehash}{3b1391f2129e2ebe835f78093a41f61a}
+      \strng{authorfullhash}{9f4c9a2f6cfaa2ee249a96e0293d3a4b}
+      \strng{authorfullhashraw}{9f4c9a2f6cfaa2ee249a96e0293d3a4b}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{ABSTRACT Satellite communication systems are important in global information exchange in areas such as military security, weather forecasting, and telecommunications. Advanced encryption standard (AES) is widely used in satellite communication due to its robustness and efficiency. However, conventional AES implementations focus primarily on encryption and decryption, which require further improvements in attack resilience, particularly against adversaries that use machine learning–based cryptanalysis and quantum threats. This paper examines the use of AES algorithms to protect data transmission over satellite communications. It introduces novel modifications to AES, incorporating machine unlearning as a defensive mechanism against attacks, chaotic injection for enhanced key unpredictability, and a quantum-inspired approach based on wavefunction collapse to mislead attackers. Machine unlearning dynamically alters cryptographic states upon intrusion detection, preventing key recovery. Chaotic injection is explored in the S-Box and key scheduling process to introduce controlled unpredictability without compromising reversibility. Additionally, a quantum circuit representation of AES is proposed, where an adversarial attack induces a wavefunction collapse, leading to incorrect but deterministic outputs. Performance evaluation under additive white Gaussian noise (AWGN) conditions demonstrates that the proposed AES achieves an average encryption throughput of 194 Mbps with only 3.2\% additional computational overhead, whereas entropy analysis shows 7.85–7.92 bits/byte, with an improvement of 1.08\% over standard AES and expanding the effective key space by approximately 6.6 times. Comparative security testing shows a 25\% increase in resistance to differential attacks. Empirical machine learning attacks demonstrate a drop in classifier accuracy from approximately 92.3\% for the baseline AES to 55.5\% for the proposed scheme. These results confirm that the proposed modifications significantly strengthen AES while maintaining computational efficiency for real-world satellite communication scenarios.}
+      \field{journaltitle}{International Journal of Satellite Communications and Networking}
+      \field{number}{2}
+      \field{title}{Advanced Encryption Techniques in Satellite Communications With Chaotic Injection and Quantum Collapse for Enhanced Security}
+      \field{volume}{44}
+      \field{year}{2026}
+      \field{pages}{158\bibrangedash 170}
+      \range{pages}{13}
+      \verb{doi}
+      \verb https://doi.org/10.1002/sat.70009
+      \endverb
+      \verb{eprint}
+      \verb https://onlinelibrary.wiley.com/doi/pdf/10.1002/sat.70009
+      \endverb
+      \verb{urlraw}
+      \verb https://onlinelibrary.wiley.com/doi/abs/10.1002/sat.70009
+      \endverb
+      \verb{url}
+      \verb https://onlinelibrary.wiley.com/doi/abs/10.1002/sat.70009
+      \endverb
+      \keyw{advanced encryption standard (AES),chaotic injection,cryptographic resilience,satellite communication systems,security threats}
+    \endentry
+    \entry{tinyAES}{software}{}{}
+      \name{author}{1}{}{%
+        {{hash=706cde2525d9a88436681d53549c2928}{%
+           family={Kokke},
+           familyi={K\bibinitperiod},
+           given={Kasper},
+           giveni={K\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {GitHub}%
+      }
+      \strng{namehash}{706cde2525d9a88436681d53549c2928}
+      \strng{fullhash}{706cde2525d9a88436681d53549c2928}
+      \strng{fullhashraw}{706cde2525d9a88436681d53549c2928}
+      \strng{bibnamehash}{706cde2525d9a88436681d53549c2928}
+      \strng{authorbibnamehash}{706cde2525d9a88436681d53549c2928}
+      \strng{authornamehash}{706cde2525d9a88436681d53549c2928}
+      \strng{authorfullhash}{706cde2525d9a88436681d53549c2928}
+      \strng{authorfullhashraw}{706cde2525d9a88436681d53549c2928}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{GitHub repository}
+      \field{title}{{tiny-AES-c}: Small Portable {AES128/192/256} in {C}}
+      \field{year}{2020}
+      \verb{urlraw}
+      \verb https://github.com/kokke/tiny-AES-c
+      \endverb
+      \verb{url}
+      \verb https://github.com/kokke/tiny-AES-c
+      \endverb
+    \endentry
+    \entry{AES256-GCM}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=47cbb6bb050264fe0e94e0645d6599ee}{%
+           family={{Consultative Committee for Space Data Systems (CCSDS)}},
+           familyi={C\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Washington, D.C., USA}%
+      }
+      \list{publisher}{1}{%
+        {CCSDS}%
+      }
+      \strng{namehash}{47cbb6bb050264fe0e94e0645d6599ee}
+      \strng{fullhash}{47cbb6bb050264fe0e94e0645d6599ee}
+      \strng{fullhashraw}{47cbb6bb050264fe0e94e0645d6599ee}
+      \strng{bibnamehash}{47cbb6bb050264fe0e94e0645d6599ee}
+      \strng{authorbibnamehash}{47cbb6bb050264fe0e94e0645d6599ee}
+      \strng{authornamehash}{47cbb6bb050264fe0e94e0645d6599ee}
+      \strng{authorfullhash}{47cbb6bb050264fe0e94e0645d6599ee}
+      \strng{authorfullhashraw}{47cbb6bb050264fe0e94e0645d6599ee}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{Issue 2}
+      \field{month}{7}
+      \field{number}{CCSDS 355.0-B-2}
+      \field{title}{Space Data Link Security Protocol}
+      \field{type}{Recommendation for Space Data System Standards}
+      \field{year}{2022}
+      \verb{urlraw}
+      \verb https://ccsds.org/Pubs/355x0b2.pdf
+      \endverb
+      \verb{url}
+      \verb https://ccsds.org/Pubs/355x0b2.pdf
+      \endverb
+    \endentry
+    \entry{aLotOfReferences}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=fe532a015e6161a5374263a45d0d1144}{%
+           family={Salim},
+           familyi={S\bibinitperiod},
+           given={Sara},
+           giveni={S\bibinitperiod}}}%
+        {{hash=ab9bcf08d864de16f62df4a541080d3c}{%
+           family={Moustafa},
+           familyi={M\bibinitperiod},
+           given={Nour},
+           giveni={N\bibinitperiod}}}%
+        {{hash=e5883236e64d11b6c74c9bddea54c831}{%
+           family={Reisslein},
+           familyi={R\bibinitperiod},
+           given={Martin},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{7e0aa8a86c3b0a547459680d4dde3e78}
+      \strng{fullhash}{7e0aa8a86c3b0a547459680d4dde3e78}
+      \strng{fullhashraw}{7e0aa8a86c3b0a547459680d4dde3e78}
+      \strng{bibnamehash}{7e0aa8a86c3b0a547459680d4dde3e78}
+      \strng{authorbibnamehash}{7e0aa8a86c3b0a547459680d4dde3e78}
+      \strng{authornamehash}{7e0aa8a86c3b0a547459680d4dde3e78}
+      \strng{authorfullhash}{7e0aa8a86c3b0a547459680d4dde3e78}
+      \strng{authorfullhashraw}{7e0aa8a86c3b0a547459680d4dde3e78}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{IEEE Communications Surveys \& Tutorials}
+      \field{number}{1}
+      \field{title}{Cybersecurity of Satellite Communications Systems: A Comprehensive Survey of the Space, Ground, and Links Segments}
+      \field{volume}{27}
+      \field{year}{2025}
+      \field{pages}{372\bibrangedash 425}
+      \range{pages}{54}
+      \verb{doi}
+      \verb 10.1109/COMST.2024.3408277
+      \endverb
+      \keyw{Computer security;Computer crime;Surveys;Space vehicles;Satellites;Satellite broadcasting;Media;Cyberattack;cybersecurity;ground segment;links segment;space segment;satellite communications}
+    \endentry
+    \entry{SataaS}{inproceedings}{}{}
+      \name{author}{4}{}{%
+        {{hash=4fece3f163324172bba987dcd205bd8e}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Weidong},
+           giveni={W\bibinitperiod}}}%
+        {{hash=3ebada13908c04a410363628089033d3}{%
+           family={Xue},
+           familyi={X\bibinitperiod},
+           given={Yiqi},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=08d270b00797dc5a2b6c001ca36de4f5}{%
+           family={Wu},
+           familyi={W\bibinitperiod},
+           given={Junyi},
+           giveni={J\bibinitperiod}}}%
+        {{hash=394255064489178bfbe6051d0688e58c}{%
+           family={Xu},
+           familyi={X\bibinitperiod},
+           given={Xiaobin},
+           giveni={X\bibinitperiod}}}%
+      }
+      \strng{namehash}{eb3043b8b8fa17fed0bd616cdd537c31}
+      \strng{fullhash}{0bb0b8b74d49dfa808ab88a0ce3d5a51}
+      \strng{fullhashraw}{0bb0b8b74d49dfa808ab88a0ce3d5a51}
+      \strng{bibnamehash}{eb3043b8b8fa17fed0bd616cdd537c31}
+      \strng{authorbibnamehash}{eb3043b8b8fa17fed0bd616cdd537c31}
+      \strng{authornamehash}{eb3043b8b8fa17fed0bd616cdd537c31}
+      \strng{authorfullhash}{0bb0b8b74d49dfa808ab88a0ce3d5a51}
+      \strng{authorfullhashraw}{0bb0b8b74d49dfa808ab88a0ce3d5a51}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{2020 IEEE 11th International Conference on Software Engineering and Service Science (ICSESS)}
+      \field{title}{Satellite as a Service: a Hybrid Resource Management Framework for Space-terrestrial Integrated Networks}
+      \field{year}{2020}
+      \field{pages}{171\bibrangedash 174}
+      \range{pages}{4}
+      \verb{doi}
+      \verb 10.1109/ICSESS49938.2020.9237705
+      \endverb
+      \keyw{Space vehicles;Rockets;Satellites;Space technology;Simulation;Hardware;Resource management;satellites;services;virtual machines;computing resources management}
+    \endentry
+    \entry{wiki_ground_segment}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=e0dedb40dda8df32fd056b6b6551502b}{%
+           family={{Wikimedia Commons}},
+           familyi={W\bibinitperiod}}}%
+      }
+      \strng{namehash}{e0dedb40dda8df32fd056b6b6551502b}
+      \strng{fullhash}{e0dedb40dda8df32fd056b6b6551502b}
+      \strng{fullhashraw}{e0dedb40dda8df32fd056b6b6551502b}
+      \strng{bibnamehash}{e0dedb40dda8df32fd056b6b6551502b}
+      \strng{authorbibnamehash}{e0dedb40dda8df32fd056b6b6551502b}
+      \strng{authornamehash}{e0dedb40dda8df32fd056b6b6551502b}
+      \strng{authorfullhash}{e0dedb40dda8df32fd056b6b6551502b}
+      \strng{authorfullhashraw}{e0dedb40dda8df32fd056b6b6551502b}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Accessed: 06-11-2026}
+      \field{title}{Diagram of the Space, Ground, and User Segments in a Satellite Communications System}
+      \field{year}{2026}
+      \verb{urlraw}
+      \verb https://commons.wikimedia.org/wiki/File:Space_Ground_User_segments.png
+      \endverb
+      \verb{url}
+      \verb https://commons.wikimedia.org/wiki/File:Space_Ground_User_segments.png
+      \endverb
+    \endentry
+    \entry{LEO_MEO_GEO}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=e702c1365dedc19e936da9afb3136f5e}{%
+           family={Verma},
+           familyi={V\bibinitperiod},
+           given={Aditi\bibnamedelimb Ranjit\bibnamedelima Kumar},
+           giveni={A\bibinitperiod\bibinitdelim R\bibinitperiod\bibinitdelim K\bibinitperiod}}}%
+      }
+      \strng{namehash}{e702c1365dedc19e936da9afb3136f5e}
+      \strng{fullhash}{e702c1365dedc19e936da9afb3136f5e}
+      \strng{fullhashraw}{e702c1365dedc19e936da9afb3136f5e}
+      \strng{bibnamehash}{e702c1365dedc19e936da9afb3136f5e}
+      \strng{authorbibnamehash}{e702c1365dedc19e936da9afb3136f5e}
+      \strng{authornamehash}{e702c1365dedc19e936da9afb3136f5e}
+      \strng{authorfullhash}{e702c1365dedc19e936da9afb3136f5e}
+      \strng{authorfullhashraw}{e702c1365dedc19e936da9afb3136f5e}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{IEEE Open Journal of the Communications Society}
+      \field{title}{Cybersecurity in Satellite Communication Networks: Key Threats and Neutralization Measures}
+      \field{volume}{6}
+      \field{year}{2025}
+      \field{pages}{5667\bibrangedash 5692}
+      \range{pages}{26}
+      \verb{doi}
+      \verb 10.1109/OJCOMS.2025.3585060
+      \endverb
+      \keyw{Security;Satellite broadcasting;Computer security;Cryptography;Space vehicles;Jamming;Encryption;Satellites;Resilience;Extraterrestrial measurements;Satellite communications (SATCOM);cybersecurity;cryptographic methods;satellite jamming;spoofing}
+    \endentry
+    \entry{PLS}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=3fd20732196b81a345ea43389a18d9de}{%
+           family={Abdelsalam},
+           familyi={A\bibinitperiod},
+           given={Nora},
+           giveni={N\bibinitperiod}}}%
+        {{hash=b57bfa71d193f5b4e6b173d9a8963ef4}{%
+           family={Al-Kuwari},
+           familyi={A\bibinithyphendelim K\bibinitperiod},
+           given={Saif\bibnamedelima M.},
+           giveni={S\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+        {{hash=7c89a3e05c69754a550d2bdda4f82450}{%
+           family={Erbad},
+           familyi={E\bibinitperiod},
+           given={Aiman\bibnamedelima M.},
+           giveni={A\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+      }
+      \strng{namehash}{8df51245578a53067f84719da9a60872}
+      \strng{fullhash}{8df51245578a53067f84719da9a60872}
+      \strng{fullhashraw}{8df51245578a53067f84719da9a60872}
+      \strng{bibnamehash}{8df51245578a53067f84719da9a60872}
+      \strng{authorbibnamehash}{8df51245578a53067f84719da9a60872}
+      \strng{authornamehash}{8df51245578a53067f84719da9a60872}
+      \strng{authorfullhash}{8df51245578a53067f84719da9a60872}
+      \strng{authorfullhashraw}{8df51245578a53067f84719da9a60872}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{IET Communications}
+      \field{number}{1}
+      \field{title}{Physical layer security in satellite communication: State-of-the-art and open problems}
+      \field{volume}{19}
+      \field{year}{2025}
+      \field{pages}{e12830}
+      \range{pages}{-1}
+      \verb{doi}
+      \verb 10.1049/cmu2.12830
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1049/cmu2.12830
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1049/cmu2.12830
+      \endverb
+    \endentry
+    \entry{IBE}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=f3c851fb906c7d177a9c910b1a87622a}{%
+           family={Jeon},
+           familyi={J\bibinitperiod},
+           given={Suhyeon},
+           giveni={S\bibinitperiod}}}%
+        {{hash=6d33e33e7bae296c29fda5a9788c079c}{%
+           family={Kwak},
+           familyi={K\bibinitperiod},
+           given={Jeongho},
+           giveni={J\bibinitperiod}}}%
+        {{hash=61a93ca0a5f807bff04d3e2c5ce3d030}{%
+           family={Choi},
+           familyi={C\bibinitperiod},
+           given={Jihwan\bibnamedelima P.},
+           giveni={J\bibinitperiod\bibinitdelim P\bibinitperiod}}}%
+      }
+      \strng{namehash}{5088ca84634351acaabc7a91a2128ba2}
+      \strng{fullhash}{5088ca84634351acaabc7a91a2128ba2}
+      \strng{fullhashraw}{5088ca84634351acaabc7a91a2128ba2}
+      \strng{bibnamehash}{5088ca84634351acaabc7a91a2128ba2}
+      \strng{authorbibnamehash}{5088ca84634351acaabc7a91a2128ba2}
+      \strng{authornamehash}{5088ca84634351acaabc7a91a2128ba2}
+      \strng{authorfullhash}{5088ca84634351acaabc7a91a2128ba2}
+      \strng{authorfullhashraw}{5088ca84634351acaabc7a91a2128ba2}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{IEEE Transactions on Aerospace and Electronic Systems}
+      \field{number}{3}
+      \field{title}{Cross-Layer Encryption of CFB-AES-TURBO for Advanced Satellite Data Transmission Security}
+      \field{volume}{58}
+      \field{year}{2022}
+      \field{pages}{2192\bibrangedash 2205}
+      \range{pages}{14}
+      \verb{doi}
+      \verb 10.1109/TAES.2021.3134988
+      \endverb
+      \keyw{Encryption;Security;Satellite broadcasting;Turbo codes;Satellites;Receivers;Ciphers;Advanced encryption standard (AES);channel coding;cipher feedback (CFB) mode;encryption;satellite communication;security;turbo codes}
+    \endentry
+    \entry{masterSessionKey}{report}{}{}
+      \list{location}{1}{%
+        {Washington, D.C.}%
+      }
+      \list{publisher}{1}{%
+        {Consultative Committee for Space Data Systems (CCSDS)}%
+      }
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labeltitlesource}{title}
+      \field{edition}{Issue 1}
+      \field{month}{2}
+      \field{number}{CCSDS 355.1-B-1}
+      \field{title}{{Space Data Link Security Protocol---Extended Procedures}}
+      \field{type}{Recommended Standard}
+      \field{year}{2020}
+      \verb{urlraw}
+      \verb https://ccsds.org/Pubs/355x1b1.pdf
+      \endverb
+      \verb{url}
+      \verb https://ccsds.org/Pubs/355x1b1.pdf
+      \endverb
+    \endentry
+    \entry{diffieHellman}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=64bf536193a84b0e04cc198c3b2917f8}{%
+           family={Baghaei\bibnamedelima Jezehei},
+           familyi={B\bibinitperiod\bibinitdelim J\bibinitperiod},
+           given={Mahdi},
+           giveni={M\bibinitperiod}}}%
+        {{hash=468423adbbe5833059eb0ab44577b869}{%
+           family={Olamaei},
+           familyi={O\bibinitperiod},
+           given={Seyed\bibnamedelima Ahmad},
+           giveni={S\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+        {{hash=5f67ac1c9dc57aa33163d60fbb72685c}{%
+           family={Broumandnia},
+           familyi={B\bibinitperiod},
+           given={Ali},
+           giveni={A\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Semnan University}%
+      }
+      \strng{namehash}{74f306ab9fda6848cea318c1839509a9}
+      \strng{fullhash}{74f306ab9fda6848cea318c1839509a9}
+      \strng{fullhashraw}{74f306ab9fda6848cea318c1839509a9}
+      \strng{bibnamehash}{74f306ab9fda6848cea318c1839509a9}
+      \strng{authorbibnamehash}{74f306ab9fda6848cea318c1839509a9}
+      \strng{authornamehash}{74f306ab9fda6848cea318c1839509a9}
+      \strng{authorfullhash}{74f306ab9fda6848cea318c1839509a9}
+      \strng{authorfullhashraw}{74f306ab9fda6848cea318c1839509a9}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{With the expansion of Internet of Things (IoT) services and the use of satellite communications, according to the regional or continental extent of these services, the need for lightweight encryption has increased. In satellite communications, security cannot be fully implemented given the long transmission distances, rendering heavy encryption algorithms, such as RSA, unreliable. ECC using mathematical solutions and elliptic curve discrete logarithm problems (ECDLP) can be considered a lightweight algorithm in telecommunications. Here, we propose a new strategy for secure IOT data communication between a satellite link and a terrestrial link that uses the principles of ECC elliptic curve cryptography and the NIST P-256 standard for key agreement and encryption for transmitting messages over the satellite communication platform.}
+      \field{issn}{2008-6822}
+      \field{journaltitle}{International Journal of Nonlinear Analysis and Applications}
+      \field{number}{4}
+      \field{title}{Lightweight secure message transfer protocol based on ECC (Nist P-256) Internet of Things equipped with satellite communications}
+      \field{volume}{16}
+      \field{year}{2025}
+      \field{pages}{93\bibrangedash 102}
+      \range{pages}{10}
+      \verb{doi}
+      \verb 10.22075/ijnaa.2023.32465.4831
+      \endverb
+      \verb{eprint}
+      \verb https://ijnaa.semnan.ac.ir/article_8995_d469547325a320e660ba7f4bf05c7ecf.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://ijnaa.semnan.ac.ir/article_8995.html
+      \endverb
+      \verb{url}
+      \verb https://ijnaa.semnan.ac.ir/article_8995.html
+      \endverb
+      \keyw{Elliptic Curve Cryptography,Internet of Things,Cryptographic Protocols,Satellite and Information Security,Satellite Communications}
+    \endentry
+    \entry{quantum-AES-vulnerable}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=e33b2ed0bd8436e426ac31f212068dbe}{%
+           family={Sharma},
+           familyi={S\bibinitperiod},
+           given={Neeraj},
+           giveni={N\bibinitperiod}}}%
+      }
+      \strng{namehash}{e33b2ed0bd8436e426ac31f212068dbe}
+      \strng{fullhash}{e33b2ed0bd8436e426ac31f212068dbe}
+      \strng{fullhashraw}{e33b2ed0bd8436e426ac31f212068dbe}
+      \strng{bibnamehash}{e33b2ed0bd8436e426ac31f212068dbe}
+      \strng{authorbibnamehash}{e33b2ed0bd8436e426ac31f212068dbe}
+      \strng{authornamehash}{e33b2ed0bd8436e426ac31f212068dbe}
+      \strng{authorfullhash}{e33b2ed0bd8436e426ac31f212068dbe}
+      \strng{authorfullhashraw}{e33b2ed0bd8436e426ac31f212068dbe}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Information Systems Engineering and Management}
+      \field{month}{05}
+      \field{title}{Investigating the Impact of Quantum Computing on Existing Encryption Methods}
+      \field{volume}{10}
+      \field{year}{2025}
+      \field{pages}{994\bibrangedash 1010}
+      \range{pages}{17}
+      \verb{doi}
+      \verb 10.52783/jisem.v10i41s.8035
+      \endverb
+    \endentry
+    \entry{AES}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=ef9cb61878e61d434507444346b29d1a}{%
+           family={{National Institute of Standards and Technology}},
+           familyi={N\bibinitperiod}}}%
+      }
+      \list{institution}{2}{%
+        {National Institute of Standards}%
+        {Technology}%
+      }
+      \strng{namehash}{ef9cb61878e61d434507444346b29d1a}
+      \strng{fullhash}{ef9cb61878e61d434507444346b29d1a}
+      \strng{fullhashraw}{ef9cb61878e61d434507444346b29d1a}
+      \strng{bibnamehash}{ef9cb61878e61d434507444346b29d1a}
+      \strng{authorbibnamehash}{ef9cb61878e61d434507444346b29d1a}
+      \strng{authornamehash}{ef9cb61878e61d434507444346b29d1a}
+      \strng{authorfullhash}{ef9cb61878e61d434507444346b29d1a}
+      \strng{authorfullhashraw}{ef9cb61878e61d434507444346b29d1a}
+      \field{extraname}{1}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{5}
+      \field{number}{NIST FIPS 197-upd1}
+      \field{title}{{Advanced Encryption Standard (AES)}}
+      \field{type}{Federal Information Processing Standards Publication}
+      \field{year}{2023}
+      \verb{doi}
+      \verb 10.6028/NIST.FIPS.197-upd1
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.6028/NIST.FIPS.197-upd1
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.6028/NIST.FIPS.197-upd1
+      \endverb
+    \endentry
+    \entry{GCM}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=cb698fb75e6c17d7b7bffc2da99a0db2}{%
+           family={Dworkin},
+           familyi={D\bibinitperiod},
+           given={Morris},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{institution}{2}{%
+        {National Institute of Standards}%
+        {Technology (NIST)}%
+      }
+      \list{location}{1}{%
+        {Gaithersburg, MD}%
+      }
+      \strng{namehash}{cb698fb75e6c17d7b7bffc2da99a0db2}
+      \strng{fullhash}{cb698fb75e6c17d7b7bffc2da99a0db2}
+      \strng{fullhashraw}{cb698fb75e6c17d7b7bffc2da99a0db2}
+      \strng{bibnamehash}{cb698fb75e6c17d7b7bffc2da99a0db2}
+      \strng{authorbibnamehash}{cb698fb75e6c17d7b7bffc2da99a0db2}
+      \strng{authornamehash}{cb698fb75e6c17d7b7bffc2da99a0db2}
+      \strng{authorfullhash}{cb698fb75e6c17d7b7bffc2da99a0db2}
+      \strng{authorfullhashraw}{cb698fb75e6c17d7b7bffc2da99a0db2}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{11}
+      \field{number}{800-38D}
+      \field{title}{{Recommendation for Block Cipher Modes of Operation: Galois/Counter Mode (GCM) and GMAC}}
+      \field{type}{NIST Special Publication}
+      \field{year}{2007}
+      \verb{doi}
+      \verb 10.6028/NIST.SP.800-38D
+      \endverb
+      \verb{urlraw}
+      \verb https://csrc.nist.gov/pubs/sp/800/38/d/final
+      \endverb
+      \verb{url}
+      \verb https://csrc.nist.gov/pubs/sp/800/38/d/final
+      \endverb
+    \endentry
+    \entry{tinyAES_IoMT}{article}{}{}
+      \name{author}{5}{}{%
+        {{hash=4d638314fd7a72ee19265e0c597f547f}{%
+           family={Naser},
+           familyi={N\bibinitperiod},
+           given={Hayder\bibnamedelima Yasir},
+           giveni={H\bibinitperiod\bibinitdelim Y\bibinitperiod}}}%
+        {{hash=3a5694c58209b85a3bef322afb25f208}{%
+           family={Mattar},
+           familyi={M\bibinitperiod},
+           given={Ali\bibnamedelima K.},
+           giveni={A\bibinitperiod\bibinitdelim K\bibinitperiod}}}%
+        {{hash=509468cda0bf3b0bfd5194ea583789a6}{%
+           family={Saare},
+           familyi={S\bibinitperiod},
+           given={Murtaja\bibnamedelima Ali},
+           giveni={M\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+        {{hash=05abc5af8baa3312f6fc29d1b735cb6e}{%
+           family={Almaiah},
+           familyi={A\bibinitperiod},
+           given={Mohammed\bibnamedelima Amin},
+           giveni={M\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+        {{hash=74a20d07b5a2b3097b9ea7cffe2fe4d4}{%
+           family={Shehab},
+           familyi={S\bibinitperiod},
+           given={Rami},
+           giveni={R\bibinitperiod}}}%
+      }
+      \strng{namehash}{1dcecae2bac60ec118e76958290fc243}
+      \strng{fullhash}{b49b10b7ea0ebad038d78fc42b23d97f}
+      \strng{fullhashraw}{b49b10b7ea0ebad038d78fc42b23d97f}
+      \strng{bibnamehash}{1dcecae2bac60ec118e76958290fc243}
+      \strng{authorbibnamehash}{1dcecae2bac60ec118e76958290fc243}
+      \strng{authornamehash}{1dcecae2bac60ec118e76958290fc243}
+      \strng{authorfullhash}{b49b10b7ea0ebad038d78fc42b23d97f}
+      \strng{authorfullhashraw}{b49b10b7ea0ebad038d78fc42b23d97f}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Engineering, Technology \&amp; Applied Science Research}
+      \field{month}{8}
+      \field{number}{4}
+      \field{title}{A Comparison of Lightweight Cryptographic Protocols for Energy-Efficient and Sustainable IoMT Authentication}
+      \field{volume}{15}
+      \field{year}{2025}
+      \field{pages}{25746\bibrangedash 25756}
+      \range{pages}{11}
+      \verb{doi}
+      \verb 10.48084/etasr.12204
+      \endverb
+      \verb{urlraw}
+      \verb https://etasr.com/index.php/ETASR/article/view/12204
+      \endverb
+      \verb{url}
+      \verb https://etasr.com/index.php/ETASR/article/view/12204
+      \endverb
+    \endentry
+    \entry{tinyAES_IoT}{inproceedings}{}{}
+      \name{author}{3}{}{%
+        {{hash=62881ad1e23da228deccc92387d5eb18}{%
+           family={Tsao},
+           familyi={T\bibinitperiod},
+           given={Brandon},
+           giveni={B\bibinitperiod}}}%
+        {{hash=e38212361db6fd71583df2a250b3adae}{%
+           family={Liu},
+           familyi={L\bibinitperiod},
+           given={Yuhong},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=bc2a3f2316ff24612b4a70e56ba83a79}{%
+           family={Dezfouli},
+           familyi={D\bibinitperiod},
+           given={Behnam},
+           giveni={B\bibinitperiod}}}%
+      }
+      \strng{namehash}{865713874ca3e236414f6d5d9d5c74cc}
+      \strng{fullhash}{865713874ca3e236414f6d5d9d5c74cc}
+      \strng{fullhashraw}{865713874ca3e236414f6d5d9d5c74cc}
+      \strng{bibnamehash}{865713874ca3e236414f6d5d9d5c74cc}
+      \strng{authorbibnamehash}{865713874ca3e236414f6d5d9d5c74cc}
+      \strng{authornamehash}{865713874ca3e236414f6d5d9d5c74cc}
+      \strng{authorfullhash}{865713874ca3e236414f6d5d9d5c74cc}
+      \strng{authorfullhashraw}{865713874ca3e236414f6d5d9d5c74cc}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{11}
+      \field{title}{Analysis of the duration and energy consumption of AES algorithms on a contiki-based IoT device}
+      \field{year}{2019}
+      \field{pages}{483\bibrangedash 491}
+      \range{pages}{9}
+      \verb{doi}
+      \verb 10.1145/3360774.3368202
+      \endverb
+    \endentry
+    \entry{imageAES}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=0531ad13e89eb83e923c7c8fda6965b9}{%
+           family={Chikkala},
+           familyi={C\bibinitperiod},
+           given={Durga\bibnamedelima Prasad},
+           giveni={D\bibinitperiod\bibinitdelim P\bibinitperiod}}}%
+      }
+      \strng{namehash}{0531ad13e89eb83e923c7c8fda6965b9}
+      \strng{fullhash}{0531ad13e89eb83e923c7c8fda6965b9}
+      \strng{fullhashraw}{0531ad13e89eb83e923c7c8fda6965b9}
+      \strng{bibnamehash}{0531ad13e89eb83e923c7c8fda6965b9}
+      \strng{authorbibnamehash}{0531ad13e89eb83e923c7c8fda6965b9}
+      \strng{authornamehash}{0531ad13e89eb83e923c7c8fda6965b9}
+      \strng{authorfullhash}{0531ad13e89eb83e923c7c8fda6965b9}
+      \strng{authorfullhashraw}{0531ad13e89eb83e923c7c8fda6965b9}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Medium}
+      \field{title}{AES (Advanced Encryption Standard)}
+      \field{urlday}{8}
+      \field{urlmonth}{11}
+      \field{urlyear}{2026}
+      \field{year}{2024}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://medium.com/@durgachikkaladev/aes-advanced-encryption-standard-88e440cf0525
+      \endverb
+      \verb{url}
+      \verb https://medium.com/@durgachikkaladev/aes-advanced-encryption-standard-88e440cf0525
+      \endverb
+    \endentry
+    \entry{imageSBOX}{article}{}{}
+      \true{moreauthor}
+      \true{morelabelname}
+      \name{author}{1}{}{%
+        {{hash=bf76387929cd2d65dc50e637fc764db3}{%
+           family={Siddique},
+           familyi={S\bibinitperiod},
+           given={Muhammad\bibnamedelimb Asif\bibnamedelima Bin},
+           giveni={M\bibinitperiod\bibinitdelim A\bibinitperiod\bibinitdelim B\bibinitperiod}}}%
+      }
+      \strng{namehash}{d869f83e1c41e1795bc0f4a333fa1fe1}
+      \strng{fullhash}{d869f83e1c41e1795bc0f4a333fa1fe1}
+      \strng{fullhashraw}{d869f83e1c41e1795bc0f4a333fa1fe1}
+      \strng{bibnamehash}{d869f83e1c41e1795bc0f4a333fa1fe1}
+      \strng{authorbibnamehash}{d869f83e1c41e1795bc0f4a333fa1fe1}
+      \strng{authornamehash}{d869f83e1c41e1795bc0f4a333fa1fe1}
+      \strng{authorfullhash}{d869f83e1c41e1795bc0f4a333fa1fe1}
+      \strng{authorfullhashraw}{d869f83e1c41e1795bc0f4a333fa1fe1}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Figure 3: S-box Values for All 256 Combinations in Hexadecimal Format}
+      \field{title}{An Efficient Hardware Implementation of AES S-Box}
+      \field{urlday}{8}
+      \field{urlmonth}{11}
+      \field{urlyear}{2026}
+      \field{year}{2019}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.researchgate.net/figure/S-box-Values-for-All-256-Combinations-in-Hexadecimal-Format-1_fig3_335740212
+      \endverb
+      \verb{url}
+      \verb https://www.researchgate.net/figure/S-box-Values-for-All-256-Combinations-in-Hexadecimal-Format-1_fig3_335740212
+      \endverb
+    \endentry
+    \entry{imageGCM}{manual}{}{}
+      \name{author}{1}{}{%
+        {{hash=bd4dc2386402e8a13fb61afa30767cb4}{%
+           family={{Xilinx, Inc.}},
+           familyi={X\bibinitperiod}}}%
+      }
+      \strng{namehash}{bd4dc2386402e8a13fb61afa30767cb4}
+      \strng{fullhash}{bd4dc2386402e8a13fb61afa30767cb4}
+      \strng{fullhashraw}{bd4dc2386402e8a13fb61afa30767cb4}
+      \strng{bibnamehash}{bd4dc2386402e8a13fb61afa30767cb4}
+      \strng{authorbibnamehash}{bd4dc2386402e8a13fb61afa30767cb4}
+      \strng{authornamehash}{bd4dc2386402e8a13fb61afa30767cb4}
+      \strng{authorfullhash}{bd4dc2386402e8a13fb61afa30767cb4}
+      \strng{authorfullhashraw}{bd4dc2386402e8a13fb61afa30767cb4}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Versione 2019.2}
+      \field{title}{Vitis Security Library: Galois/Counter Mode (GCM)}
+      \field{urlday}{10}
+      \field{urlmonth}{11}
+      \field{urlyear}{2026}
+      \field{year}{2019}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://xilinx.github.io/Vitis_Libraries/security/2019.2/guide_L1/internals/gcm.html
+      \endverb
+      \verb{url}
+      \verb https://xilinx.github.io/Vitis_Libraries/security/2019.2/guide_L1/internals/gcm.html
+      \endverb
+    \endentry
+    \entry{vectorTests}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=ef9cb61878e61d434507444346b29d1a}{%
+           family={{National Institute of Standards and Technology}},
+           familyi={N\bibinitperiod}}}%
+      }
+      \strng{namehash}{ef9cb61878e61d434507444346b29d1a}
+      \strng{fullhash}{ef9cb61878e61d434507444346b29d1a}
+      \strng{fullhashraw}{ef9cb61878e61d434507444346b29d1a}
+      \strng{bibnamehash}{ef9cb61878e61d434507444346b29d1a}
+      \strng{authorbibnamehash}{ef9cb61878e61d434507444346b29d1a}
+      \strng{authornamehash}{ef9cb61878e61d434507444346b29d1a}
+      \strng{authorfullhash}{ef9cb61878e61d434507444346b29d1a}
+      \strng{authorfullhashraw}{ef9cb61878e61d434507444346b29d1a}
+      \field{extraname}{2}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{NIST Computer Security Resource Center}
+      \field{title}{Cryptographic Algorithm Validation Program ({CAVP}): Block Cipher Modes Validation System ({GCMVS}) Test Vectors}
+      \field{urlday}{11}
+      \field{urlmonth}{11}
+      \field{urlyear}{2026}
+      \field{year}{2020}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/cavp-testing-block-cipher-modes
+      \endverb
+      \verb{url}
+      \verb https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/cavp-testing-block-cipher-modes
+      \endverb
+    \endentry
+    \entry{origineMappeCaotiche}{misc}{}{}
+      \name{author}{5}{}{%
+        {{hash=a4e3a45dc9e7d8801138131bf3223ef3}{%
+           family={Rashid},
+           familyi={R\bibinitperiod},
+           given={Farrukh\bibnamedelima Bin},
+           giveni={F\bibinitperiod\bibinitdelim B\bibinitperiod}}}%
+        {{hash=2270ca80ee132d170e836b6d3371c4fb}{%
+           family={Rankothge},
+           familyi={R\bibinitperiod},
+           given={Windhya},
+           giveni={W\bibinitperiod}}}%
+        {{hash=c1132381ce39fc29fb90f4e69ee993e4}{%
+           family={Sadeghi},
+           familyi={S\bibinitperiod},
+           given={Somayeh},
+           giveni={S\bibinitperiod}}}%
+        {{hash=54c30062a9a6568cf16a044c5dfb185c}{%
+           family={Mohammadian},
+           familyi={M\bibinitperiod},
+           given={Hesamodin},
+           giveni={H\bibinitperiod}}}%
+        {{hash=53b45fdb7a7170a99803956eff9656e4}{%
+           family={Ghorbani},
+           familyi={G\bibinitperiod},
+           given={Ali},
+           giveni={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{f86afe845857536ea4883bbd03763188}
+      \strng{fullhash}{2faf90f548d35c01c126d76bd17e9382}
+      \strng{fullhashraw}{2faf90f548d35c01c126d76bd17e9382}
+      \strng{bibnamehash}{f86afe845857536ea4883bbd03763188}
+      \strng{authorbibnamehash}{f86afe845857536ea4883bbd03763188}
+      \strng{authornamehash}{f86afe845857536ea4883bbd03763188}
+      \strng{authorfullhash}{2faf90f548d35c01c126d76bd17e9382}
+      \strng{authorfullhashraw}{2faf90f548d35c01c126d76bd17e9382}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprintclass}{cs.CR}
+      \field{eprinttype}{arXiv}
+      \field{title}{Privacy-Preserving for Images in Satellite Communications: A Comprehensive Review of Chaos-Based Encryption}
+      \field{year}{2024}
+      \verb{eprint}
+      \verb 2410.21177
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2410.21177
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2410.21177
+      \endverb
+    \endentry
+    \entry{logisticTentDefaultParameters}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=84e6e0ad61782a75a62d946e2c68ed62}{%
+           family={May},
+           familyi={M\bibinitperiod},
+           given={Robert},
+           giveni={R\bibinitperiod}}}%
+      }
+      \strng{namehash}{84e6e0ad61782a75a62d946e2c68ed62}
+      \strng{fullhash}{84e6e0ad61782a75a62d946e2c68ed62}
+      \strng{fullhashraw}{84e6e0ad61782a75a62d946e2c68ed62}
+      \strng{bibnamehash}{84e6e0ad61782a75a62d946e2c68ed62}
+      \strng{authorbibnamehash}{84e6e0ad61782a75a62d946e2c68ed62}
+      \strng{authornamehash}{84e6e0ad61782a75a62d946e2c68ed62}
+      \strng{authorfullhash}{84e6e0ad61782a75a62d946e2c68ed62}
+      \strng{authorfullhashraw}{84e6e0ad61782a75a62d946e2c68ed62}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{978-1-4419-2330-1}
+      \field{journaltitle}{Nature}
+      \field{month}{07}
+      \field{title}{Simple Mathematical Models With Very Complicated Dynamics}
+      \field{volume}{26}
+      \field{year}{1976}
+      \field{pages}{457}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1038/261459a0
+      \endverb
+    \endentry
+    \entry{chebyshevDefaultParameters}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=83b176b9f3e613991ca3941891f979cc}{%
+           family={Adler},
+           familyi={A\bibinitperiod},
+           given={Roy\bibnamedelima L.},
+           giveni={R\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+        {{hash=f3e4755c5ddde84a0399f493d1a5939c}{%
+           family={Rivlin},
+           familyi={R\bibinitperiod},
+           given={Theodore\bibnamedelima J.},
+           giveni={T\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+      }
+      \strng{namehash}{4c4395c8c071fb5a207f2269748d2c66}
+      \strng{fullhash}{4c4395c8c071fb5a207f2269748d2c66}
+      \strng{fullhashraw}{4c4395c8c071fb5a207f2269748d2c66}
+      \strng{bibnamehash}{4c4395c8c071fb5a207f2269748d2c66}
+      \strng{authorbibnamehash}{4c4395c8c071fb5a207f2269748d2c66}
+      \strng{authornamehash}{4c4395c8c071fb5a207f2269748d2c66}
+      \strng{authorfullhash}{4c4395c8c071fb5a207f2269748d2c66}
+      \strng{authorfullhashraw}{4c4395c8c071fb5a207f2269748d2c66}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Proceedings of the American Mathematical Society}
+      \field{number}{5}
+      \field{title}{Ergodic and Mixing Properties of Chebyshev Polynomials}
+      \field{volume}{15}
+      \field{year}{1964}
+      \field{pages}{794\bibrangedash 796}
+      \range{pages}{3}
+      \verb{doi}
+      \verb 10.2307/2034600
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.2307/2034600
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.2307/2034600
+      \endverb
+    \endentry
+    \entry{henonDefaultParameters}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=2aafb2d0d4cbb0bc974e6ff041616a42}{%
+           family={Hénon},
+           familyi={H\bibinitperiod},
+           given={Michel},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{2aafb2d0d4cbb0bc974e6ff041616a42}
+      \strng{fullhash}{2aafb2d0d4cbb0bc974e6ff041616a42}
+      \strng{fullhashraw}{2aafb2d0d4cbb0bc974e6ff041616a42}
+      \strng{bibnamehash}{2aafb2d0d4cbb0bc974e6ff041616a42}
+      \strng{authorbibnamehash}{2aafb2d0d4cbb0bc974e6ff041616a42}
+      \strng{authornamehash}{2aafb2d0d4cbb0bc974e6ff041616a42}
+      \strng{authorfullhash}{2aafb2d0d4cbb0bc974e6ff041616a42}
+      \strng{authorfullhashraw}{2aafb2d0d4cbb0bc974e6ff041616a42}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issn}{1432-0916}
+      \field{journaltitle}{Communications in Mathematical Physics}
+      \field{number}{1}
+      \field{title}{A Two-Dimensional Mapping with a Strange Attractor}
+      \field{volume}{50}
+      \field{year}{1976}
+      \field{pages}{69\bibrangedash 77}
+      \range{pages}{9}
+      \verb{doi}
+      \verb 10.1007/BF01608556
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1007/BF01608556
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1007/BF01608556
+      \endverb
+    \endentry
+    \entry{KR4}{book}{}{}
+      \name{author}{4}{}{%
+        {{hash=0eab1ccd4d6c57a2ff6794a4724ccafb}{%
+           family={Press},
+           familyi={P\bibinitperiod},
+           given={William\bibnamedelima H.},
+           giveni={W\bibinitperiod\bibinitdelim H\bibinitperiod}}}%
+        {{hash=ff8354846900d7ef6c94cb025f7e938c}{%
+           family={Teukolsky},
+           familyi={T\bibinitperiod},
+           given={Saul\bibnamedelima A.},
+           giveni={S\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+        {{hash=0bb298496cc38e45b21c576a005078a0}{%
+           family={Vetterling},
+           familyi={V\bibinitperiod},
+           given={William\bibnamedelima T.},
+           giveni={W\bibinitperiod\bibinitdelim T\bibinitperiod}}}%
+        {{hash=f40726c661611c8a024d53294b6e0ad0}{%
+           family={Flannery},
+           familyi={F\bibinitperiod},
+           given={Brian\bibnamedelima P.},
+           giveni={B\bibinitperiod\bibinitdelim P\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Cambridge, UK}%
+      }
+      \list{publisher}{1}{%
+        {Cambridge University Press}%
+      }
+      \strng{namehash}{618fa62f030076edf2937faa1b1684fb}
+      \strng{fullhash}{f75c24a04994b574cb620c685a1f8229}
+      \strng{fullhashraw}{f75c24a04994b574cb620c685a1f8229}
+      \strng{bibnamehash}{618fa62f030076edf2937faa1b1684fb}
+      \strng{authorbibnamehash}{618fa62f030076edf2937faa1b1684fb}
+      \strng{authornamehash}{618fa62f030076edf2937faa1b1684fb}
+      \strng{authorfullhash}{f75c24a04994b574cb620c685a1f8229}
+      \strng{authorfullhashraw}{f75c24a04994b574cb620c685a1f8229}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{2nd}
+      \field{isbn}{978-0-521-43108-8}
+      \field{title}{Numerical Recipes in C: The Art of Scientific Computing}
+      \field{year}{1992}
+    \endentry
+    \entry{lorenzDefaultParameters}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=b3eeab11b971bbf5ed269c4f19465b91}{%
+           family={Lorenz},
+           familyi={L\bibinitperiod},
+           given={Edward\bibnamedelima N.},
+           giveni={E\bibinitperiod\bibinitdelim N\bibinitperiod}}}%
+      }
+      \strng{namehash}{b3eeab11b971bbf5ed269c4f19465b91}
+      \strng{fullhash}{b3eeab11b971bbf5ed269c4f19465b91}
+      \strng{fullhashraw}{b3eeab11b971bbf5ed269c4f19465b91}
+      \strng{bibnamehash}{b3eeab11b971bbf5ed269c4f19465b91}
+      \strng{authorbibnamehash}{b3eeab11b971bbf5ed269c4f19465b91}
+      \strng{authornamehash}{b3eeab11b971bbf5ed269c4f19465b91}
+      \strng{authorfullhash}{b3eeab11b971bbf5ed269c4f19465b91}
+      \strng{authorfullhashraw}{b3eeab11b971bbf5ed269c4f19465b91}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of the Atmospheric Sciences}
+      \field{number}{2}
+      \field{title}{Deterministic Nonperiodic Flow}
+      \field{volume}{20}
+      \field{year}{1963}
+      \field{pages}{130\bibrangedash 141}
+      \range{pages}{12}
+      \verb{doi}
+      \verb 10.1175/1520-0469(1963)020<0130:DNF>2.0.CO;2
+      \endverb
+    \endentry
+    \entry{chenDefaultParameters}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=c2465aadc98c418b040e810d4f8c1b79}{%
+           family={Chen},
+           familyi={C\bibinitperiod},
+           given={Guanrong},
+           giveni={G\bibinitperiod}}}%
+        {{hash=c6c339eff0dc26e0b2624ae7b7bf9ecb}{%
+           family={Ueta},
+           familyi={U\bibinitperiod},
+           given={Tetsushi},
+           giveni={T\bibinitperiod}}}%
+      }
+      \strng{namehash}{0d54d13ffd2639799396b032c92b1a87}
+      \strng{fullhash}{0d54d13ffd2639799396b032c92b1a87}
+      \strng{fullhashraw}{0d54d13ffd2639799396b032c92b1a87}
+      \strng{bibnamehash}{0d54d13ffd2639799396b032c92b1a87}
+      \strng{authorbibnamehash}{0d54d13ffd2639799396b032c92b1a87}
+      \strng{authornamehash}{0d54d13ffd2639799396b032c92b1a87}
+      \strng{authorfullhash}{0d54d13ffd2639799396b032c92b1a87}
+      \strng{authorfullhashraw}{0d54d13ffd2639799396b032c92b1a87}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{International Journal of Bifurcation and Chaos - IJBC}
+      \field{month}{07}
+      \field{title}{Yet Another Chaotic Attractor}
+      \field{volume}{9}
+      \field{year}{1999}
+      \field{pages}{1465\bibrangedash 1466}
+      \range{pages}{2}
+      \verb{doi}
+      \verb 10.1142/S0218127499001024
+      \endverb
+    \endentry
+    \entry{rosslerDefaultParameters}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=935de4cb40cf3a77d150e43f80ba3059}{%
+           family={Rössler},
+           familyi={R\bibinitperiod},
+           given={O.E.},
+           giveni={O\bibinitperiod}}}%
+      }
+      \strng{namehash}{935de4cb40cf3a77d150e43f80ba3059}
+      \strng{fullhash}{935de4cb40cf3a77d150e43f80ba3059}
+      \strng{fullhashraw}{935de4cb40cf3a77d150e43f80ba3059}
+      \strng{bibnamehash}{935de4cb40cf3a77d150e43f80ba3059}
+      \strng{authorbibnamehash}{935de4cb40cf3a77d150e43f80ba3059}
+      \strng{authornamehash}{935de4cb40cf3a77d150e43f80ba3059}
+      \strng{authorfullhash}{935de4cb40cf3a77d150e43f80ba3059}
+      \strng{authorfullhashraw}{935de4cb40cf3a77d150e43f80ba3059}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{A prototype equation to the Lorenz model of turbulence contains just one (second-order) nonlinearity in one variable. The flow in state space allows for a “folded” Poincaré map (horseshoe map). Many more natural and artificial systems are governed by this type of equation.}
+      \field{issn}{0375-9601}
+      \field{journaltitle}{Physics Letters A}
+      \field{number}{5}
+      \field{title}{An equation for continuous chaos}
+      \field{volume}{57}
+      \field{year}{1976}
+      \field{pages}{397\bibrangedash 398}
+      \range{pages}{2}
+      \verb{doi}
+      \verb https://doi.org/10.1016/0375-9601(76)90101-8
+      \endverb
+      \verb{urlraw}
+      \verb https://www.sciencedirect.com/science/article/pii/0375960176901018
+      \endverb
+      \verb{url}
+      \verb https://www.sciencedirect.com/science/article/pii/0375960176901018
+      \endverb
+    \endentry
+    \entry{KeyAsSeed}{article}{}{}
+      \name{author}{7}{}{%
+        {{hash=1f3b1cda5958871ed1b84d967e250e37}{%
+           family={Safdar\bibnamedelima Gill},
+           familyi={S\bibinitperiod\bibinitdelim G\bibinitperiod},
+           given={Hammad},
+           giveni={H\bibinitperiod}}}%
+        {{hash=5414a644e1fcea4f57b6797bbaec008f}{%
+           family={Amjad},
+           familyi={A\bibinitperiod},
+           given={Madiha},
+           giveni={M\bibinitperiod}}}%
+        {{hash=14bfcb3f3b384e3503cf66b0d017b6ca}{%
+           family={Faheem},
+           familyi={F\bibinitperiod},
+           given={Muhammad},
+           giveni={M\bibinitperiod}}}%
+        {{hash=6a544daa64494ce3eba68c1a5c338844}{%
+           family={Ur\bibnamedelima Rehman},
+           familyi={U\bibinitperiod\bibinitdelim R\bibinitperiod},
+           given={Aqeel},
+           giveni={A\bibinitperiod}}}%
+        {{hash=4306ffa20759327f265d9fabcc9062ea}{%
+           family={Rana},
+           familyi={R\bibinitperiod},
+           given={Umber},
+           giveni={U\bibinitperiod}}}%
+        {{hash=f22aec688d267c82524cf8dcec79bc89}{%
+           family={Rehman\bibnamedelima Khan},
+           familyi={R\bibinitperiod\bibinitdelim K\bibinitperiod},
+           given={Amjad},
+           giveni={A\bibinitperiod}}}%
+        {{hash=1b9ab3cb7dc8ec3450d11b4fac2ae0e1}{%
+           family={Nawaz\bibnamedelima Bashir},
+           familyi={N\bibinitperiod\bibinitdelim B\bibinitperiod},
+           given={Rab},
+           giveni={R\bibinitperiod}}}%
+      }
+      \strng{namehash}{f1fcbf1fdd967b27830d804702447967}
+      \strng{fullhash}{397d3727f0d988512c527a15d16ef1d5}
+      \strng{fullhashraw}{397d3727f0d988512c527a15d16ef1d5}
+      \strng{bibnamehash}{f1fcbf1fdd967b27830d804702447967}
+      \strng{authorbibnamehash}{f1fcbf1fdd967b27830d804702447967}
+      \strng{authornamehash}{f1fcbf1fdd967b27830d804702447967}
+      \strng{authorfullhash}{397d3727f0d988512c527a15d16ef1d5}
+      \strng{authorfullhashraw}{397d3727f0d988512c527a15d16ef1d5}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{IEEE Access}
+      \field{title}{A Normalized Exponential Piecewise Chaotic System (NEPCS) and DNA Image Cryptography Using SHA-256}
+      \field{volume}{13}
+      \field{year}{2025}
+      \field{pages}{110392\bibrangedash 110417}
+      \range{pages}{26}
+      \verb{doi}
+      \verb 10.1109/ACCESS.2025.3582318
+      \endverb
+      \keyw{Encryption;Chaotic communication;Logistics;DNA;Entropy;NIST;Aerospace electronics;Sensitivity;Correlation;Ciphers;1D chaos;normalized exponential piecewise chaotic system (NEPCS);DNA;image encryption;CBC}
+    \endentry
+    \entry{SAC}{inproceedings}{}{}
+      \name{author}{2}{}{%
+        {{hash=d61a6c1ee7c3b43ebb151c5361cac0f4}{%
+           family={Webster},
+           familyi={W\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod}}}%
+        {{hash=246e1b9d509a223849acaaec454606da}{%
+           family={Tavares},
+           familyi={T\bibinitperiod},
+           given={Stafford},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{9c182ff93612d841e03fc443b37977dd}
+      \strng{fullhash}{9c182ff93612d841e03fc443b37977dd}
+      \strng{fullhashraw}{9c182ff93612d841e03fc443b37977dd}
+      \strng{bibnamehash}{9c182ff93612d841e03fc443b37977dd}
+      \strng{authorbibnamehash}{9c182ff93612d841e03fc443b37977dd}
+      \strng{authornamehash}{9c182ff93612d841e03fc443b37977dd}
+      \strng{authorfullhash}{9c182ff93612d841e03fc443b37977dd}
+      \strng{authorfullhashraw}{9c182ff93612d841e03fc443b37977dd}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{978-3-540-16463-0}
+      \field{month}{02}
+      \field{title}{On the design of S-Boxes}
+      \field{year}{1970}
+      \verb{doi}
+      \verb 10.1007/3-540-39799-X_41
+      \endverb
+    \endentry
+    \entry{OriginalAesPaper}{book}{}{}
+      \name{author}{2}{}{%
+        {{hash=ce9c20302c5a545e289c41661ac58c43}{%
+           family={Daemen},
+           familyi={D\bibinitperiod},
+           given={Joan},
+           giveni={J\bibinitperiod}}}%
+        {{hash=d2e51b6dbeb039e27ea5d1a6f5d63302}{%
+           family={Rijmen},
+           familyi={R\bibinitperiod},
+           given={Vincent},
+           giveni={V\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Springer Science \& Business Media}%
+      }
+      \strng{namehash}{3967038944da1152e0568c52ebc551ab}
+      \strng{fullhash}{3967038944da1152e0568c52ebc551ab}
+      \strng{fullhashraw}{3967038944da1152e0568c52ebc551ab}
+      \strng{bibnamehash}{3967038944da1152e0568c52ebc551ab}
+      \strng{authorbibnamehash}{3967038944da1152e0568c52ebc551ab}
+      \strng{authornamehash}{3967038944da1152e0568c52ebc551ab}
+      \strng{authorfullhash}{3967038944da1152e0568c52ebc551ab}
+      \strng{authorfullhashraw}{3967038944da1152e0568c52ebc551ab}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{The Design of Rijndael: AES-the Advanced Encryption Standard}
+      \field{year}{2002}
+      \verb{urlraw}
+      \verb https://cs.ru.nl/~joan/papers/JDA_VRI_Rijndael_2002.pdf
+      \endverb
+      \verb{url}
+      \verb https://cs.ru.nl/~joan/papers/JDA_VRI_Rijndael_2002.pdf
+      \endverb
+    \endentry
+    \entry{NISTRandomnessTestSuite}{report}{}{}
+      \name{author}{12}{}{%
+        {{hash=ddda76aa96553e3d4c700fdf3c6b9132}{%
+           family={Bassham},
+           familyi={B\bibinitperiod},
+           given={Lawrence\bibnamedelima E.},
+           giveni={L\bibinitperiod\bibinitdelim E\bibinitperiod}}}%
+        {{hash=420ad5e4d55032fa412b7b1b55c98eec}{%
+           family={Rukhin},
+           familyi={R\bibinitperiod},
+           given={Andrew\bibnamedelima L.},
+           giveni={A\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+        {{hash=90028662b3ed507a8c93ed6762876b17}{%
+           family={Soto},
+           familyi={S\bibinitperiod},
+           given={Juan},
+           giveni={J\bibinitperiod}}}%
+        {{hash=ab8269bb60342d75ec11f70397754714}{%
+           family={Nechvatal},
+           familyi={N\bibinitperiod},
+           given={James\bibnamedelima R.},
+           giveni={J\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
+        {{hash=ca376fc04ea53d83064671af57950b5f}{%
+           family={Smid},
+           familyi={S\bibinitperiod},
+           given={Miles\bibnamedelima E.},
+           giveni={M\bibinitperiod\bibinitdelim E\bibinitperiod}}}%
+        {{hash=63ed5a56320d6e2df4f62be5b4147bab}{%
+           family={Barker},
+           familyi={B\bibinitperiod},
+           given={Elaine\bibnamedelima B.},
+           giveni={E\bibinitperiod\bibinitdelim B\bibinitperiod}}}%
+        {{hash=af1bc76bdb6ff71ebe31c920b2914df1}{%
+           family={Leigh},
+           familyi={L\bibinitperiod},
+           given={Stefan\bibnamedelima D.},
+           giveni={S\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+        {{hash=c7e5acee60d9d633145f69ced9a5d25e}{%
+           family={Levenson},
+           familyi={L\bibinitperiod},
+           given={Mark},
+           giveni={M\bibinitperiod}}}%
+        {{hash=76250ce2b996dc8662fbce6a07a63d80}{%
+           family={Vangel},
+           familyi={V\bibinitperiod},
+           given={Mark},
+           giveni={M\bibinitperiod}}}%
+        {{hash=ec7d99b7f9992f0037a5d7f636913abf}{%
+           family={Banks},
+           familyi={B\bibinitperiod},
+           given={David\bibnamedelima L.},
+           giveni={D\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+        {{hash=34ae85bbe7a5388e4adfb8e87c28195a}{%
+           family={Heckert},
+           familyi={H\bibinitperiod},
+           given={Nathanael\bibnamedelima A.},
+           giveni={N\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+        {{hash=76900d8d6e91f218f537e31b8152aafc}{%
+           family={Dray},
+           familyi={D\bibinitperiod},
+           given={James\bibnamedelima F.},
+           giveni={J\bibinitperiod\bibinitdelim F\bibinitperiod}}}%
+      }
+      \list{institution}{2}{%
+        {National Institute of Standards}%
+        {Technology (NIST)}%
+      }
+      \list{location}{1}{%
+        {Gaithersburg, MD}%
+      }
+      \strng{namehash}{9b43868a80b5e88c99c9346d846d66c9}
+      \strng{fullhash}{1e1aab1ef0b2ddc6b02f6fd7c55b9fa5}
+      \strng{fullhashraw}{1e1aab1ef0b2ddc6b02f6fd7c55b9fa5}
+      \strng{bibnamehash}{9b43868a80b5e88c99c9346d846d66c9}
+      \strng{authorbibnamehash}{9b43868a80b5e88c99c9346d846d66c9}
+      \strng{authornamehash}{9b43868a80b5e88c99c9346d846d66c9}
+      \strng{authorfullhash}{1e1aab1ef0b2ddc6b02f6fd7c55b9fa5}
+      \strng{authorfullhashraw}{1e1aab1ef0b2ddc6b02f6fd7c55b9fa5}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{4}
+      \field{number}{800-22, Rev. 1a}
+      \field{title}{{A Statistical Test Suite for Random and Pseudorandom Number Generators for Cryptographic Applications}}
+      \field{type}{NIST Special Publication}
+      \field{year}{2010}
+      \verb{doi}
+      \verb 10.6028/NIST.SP.800-22r1a
+      \endverb
+      \verb{urlraw}
+      \verb https://csrc.nist.gov/pubs/sp/800/22/r1a/final
+      \endverb
+      \verb{url}
+      \verb https://csrc.nist.gov/pubs/sp/800/22/r1a/final
+      \endverb
+    \endentry
+    \entry{stevenang2020randomness_testsuite}{software}{}{}
+      \name{author}{1}{}{%
+        {{hash=409922cd52d50dfecba01fdb9a389146}{%
+           family={Ang},
+           familyi={A\bibinitperiod},
+           given={Steven},
+           giveni={S\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {GitHub}%
+      }
+      \strng{namehash}{409922cd52d50dfecba01fdb9a389146}
+      \strng{fullhash}{409922cd52d50dfecba01fdb9a389146}
+      \strng{fullhashraw}{409922cd52d50dfecba01fdb9a389146}
+      \strng{bibnamehash}{409922cd52d50dfecba01fdb9a389146}
+      \strng{authorbibnamehash}{409922cd52d50dfecba01fdb9a389146}
+      \strng{authornamehash}{409922cd52d50dfecba01fdb9a389146}
+      \strng{authorfullhash}{409922cd52d50dfecba01fdb9a389146}
+      \strng{authorfullhashraw}{409922cd52d50dfecba01fdb9a389146}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{GitHub repository}
+      \field{title}{{randomness\_testsuite}: A {Python} Implementation of the {NIST SP 800-22 Rev 1a} Test Suite}
+      \field{year}{2020}
+      \verb{urlraw}
+      \verb https://github.com/stevenang/randomness_testsuite
+      \endverb
+      \verb{url}
+      \verb https://github.com/stevenang/randomness_testsuite
+      \endverb
+    \endentry
+    \entry{HW_PROPOZIONALE_CONSUMO}{book}{}{}
+      \name{author}{3}{}{%
+        {{hash=1cdffbc482347edefd718f61814abbc3}{%
+           family={Mangard},
+           familyi={M\bibinitperiod},
+           given={Stefan},
+           giveni={S\bibinitperiod}}}%
+        {{hash=cf7c0382045f06385a28d0235a0bbc97}{%
+           family={Oswald},
+           familyi={O\bibinitperiod},
+           given={Elisabeth},
+           giveni={E\bibinitperiod}}}%
+        {{hash=34c7d868028eb76ef7d90c1f3ba5c8ec}{%
+           family={Popp},
+           familyi={P\bibinitperiod},
+           given={Thomas},
+           giveni={T\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Springer}%
+      }
+      \strng{namehash}{c6527fca10514b5b57a9540f156dce07}
+      \strng{fullhash}{c6527fca10514b5b57a9540f156dce07}
+      \strng{fullhashraw}{c6527fca10514b5b57a9540f156dce07}
+      \strng{bibnamehash}{c6527fca10514b5b57a9540f156dce07}
+      \strng{authorbibnamehash}{c6527fca10514b5b57a9540f156dce07}
+      \strng{authornamehash}{c6527fca10514b5b57a9540f156dce07}
+      \strng{authorfullhash}{c6527fca10514b5b57a9540f156dce07}
+      \strng{authorfullhashraw}{c6527fca10514b5b57a9540f156dce07}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{978-0-387-38162-6}
+      \field{title}{Power Analysis Attacks: Revealing the Secrets of Smart Cards}
+      \field{year}{2007}
+      \verb{doi}
+      \verb 10.1007/978-0-387-38162-6
+      \endverb
+    \endentry
+    \entry{HW_proof-of-concept}{article}{}{}
+      \name{author}{5}{}{%
+        {{hash=57116418049ffffb40e17b399648030d}{%
+           family={Prouff},
+           familyi={P\bibinitperiod},
+           given={Emmanuel},
+           giveni={E\bibinitperiod}}}%
+        {{hash=ea541397d0c2f47909bedbd7cadf989a}{%
+           family={Strullu},
+           familyi={S\bibinitperiod},
+           given={Rémi},
+           giveni={R\bibinitperiod}}}%
+        {{hash=1545b88b2e4e3a4afa3916e70650d88c}{%
+           family={Benadjila},
+           familyi={B\bibinitperiod},
+           given={Ryad},
+           giveni={R\bibinitperiod}}}%
+        {{hash=b3cf2e1342d5e73111683063da80c2ec}{%
+           family={Cagli},
+           familyi={C\bibinitperiod},
+           given={Eleonora},
+           giveni={E\bibinitperiod}}}%
+        {{hash=26b9a2549fbe1b135e66fa64d4d3ed61}{%
+           family={Dumas},
+           familyi={D\bibinitperiod},
+           given={Cécile},
+           giveni={C\bibinitperiod}}}%
+      }
+      \strng{namehash}{b3438b97552a969d44d404d0d97d500e}
+      \strng{fullhash}{c55264c85f5fe8b51f381a6d643179f6}
+      \strng{fullhashraw}{c55264c85f5fe8b51f381a6d643179f6}
+      \strng{bibnamehash}{b3438b97552a969d44d404d0d97d500e}
+      \strng{authorbibnamehash}{b3438b97552a969d44d404d0d97d500e}
+      \strng{authornamehash}{b3438b97552a969d44d404d0d97d500e}
+      \strng{authorfullhash}{c55264c85f5fe8b51f381a6d643179f6}
+      \strng{authorfullhashraw}{c55264c85f5fe8b51f381a6d643179f6}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{IACR Cryptol. ePrint Arch.}
+      \field{title}{Study of Deep Learning Techniques for Side-Channel Analysis and Introduction to ASCAD Database}
+      \field{volume}{2018}
+      \field{year}{2018}
+      \field{pages}{53}
+      \range{pages}{1}
+      \verb{urlraw}
+      \verb https://api.semanticscholar.org/CorpusID:41991837
+      \endverb
+      \verb{url}
+      \verb https://api.semanticscholar.org/CorpusID:41991837
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+
