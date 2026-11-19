@@ -53,7 +53,6 @@ Utility per il cluster:
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-### QUANTO DEEP??? ###
 
 ### Sia in spigazione AES che in GCM mostro codice ? ###
 
@@ -63,18 +62,6 @@ Utility per il cluster:
 	- contesto
 	- scopo
 	- struttura tesi
-
-######################################################################
-
-	- CAMBIARE ELENCO PUNTATO INIZIALE
-	- aggiungere in 3.2 delle citazioni per il ECB e il CTR
-	- Mettere la mia repo nell'introduzione
-	- serve citazione \paragraph{Additional Challenges of GCM}
-	- citazioni per come funziona la random forest ?
-	- in quanto il sistema di difesa è software è installabile anche su satelliti vecchi
-	- ricontrollo errori di battitura
-
-######################################################################
 
 - background e stato dell'arte
 	- stato dell'arte delle comunicazioni satellitari: vulnerabilità dovute al nuovo spazio

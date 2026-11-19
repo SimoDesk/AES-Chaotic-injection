@@ -1,10 +1,7 @@
 \documentclass[11pt,a4paper]{report}
 
-\usepackage[utf8]{inputenc}
-\usepackage{amsmath}
-\usepackage{amsfonts}
-\usepackage{amssymb}
 \usepackage{changepage}
+\usepackage{microtype}
 
 \usepackage{xcolor}
 \definecolor{sapienzaRed}{HTML}{802433}
@@ -63,7 +60,6 @@
 % Load package for creating colored boxes and listings
 \usepackage[most]{tcolorbox}
 \usepackage{listings}
-\usepackage{xcolor}
 
 % Define custom colors for code to use for code snippets
 \definecolor{codebg}{RGB}{250,250,252}
@@ -154,10 +150,8 @@
 \addbibresource{references.bib}
 
 % Allows links in the contents
-\usepackage[hidelinks]{hyperref}
-
+\usepackage{hyperref}
 % Allows links for the bibliography
-\usepackage{xcolor}
 \hypersetup{
     colorlinks=true,       
     linkcolor=black,       
@@ -264,6 +258,31 @@ Author's email: \texttt{simo.desk04@gmail.com}
 
 % Contents page
 \pagenumbering{roman}
+
+\cleardoublepage
+\thispagestyle{myheadings}
+\markright{}
+\vspace*{1.2cm}
+{\noindent\Large\bfseries Abstract\par}
+\vspace{0.4cm}
+\addcontentsline{toc}{chapter}{Abstract}
+
+Satellite Communications (SATCOM) represent a critical backbone of modern global infrastructure, making the confidentiality and integrity of transmitted data paramount. 
+To comply with the stringent SWaP (Size, Weight, and Power) constraints of space-grade hardware, aerospace standards designate AES-256-GCM as the default authenticated encryption protocol. 
+In embedded deployments, the algorithm typically relies on pre-computed Look-Up Tables (LUTs) for the S-Box substitution to reduce execution time and energy consumption. 
+However, static LUT accesses introduce deterministic physical leakages, exposing the cipher to Side-Channel Attacks (SCAs) that can be drastically accelerated through Machine Learning (ML).
+
+Building upon the chaotic injection framework proposed by Kumar et al., this thesis presents a proof-of-concept C implementation that extends the open-source \texttt{tiny-aes-c} library with the GCM mode of operation and integrates nine distinct chaotic maps (1D, 2D, and 3D). 
+To ensure architectural viability for SATCOM, this work introduces a scalar chaotic state optimization and a \texttt{once-per-block} update strategy. 
+Empirical evaluations confirm that the modified cipher preserves its cryptographic randomness (passing the NIST SP 800-22 suite) 
+while reducing the temporal and energetic overhead with the \texttt{once-per-block} approach to negligible levels ($\approx 0.5\%$--$4\%$, with at most 56 extra bytes of memory). 
+Furthermore, a simulated ML-assisted SCA (combining a Random Forest classifier with an algebraic Divide-and-Conquer strategy) achieves a $100\%$ key recovery rate on standard AES-256-GCM, 
+while failing completely against the chaotic variants.
+
+Being purely software-defined, the proposed countermeasure can be deployed via Over-the-Air (OTA) updates to both legacy spacecraft already in orbit and constrained terrestrial terminals, 
+providing robust side-channel resilience without requiring hardware modifications.
+
+
 \newpage
 \tableofcontents 
 
@@ -271,58 +290,87 @@ Author's email: \texttt{simo.desk04@gmail.com}
 \pagenumbering{arabic}
 
 \chapter{Introduction}
+With the rapid expansion and increasing accessibility of satellite technologies, ensuring the confidentiality and integrity of data transmitted via Satellite Communications (SATCOM) has become more critical than ever. 
+Official aerospace standards designate \textit{AES-256-GCM}~\cite{AES256-GCM} as the default cryptographic protocol for space communications, owing to the low encryption latency of symmetric-key cryptography 
+and the robust integrity guarantees provided by the Galois/Counter Mode (GCM) authentication tag.
+
+However, spacecraft must operate under strict \texttt{SWaP} (Size, Weight, and Power) constraints imposed by the harsh space environment. 
+To comply with these limitations, the vast majority of embedded satellite implementations rely on pre-computed Look-Up Tables (LUTs) during the \textsc{SubBytes()} routine, 
+avoiding the computationally expensive dynamic calculation of multiplicative inverses over $\mathrm{GF}(2^{8})$ that would otherwise increase both execution time and energy consumption. 
+While LUTs yield a substantial performance boost, they introduce a severe micro-architectural vulnerability: 
+memory accesses to static tables inevitably generate physical power leakages proportional to the processed byte values. 
+Adversaries can capture these leakages and leverage advanced Machine Learning (ML) models to render complex Side-Channel Attacks (SCAs) practically feasible.
+
+Conventional countermeasures typically rely on dedicated hardware cryptographic extensions (such as AES-NI) to bypass memory-based LUTs altogether. 
+However, such hardware solutions not only increase power consumption and manufacturing costs, but are also completely inapplicable to legacy satellites already deployed in orbit.
 
 \section{Thesis Objective}
 Inspired by the foundational work of Kumar et al.~\cite{KumarPaper}, the primary objective of this thesis is to develop a proof-of-concept implementation of \textit{AES with chaotic injection}. 
 This is achieved by extending the open-source \texttt{tiny-aes-c} library~\cite{tinyAES} and adapting it to comply with modern satellite communication standards through the integration of the \textit{AES-256-GCM} mode of operation~\cite{AES256-GCM}.
 
 Furthermore, this study aims to analyze the integration of various chaotic maps within the cipher's architecture. 
-These configurations will be rigorously benchmarked to evaluate execution time and energy consumption, thereby identifying the optimal solution for the resource-constrained SATCOM environment. 
-Concurrently, statistical and cryptographic tests will verify that altering the standard encryption algorithm does not degrade its fundamental cryptographic properties.
+These configurations are rigorously benchmarked to evaluate execution time, memory footprint, and energy consumption, 
+thereby identifying the optimal solution for the resource-constrained SATCOM environment. 
+Concurrently, statistical and cryptographic tests verify that altering the standard encryption algorithm does not degrade its fundamental cryptographic properties.
 
-Building upon these analysis, the thesis proposes an architectural optimization tailored for satellite communications. 
-A comprehensive comparison will be provided between the baseline chaotic algorithm proposed by Kumar et al. and a modified iteration engineered to yield superior performance metrics, 
+Building upon these analyses, the thesis proposes an architectural optimization tailored for satellite communications. 
+A comprehensive comparison is provided between the baseline chaotic algorithm proposed by Kumar et al. and a modified iteration engineered to yield superior performance metrics, 
 rendering it highly appropriate for space applications.
 
-Lastly, significantly diverging from the scope of Kumar et al.~\cite{KumarPaper}, this research will simulate a Machine Learning-based Side-Channel Attack (SCA) aiming for complete key recovery. 
+Lastly, significantly diverging from the scope of Kumar et al.~\cite{KumarPaper}, this research simulates a Machine Learning-based Side-Channel Attack (SCA) aiming for complete key recovery. 
 This simulation serves a critical dual purpose: it demonstrates a devastating threat vector that is entirely feasible against standard AES-256-GCM in current SATCOM architectures, 
 while simultaneously proving that the proposed chaotic implementation successfully immunizes the system against such advanced profiling attacks.
 
+To ensure the full reproducibility of this research, the complete C codebase, the statistical and performance benchmarking suites, 
+and the Machine Learning side-channel attack scripts are publicly available in a dedicated GitHub repository~\cite{simodesk_aes_chaotic}.
+
+\section{Thesis Structure}
+The remainder of this thesis is organized as follows:
+\begin{itemize}
+    \item \textbf{Chapter 2} provides an in-depth analysis of the state-of-the-art in satellite communications, detailing its architectural segments, 
+    the major security threats targeting each segment, and the defensive strategies currently deployed or under investigation.
+    
+    \item \textbf{Chapter 3} focuses on a rigorous algorithmic analysis of the AES-256-GCM standard, detailing the mathematical mechanics of both the core block cipher routines and the GCM authenticated encryption mode.
+    
+    \item \textbf{Chapter 4} introduces the chaotic injection framework proposed by Kumar et al.~\cite{KumarPaper}, 
+    presents the architectural optimizations designed to minimize overhead on constrained devices, and details the taxonomy of the nine evaluated chaotic systems.
+    
+    \item \textbf{Chapter 5} presents the empirical tuning methodology used to select the optimal parameters for each chaotic map, 
+    validates their randomness properties via the official NIST Statistical Test Suite~\cite{NISTRandomnessTestSuite}, 
+    and benchmarks execution time, memory footprint, and energy consumption for both the \texttt{once-per-round} and \texttt{once-per-block} update strategies.
+    
+    \item \textbf{Chapter 6} details the empirical simulation of a Machine Learning-assisted Side-Channel Attack targeting complete key recovery, 
+    illustrating the attack's architecture and demonstrating the resilience of the chaotic-injected S-Box LUT against it.
+    
+    \item \textbf{Chapter 7} summarizes the main findings of this research and outlines potential directions for future work.
+\end{itemize}
+
+
 
 
 % ====================================================================================================
 
 % ====================================================================================================
 
-\chapter[Background and State-of-the-Art of Satellite Communications]{Background and State-of-the-Art of \\ Satellite Communications}Satellite communications (SATCOM) are vastly different from how they appeared just a few decades ago. 
+\chapter[Background and State-of-the-Art of Satellite Communications]{Background and State-of-the-Art of \\ Satellite Communications}
+Satellite communications (SATCOM) are vastly different from how they appeared just a few decades ago. 
 At that time, space-based communications were mainly represented by government activities, characterized by larger and more expensive satellites than the ones used today. 
 This era is also known as the \textit{old space}~\cite[p. 377]{aLotOfReferences}, a term often used to describe the space applications that emerged during the Cold War.
 
 On the other hand, since the beginning of the \textit{new space} era~\cite[p. 377--398]{aLotOfReferences}, 
-thanks to the ever-decreasing cost of satellite launches and the enormous technological progress that has been made in recent years, 
-space has become increasingly populated by satellites used for commercial purposes, such as:
-\begin{itemize}
-    \item \textit{Telecommunications and broadband connectivity}: they help to provide an internet connection even in the most remote regions or those that are hard to reach with a physical connection~\cite[p. 373--381]{aLotOfReferences}.
+the steadily decreasing cost of satellite launches and rapid technological progress have populated orbit with commercial satellites serving a wide range of applications. 
+Primary examples include \textit{telecommunications and broadband connectivity}, which provide internet access even in remote regions hard to reach with terrestrial infrastructure~\cite[p. 373--381]{aLotOfReferences}, 
+as well as \textit{television broadcasting and multimedia streaming}, which leverage wide satellite coverage to meet the constant demand for high-quality content delivery~\cite[p. 373--381]{aLotOfReferences}. 
+Furthermore, SATCOM systems are extensively employed for \textit{Earth observation}: thanks to more affordable spacecraft, private entities can now launch dedicated programs for environmental analysis alongside traditional meteorological monitoring~\cite[p. 372--381]{aLotOfReferences}.
 
-    \item \textit{Television broadcast and multimedia streaming}: due to the constant demand for high-quality multimedia, 
-    the wide coverage of satellite communications helps to deliver content to a large number of users more efficiently~\cite[p. 373--381]{aLotOfReferences}.
+In addition, satellite networks enable everyday services such as the \textit{Global Positioning System (GPS)}~\cite[p. 378--381]{aLotOfReferences}, 
+which is relied upon daily by individuals and numerous industrial sectors for route planning and resource tracking. 
+Similarly, the \textit{Internet of Things (IoT)} heavily depends on SATCOMs: given the heterogeneous nature of IoT devices, ranging from smart homes to transport fleets, 
+achieving seamless global coverage is essential and is effectively addressed via space-based links~\cite[p. 372]{aLotOfReferences}. 
+Finally, a new frontier is emerging with \textit{Satellite-as-a-Service (SataaS)}. 
+Although launch costs have dropped significantly, deploying proprietary spacecraft remains financially prohibitive for many private companies that would otherwise benefit from satellite coverage. 
+To address this challenge, major aerospace operators lease onboard resources to third-party users, granting them access to space infrastructure without the need for dedicated launches~\cite{SataaS}.
 
-    \item \textit{Global Positioning System (GPS)}: numerous sectors make use of satellite-based geolocation to plan routes or monitor the movement of resources. 
-    In addition to this, a large number of people use geolocation daily to plan their travels~\cite[p. 378--381]{aLotOfReferences}.
-
-    \item \textit{Earth observation}: thanks to more affordable satellites, it is now possible for private entities to start their own Earth observation programs for scientific purposes, 
-    such as environmental analysis. Moreover, satellites observing the Earth are widely used for meteorological purposes~\cite[p. 372--381]{aLotOfReferences}.
-
-    \item \textit{Internet of Things (IoT)}: because of the multifaceted nature of IoT devices, which can take on many different forms,
-     from smart homes to means of transport, it is essential that the coverage area serving these devices is as wide as possible.
-      Such needs are effectively addressed by using SATCOMs as the main communication method~\cite[p. 372]{aLotOfReferences}.
-
-    \item \textit{Satellite as a service (SataaS)}: while it is true that the cost of satellite lounches is significantly decreased,
-    it remains unaffordable for many private companies that would otherwise benefit of the wide coverage provided by SATCOMs. 
-    \newline
-    To address this challange, majour caerospace operators can lease resources on their satellites to third-party users,
-    granting them access to space infrastructure without the need for additional launches~\cite{SataaS}.
-\end{itemize}
 Along with the opportunities offered by the \textit{new space}, the critical requirements of the \textit{old space} have not diminished. 
 Today, satellite communications remain essential for handling mission-critical data exchanges, such as those required by aviation and maritime operations~\cite[p. 397--398]{aLotOfReferences}, 
 as well as for the coordination of rescue services in disaster or crisis situations~\cite[p. 388--389]{aLotOfReferences}.
@@ -341,16 +389,14 @@ it is essential to analyze its underlying infrastructure. A modern SATCOM system
 \end{figure}
 
 Satellite communications are typically classified into three fundamental segments, although the exact categorization may vary across the literature.
-One common classification framework, as described in extended SATCOM state-of-the-art analysis provided by Salim et al.~\cite{aLotOfReferences}, divides the architecture into the \textit{space segment}, the \textit{ground segment}, and the \textit{link segment}. 
+One common classification framework, as described in the extended SATCOM state-of-the-art analysis provided by Salim et al.~\cite{aLotOfReferences}, divides the architecture into the \textit{space segment}, the \textit{ground segment}, and the \textit{link segment}. 
 In this model, the \textit{ground Segment} encompasses both the \textit{ground Stations}, which act as gateways for devices lacking direct satellite communication capabilities,
 and the \textit{user segment}, which consists of end-user terminals equipped for space links. 
 Another classification model still includes the \textit{space segment} and the \textit{ground segment}, 
 but explicitly separates the \textit{user segment}, treating the \textit{link segment} merely as a passive communication channel~\cite[p. 5671]{LEO_MEO_GEO}. 
 
-While all these components are crucial to maintain the network's operability, this thesis will adopt the classification proposed in~\cite{aLotOfReferences}. 
-Grouping the ground stations and end-user devices under a unified \textit{ground segment} is conceptually sound for terrestrial entities. 
-More importantly, treating the \textit{link segment} as a primary, distinct architectural component is essential for the scope of this study, 
-as the physical transmission channel introduces specific vulnerabilities and security challenges that are central to the analyzed threat model.
+While all these components are crucial to maintain the network's operability, this thesis will adopt the classification proposed in~\cite{aLotOfReferences}, 
+grouping the ground stations and end-user devices under a unified \textit{ground segment} is conceptually sound for terrestrial entities. 
 
 \subsection{Space Segment}
 The space segment is represented by the satellites in orbit, each composed of the \textit{bus}, which handles onboard systems such as power and thermal management, 
@@ -448,7 +494,7 @@ a vulnerability exclusively tied to the terrestrial infrastructure is \textit{Un
 If physical or logical authentication mechanisms are missing, poorly designed, or vulnerable, an adversary could gain unauthorized entry, ultimately leading to a complete takeover of the spacecraft's control systems~\cite[p. 389--391]{aLotOfReferences}.
 
 \subsection{Link Segment Threats}
-Lastly, the \textit{link aegment} is arguably the most vulnerable of the three segments, primarily due to its wireless nature. 
+Lastly, the \textit{link segment} is arguably the most vulnerable of the three segments, primarily due to its wireless nature. 
 The most straightforward threat is \textit{eavesdropping}, which consists of the unauthorized interception of communications. 
 The adversaries' preferred target for eavesdropping is typically the \textit{downlink}, as the signal is directed towards Earth over a wide footprint; 
 conversely, the highly directional trajectory of the \textit{uplink} makes it significantly more difficult to capture data~\cite[p.~393]{aLotOfReferences}.
@@ -481,7 +527,7 @@ a sophisticated \textit{supply chain attack} can circumvent this limitation.
 Adversaries could compromise key satellite components, such as cryptographic chips or CPUs, by implanting the necessary hardware trojans during the manufacturing process, 
 establishing a covert channel to transmit the leaked information once deployed in space.
 
-Lastly, to compromise the SATCOM infrastructure via an SCA, an adversary could exploit the interconnection between the network segments by targeting the more physically accessible \textit{ground stations}. 
+Lastly, to compromise the SATCOM infrastructure via an SCA, an adversary could exploit the interconnection between the network segments by targeting the more physically accessible \textit{ground segment}. 
 Since the ground and space segments must share the same cryptographic parameters to establish a secure link, 
 successfully extracting the secret key from a ground terminal yields the exact same catastrophic result for the entire network.
 
@@ -522,7 +568,7 @@ from which dynamically changing session keys are derived~\cite{masterSessionKey}
 More recently, modern space infrastructures have begun deploying \textit{Elliptic Curve Cryptography (ECC)-based Diffie-Hellman} key exchanges, 
 capitalizing on the computational efficiency and smaller key sizes of ECC~\cite{diffieHellman}.
 
-As implied by the adoption of ECC, the resource-constrained nature of the space environment implies the use of highly efficient algorithms to avoid overburdening the satellite's power and computational budget. 
+As implied by the adoption of ECC, the resource-constrained nature of the space environment requires the use of highly efficient algorithms to avoid overburdening the satellite's power and computational budget. 
 For this reason, traditional asymmetric-key algorithms like \textit{RSA}, which require substantial computational overhead to process large key pairs, are generally not recommended for SATCOM encryption.
 
 Finally, a major advantage of traditional cryptography over PLS techniques lies in its software-based nature. 
@@ -553,7 +599,7 @@ if the authentication tag verification fails, the receiver can discard the corru
 
 Finally, to guarantee cryptographic security, AES-GCM requires a strictly unique \textit{Initialization Vector (IV)} associated with each message. 
 Reusing an IV compromises the algorithm's confidentiality. 
-Based on CCSDS recommendations, the optimal IV length is fixed at 96 bits (12 bytes)~\cite{quantum-AES-vulnerable}.
+Based on CCSDS recommendations, the optimal IV length is fixed at 96 bits (12 bytes)~\cite{AES256-GCM}.
 
 
 
@@ -602,7 +648,7 @@ To comprehend the logic underlying the Key Expansion algorithm, the primary vari
     \item \texttt{Rcon}: A predefined array of round constant words, used to eliminate symmetries.
 \end{itemize}
 
-The procedure is detailed in the following pseudocode (Algorithm ~\ref{alg:key_expansion}):
+The procedure is detailed in the following pseudocode (Algorithm~\ref{alg:key_expansion}):
 \begin{algorithm}[htbp]
 \caption{Key Expansion Algorithm for AES-256}
 \label{alg:key_expansion}
@@ -613,7 +659,7 @@ The procedure is detailed in the following pseudocode (Algorithm ~\ref{alg:key_e
             \State $w[i] \gets key[4 \cdot i,\; \dots,\; 4 \cdot i + 3]$
             \State $i \gets i + 1$
         \EndWhile \Comment{When the loop concludes, $i = N_k$.}
-        \While{$i \le (4 \cdot N_r + 3$)}
+        \While{$i \le (4 \cdot N_r + 3)$}
             \State $temp \gets w[i - 1]$
             \If{$i \bmod N_k = 0$}
                 \State $temp \gets \textsc{SubWord}(\textsc{RotWord}(temp)) \oplus Rcon[i / N_k]$
@@ -653,7 +699,7 @@ An input block can be represented as an array of 16 bytes:
 \mathbf{in} = \begin{bmatrix} in_0 & in_1 & in_2 & \dots & in_{15} \end{bmatrix}^T
 \]
 
-During the execution of the algorithm, this 16-byte input is mapped into a $4 \cdot 4$ matrix of bytes, known as the \textit{State matrix} ($S$). 
+During the execution of the algorithm, this 16-byte input is mapped into a $4 \times 4$ matrix of bytes, known as the \textit{State matrix} ($S$). 
 As defined by the standard, the State matrix is populated column by column:
 \[
 S = \begin{bmatrix}
@@ -684,7 +730,7 @@ Consequently, the 128-bit round keys derived during the Key Expansion phase are 
 \subsection{SubBytes}
 The \textsc{SubBytes} operation is the only strictly non-linear transformation within the AES algorithm. 
 It consists of a byte-by-byte substitution based on a fixed Look-Up Table (LUT) called the \textit{S-Box}. 
-The S-Box is a $16 \cdot 16$ matrix containing every possible byte value, ranging from \texttt{0x00} to \texttt{0xFF}.
+The S-Box is a $16 \times 16$ matrix containing every possible byte value, ranging from \texttt{0x00} to \texttt{0xFF}.
 
 Both the columns and the rows are labeled in hexadecimal format from \texttt{0} to \texttt{F}. 
 To apply the substitution, each byte of the State matrix is treated as a two-digit hexadecimal value: 
@@ -719,7 +765,7 @@ Secondly, to break algebraic symmetries and prevent structural attacks, each mul
 \[
 b' = (A \cdot b) \oplus c
 \]
-where $A$ is a fixed $8 \cdot 8$ bit matrix, and $c$ is the constant column vector $[1,1,0,0,0,1,1,0]^T$ (corresponding to \texttt{0x63}).
+where $A$ is a fixed $8 \times 8$ bit matrix, and $c$ is the constant column vector $[1,1,0,0,0,1,1,0]^T$ (corresponding to \texttt{0x63}).
 
 \paragraph{Vulnerability of the Software LUT Implementation}
 Because dynamically calculating the multiplicative inverse in $\mathrm{GF}(2^8)$ during every round would introduce an enormous computational overhead, 
@@ -731,6 +777,7 @@ This power footprint is directly correlated with the specific byte value being p
 
 Conversely, modern high-performance processors mitigate this vulnerability by utilizing dedicated cryptographic hardware extensions (e.g., Intel AES-NI or ARM CE). 
 These hardware modules execute AES transformations directly within the CPU using dedicated logic gates, thereby eliminating the need for memory-based LUT lookups and effectively neutralizing this specific class of side-channel leakage.
+However, such dedicated hardware extensions are rarely available on ultra-constrained embedded microcontrollers or legacy space-grade processors.
 
 \subsection{ShiftRows}
 The \textsc{ShiftRows} transformation is a linear operation primarily responsible for introducing horizontal diffusion across the State matrix. 
@@ -741,7 +788,7 @@ It adheres to the following mathematical formulation:
     \label{eq:shift_rows}
 \end{equation}
 
-Following the application of \textsc{ShiftRows}, the resulting $4 \cdot 4$ matrix is altered such that the first row remains completely untouched. 
+Following the application of \textsc{ShiftRows}, the resulting $4 \times 4$ matrix is altered such that the first row remains completely untouched. 
 The second, third, and fourth rows undergo a cyclic left shift of one, two, and three byte positions, respectively. 
 
 \[
@@ -823,7 +870,7 @@ Therefore, multiplying $A(x)$ by \texttt{0x02} yields:
 \[
 A(x) \cdot x = a_7x^8 + a_6x^7 + a_5x^6 + a_4x^5 + a_3x^4 + a_2x^3 + a_1x^2 + a_0x
 \]
-In computer architecture, multiplying by $x$ corresponds exactly to a logical bitwise left shift of one position. 
+In computer architecture, multiplying by 2 corresponds exactly to a logical bitwise left shift of one position. 
 However, to ensure the result remains within the finite field $\mathrm{GF}(2^8)$, the maximum degree of the resulting polynomial must not exceed $x^7$. 
 This constraint presents two possible cases:
 
@@ -924,14 +971,14 @@ By applying the bitwise XOR ($\oplus$) between the two column vectors, the resul
 To apply a fixed-size block cipher such as AES to variable-length inputs, it is necessary to employ a specific \textit{mode of operation}. 
 A mode of operation dictates the exact architectural procedure by which the core encryption algorithm processes data streams larger than its native 128-bit block size.
 
-For instance, the most rudimentary mode of operation, \textit{Electronic Codebook (ECB)}, starts by evaluating whether the plaintext length is an exact multiple of 128 bits.
+For instance, the most rudimentary mode of operation, \textit{Electronic Codebook (ECB)}~\cite[p. 9]{ECB_CTR}, starts by evaluating whether the plaintext length is an exact multiple of 128 bits.
 If it is not, a padding scheme must be appended to the end of the message. The plaintext is then partitioned into 128-bit blocks, and each block is independently fed into the AES encryption algorithm. 
 Finally, the resulting encrypted blocks are sequentially concatenated to form the complete ciphertext.
 
 However, the ECB mode is notoriously vulnerable to cryptanalysis. Because the encryption of each block is entirely independent and deterministic, two identical plaintext blocks encrypted under the same key will invariably produce the exact same ciphertext blocks. 
 This fatal flaw fails to eliminate large-scale redundancies, preserving the structural patterns of the original data and rendering it cryptographically inadequate for secure communications. 
 
-To address these deterministic flaws, more advanced modes of operation were developed, such as the \textit{Counter Mode (CTR)}. 
+To address these deterministic flaws, more advanced modes of operation were developed, such as the \textit{Counter Mode (CTR)}~\cite[p. 15--16]{ECB_CTR}. 
 Unlike ECB, the CTR mode does not feed the plaintext directly into the cipher. Instead, it utilizes a 128-bit block comprising a unique \textit{nonce} (Number Used Once) concatenated with an internal counter.
 
 In this architecture, the input to the AES algorithm is the counter block itself. 
@@ -971,23 +1018,23 @@ To guarantee the designed cryptographic security bounds, strict regulatory requi
 \paragraph{Uniqueness and Forgery Attacks.}
 The most critical constraint of AES-GCM is the \textit{uniqueness requirement}. The standard dictates that the probability of the authenticated encryption function being invoked with the same Key/IV pair on two distinct plaintexts must be strictly less than $2^{-32}$. 
 
-The consequences of violating this requirement by reusing an IV with the same key are catastrophic. By construction, the GHASH authentication tag is derived via polynomial evaluations over $\mathrm{GF}(2^8)$ involving the ciphertext and the IV. 
+The consequences of violating this requirement by reusing an IV with the same key are catastrophic. By construction, the GHASH authentication tag is derived via polynomial evaluations over $\mathrm{GF}(2^{128})$ involving the ciphertext and the IV. 
 If an IV is repeated, an attacker can mathematically recover the internal authentication subkey. This exposes the system to \textit{forgery attacks}, allowing the attacker to produce fake messages with valid authentication tags, completely compromising the integrity of the channel. 
 In practice, safeguarding IV uniqueness is considered as vital as maintaining the secrecy of the master key itself.
 
 \paragraph{Key Freshness and Establishment.}
-In addition to the IV, key management plays a pivotal role. The principles of \textit{key uniqueness} and \textit{key establishment} mandate that for each new communication session, the generated symmetric key must be "fresh" (cryptographically unpredictable). 
+In addition to the IV, key management plays a pivotal role. The principles of \textit{key uniqueness} and \textit{key establishment} mandate that for each new communication session, the generated symmetric key must be ``fresh'' (cryptographically unpredictable). 
 Furthermore, the communication channel utilized to distribute this master key (often asymmetric or out-of-band) must be highly secure to prevent key theft prior to the AES-GCM execution.
 
 \paragraph{IV Construction Methods.}
-Because of the vital role the IV plays, NIST SP 800-38D\cite{GCM} outlines strict construction rules, heavily recommending a standard IV length of 96 bits for optimal performance and security. 
+Because of the vital role the IV plays, NIST SP 800-38D~\cite{GCM} outlines strict construction rules, heavily recommending a standard IV length of 96 bits for optimal performance and security. 
 Depending on the system architecture, two main generation processes are defined:
 
 \begin{itemize}
     \item \textbf{Deterministic Construction:} This method is mandatory for IVs strictly shorter than 96 bits, but is widely used for 96-bit IVs as well. 
     It stipulates that the IV is divided into two sections: a \textit{fixed field} and an \textit{invocation field}. 
     The fixed field uniquely identifies the device or the specific instance of the encryption algorithm (e.g., a satellite ID), whereas the invocation field acts as a sequential counter for the data sets. 
-    To maintain uniqueness, two devices sharing the same key must never share the same fixed field, and the invocation field must increment deterministicly.
+    To maintain uniqueness, two devices sharing the same key must never share the same fixed field, and the invocation field must increment deterministically.
     
     \item \textbf{RBG-based Construction:} For IVs of 96 bits or longer, a \textit{Random Bit Generator (RBG)} construction can be employed. 
     This format consists of a \textit{random field} and an optional \textit{free field}. 
@@ -1031,7 +1078,7 @@ The algorithmic translation of this multiplication logic begins with the initial
     \item $R$: Represents the reduction polynomial block, which is used to bring the result back into the finite field whenever a polynomial multiplication exceeds the maximum degree constraint. 
     The formal irreducible polynomial chosen by the GCM designers is $f(x) = x^{128} + x^7 + x^2 + x + 1$. 
     During modulo reduction in $\mathrm{GF}(2^{128})$, the $x^{128}$ term is mathematically substituted by $x^7 + x^2 + x + 1$. 
-    Following the NIST SP 800-38D standard~\cite{GCM}, which adopts a adopts a \textit{bit-reflected} convention, operating analogously to a little-endian scheme, where the leftmost bit is interpreted as the $x^0$ coefficient, this reduction polynomial is mapped to the binary string $11100001_2 \,\|\, 0^{120}$ (equivalent to the hexadecimal block \texttt{0xE100...00}).
+    Following the NIST SP 800-38D standard~\cite{GCM}, which adopts a \textit{bit-reflected} convention, operating analogously to a little-endian scheme, where the leftmost bit is interpreted as the $x^0$ coefficient, this reduction polynomial is mapped to the binary string $11100001_2 \,\|\, 0^{120}$ (equivalent to the hexadecimal block \texttt{0xE100...00}).
     
     \item $Z$: The accumulator variable, initialized as an array of 128 zeros ($0^{128}$).
     
@@ -1073,8 +1120,8 @@ As highlighted in the section detailing the S-Box substitution, executing repeat
 This mathematical burden is often incompatible with the strict power budgets of resource-constrained devices, such as space-segment satellite components.
 
 To address this critical efficiency bottleneck, these embedded architectures typically adopt a structural compromise remarkably similar to the S-Box implementation: leveraging pre-computed Look-Up Tables (LUTs). 
-Specifically, the Shoup's method or the 4-bit table-driven approach pre-calculates the polynomial multiplications, allowing the device to perform the GCM authentication via fast memory lookups and XOR operations rather than dynamic arithmetic. 
-Alternatively, modern architectures might utilize dedicated hardware instructions (such as the \texttt{PCLMULQDQ} instruction in x86 environments) to perform carry-less multiplications directly in the silicon logic, minimizing the energy-per-bit cost while bypassing the memory constraints.
+Specifically, Shoup's method or the 4-bit table-driven approach~\cite{Shoup} pre-calculates the polynomial multiplications, allowing the device to perform the GCM authentication via fast memory lookups and XOR operations rather than dynamic arithmetic. 
+Alternatively, modern architectures might utilize dedicated hardware instructions (such as the \texttt{PCLMULQDQ} instruction in x86 environments)~\cite{PCLMULQDQ} to perform carry-less multiplications directly in the silicon logic, minimizing the energy-per-bit cost while bypassing the memory constraints.
 
 
 \subsection{\texorpdfstring{$\text{GHASH}$}{GHASH} Function}
@@ -1104,7 +1151,7 @@ Ultimately, the core operation executed within this function is the \textsc{galo
 \end{algorithmic}
 \end{algorithm}
 
-As detailed in Algorithm ~\ref{alg:ghash}, the variable $m$ denotes the total number of 128-bit blocks comprising the input $X$ \texttt{(line 2)}. 
+As detailed in Algorithm~\ref{alg:ghash}, the variable $m$ denotes the total number of 128-bit blocks comprising the input $X$ \texttt{(line 2)}. 
 The sequence $X_1, X_2, \dots, X_m$ represents each sequential 128-bit section of the input \texttt{(line 3)}, 
 followed by the initialization of $Y$, a zero-block utilized as the accumulator variable \texttt{(line 4)}. 
 Finally, for each $i$-th block $X_i$, the accumulator $Y$ is mathematically updated with the output of the Galois multiplication between the hash subkey $H$ and the XORed state of $Y \oplus X_i$.
@@ -1139,7 +1186,7 @@ These procedures orchestrate the encryption process to produce a secure cipherte
 The encryption algorithm operates on the following set of input variables:
 \begin{itemize}
     \item $K$: The secret 256-bit \textit{master key}.
-    \item $IV$: The variable-length \textit{Initialization Vector}, chosen in accordance with official NIST specifications~\cite[p. 18--21]{GCM}. (In modern SATCOM standards, this is conventionally fixed at 96 bits / 12 bytes).
+    \item $IV$: The variable-length \textit{Initialization Vector}, chosen in accordance with official NIST specifications~\cite[p. 18--21]{GCM} (in modern SATCOM standards, this is conventionally fixed at 96 bits / 12 bytes).
     \item $P$: The variable-length input \textit{plaintext}.
     \item $A$: The \textit{Additional Authenticated Data (AAD)}.
     \item $t$: An integer value determining the maximum bit-length of the generated authentication tag.
@@ -1196,39 +1243,33 @@ Ultimately, the authentication tag $T$ is generated by encrypting $S$ with the o
 
 \paragraph{Authenticated Decryption Algorithm}
 The authenticated decryption algorithm shares the vast majority of its cryptographic logic with its encryption counterpart. 
-The primary operational differences reside in the initial validation checks—which verify that the bit-lengths of the $IV$, AAD, and ciphertext are supported, and that the provided tag matches the expected length $t$. 
-In addition, also the transposition of the input variable $C$ (ciphertext) in place of $P$ (plaintext) is a main differences.
+The primary operational differences reside in the initial validation checks, which verify that the bit-lengths of the $IV$, AAD, and ciphertext are supported, and that the provided tag matches the expected length $t$. 
+Additionally, the transposition of the input variable $C$ (ciphertext) in place of $P$ (plaintext) represents a key difference.
 
 Crucially, after following the standard computational flow to produce a localized tag $T'$, the algorithm executes a constant-time comparison between $T'$ and the received tag $T$. 
 If the two tags match perfectly, the authentication succeeds, and the decrypted plaintext is released. 
 Otherwise, the message is deemed compromised, either through malicious tampering or transmission errors. 
-In this failure state, the algorithm immediately aborts and returns a $\textsc{Fail}$ error \texttt{(lines 17--18)}, strictly discarding the plaintext to prevent Chosen-Ciphertext Attacks (CCA).
+In this failure state, the algorithm immediately aborts and returns a $\textsc{Fail}$ error \texttt{(lines 19--20)}, strictly discarding the plaintext to prevent Chosen-Ciphertext Attacks (CCA).
 
-\begin{algorithm}[htbp]
-\small
+\begin{algorithm}[H]
+\footnotesize
 \caption{GCM Authenticated Decryption}
 \label{alg:gcm_ad}
 \begin{algorithmic}[1]
 \Procedure{GcmAuthenticatedDecrypt}{$K, IV, C, A, T, t$}
-    \If{bit lengths of $IV$, $A$, or $C$ are unsupported \textbf{or} $\text{len}(T) \neq t$}
-        \State \Return $\textsc{Fail}$
-    \EndIf
-    \State $H \gets \textsc{Ciph}_K(0^{128})$ \Comment{Generate the hash subkey $H$}
+    \If{bit lengths of $IV, A$, or $C$ are unsupported \textbf{or} $\text{len}(T) \neq t$} \textbf{return} $\textsc{Fail}$ \EndIf
+    \State $H \gets \textsc{Ciph}_K(0^{128})$ \Comment{Generate hash subkey $H$}
     \If{$\text{len}(IV) = 96$}
         \State $J_0 \gets IV \,\|\, 0^{31} \,\|\, 1$
     \Else
-        \State $s \gets 128 \cdot \lceil \text{len}(IV)/128 \rceil - \text{len}(IV)$
-        \State $J_0 \gets \textsc{Ghash}_H(IV \,\|\, 0^{s+64} \,\|\, [\text{len}(IV)]_{64})$
+        \State $s \gets 128 \cdot \lceil \text{len}(IV)/128 \rceil - \text{len}(IV)$; \quad $J_0 \gets \textsc{Ghash}_H(IV \,\|\, 0^{s+64} \,\|\, [\text{len}(IV)]_{64})$
     \EndIf
     \State $P \gets \textsc{Gctr}_K(\text{inc}_{32}(J_0), C)$ \Comment{Decrypt ciphertext $C$}
-    \State $u \gets 128 \cdot \lceil \text{len}(C)/128 \rceil - \text{len}(C)$
-    \State $v \gets 128 \cdot \lceil \text{len}(A)/128 \rceil - \text{len}(A)$
+    \State $u \gets 128 \cdot \lceil \text{len}(C)/128 \rceil - \text{len}(C)$; \quad $v \gets 128 \cdot \lceil \text{len}(A)/128 \rceil - \text{len}(A)$
     \State $S \gets \textsc{Ghash}_H(A \,\|\, 0^v \,\|\, C \,\|\, 0^u \,\|\, [\text{len}(A)]_{64} \,\|\, [\text{len}(C)]_{64})$
-    \State $T' \gets \text{MSB}_t(\textsc{Gctr}_K(J_0, S))$ \Comment{Compute expected authentication tag}
-    \If{$T = T'$}
-        \State \Return $P$ \Comment{Authentication succeeded}
-    \Else
-        \State \Return $\textsc{Fail}$ \Comment{Integrity check failed}
+    \State $T' \gets \text{MSB}_t(\textsc{Gctr}_K(J_0, S))$ \Comment{Compute expected tag}
+    \If{$T = T'$} \textbf{return} $P$ \Comment{Authentication succeeded}
+    \Else\ \textbf{return} $\textsc{Fail}$ \Comment{Integrity check failed}
     \EndIf
 \EndProcedure
 \end{algorithmic}
@@ -1263,7 +1304,7 @@ ERROR: decryption failed as expected due to the bit flip.
 \paragraph{Chaotic Injection overview}
 With the baseline AES-256-GCM architecture fully implemented, theoretically analyzed, and functionally validated, the foundational framework of this study is established. 
 The next chapter will address the physical vulnerabilities of this standard implementation by integrating a chaotic injection mechanism into the S-Box. 
-Drawing inspiration from the foundational concepts proposed by Kumar et al.~\cite{KumarPaper}, the following chapter explores a cryptographic "Machine Unlearning" approach, deliberately adapting it to break the deterministic power leakages exploited by advanced ML-based Side-Channel Attacks in SATCOM environments.
+Drawing inspiration from the foundational concepts proposed by Kumar et al.~\cite{KumarPaper}, the following chapter explores a cryptographic ``Machine Unlearning'' approach, deliberately adapting it to break the deterministic power leakages exploited by advanced ML-based Side-Channel Attacks in SATCOM environments.
 
 % ====================================================================================================
 
@@ -1294,7 +1335,7 @@ The evolution of this state across iterations is defined by the following equati
     \label{eq:chaotic_evolution}
 \end{equation}
 In this dynamic system, $\alpha$ represents the learning rate governing the chaotic perturbation, while $\beta$ acts as a crucial forgetting factor. 
-The term $\beta$ physically dictates the rate at which the system "forgets" any previously stable structural patterns over time.
+The term $\beta$ physically dictates the rate at which the system ``forgets'' any previously stable structural patterns over time.
 
 According to the original theoretical framework, the chaotic system forces the encryption algorithm to forget structured learning by continuously evolving an entire weight matrix. 
 In this baseline model, each individual weight $w_{ij}$ within the matrix is iteratively updated via the following relation:
@@ -1325,12 +1366,12 @@ While the theoretical framework proposed by Kumar et al.~\cite{KumarPaper} conce
 Such complexity is inherently incompatible with the strict power budgets and memory limitations of lightweight SATCOM embedded systems.
 
 To resolve this architectural bottleneck, this thesis introduces a critical optimization: the multidimensional matrix $W(t)$ is algorithmically collapsed into a single scalar chaotic variable. 
-Crucially, this scalar state continues to evolve according to the fundamental unlearning dynamics defined in Equation ~\ref{eq:chaotic_evolution}, thereby preserving the crucial role of the forgetting factor $\beta$.
+Crucially, this scalar state continues to evolve according to the fundamental unlearning dynamics defined in Equation~\ref{eq:chaotic_evolution}, thereby preserving the crucial role of the forgetting factor $\beta$.
 As will be demonstrated through empirical testing, tracking and updating a scalar value provides sufficient non-linear entropy to successfully mask the S-Box power signature. 
 Therefore, this custom implementation achieves the required cryptographic unlearning while rigorously preserving the efficiency dictated by the \texttt{tiny-aes-c}~\cite{tinyAES} baseline and space-grade microcontrollers.
 
-Finally, in the theoretical model, the term $\Delta W$ in Equation ~\ref{eq:chaotic_evolution} is broadly defined as the weight adjustment derived from the system's learning process. 
-However, a symmetric block cipher like AES does not possess a traditional ML loss function or a backpropagation mechanism to calculate a literal "learning" gradient during the encryption phase.
+Finally, in the theoretical model, the term $\Delta W$ in Equation~\ref{eq:chaotic_evolution} is broadly defined as the weight adjustment derived from the system's learning process. 
+However, a symmetric block cipher like AES does not possess a traditional ML loss function or a backpropagation mechanism to calculate a literal ``learning'' gradient during the encryption phase.
 
 To bridge this gap between ML theory and practical cryptography, this thesis explicitly redefines $\Delta W$ as the discrete differential of the chosen chaotic map. 
 Specifically, for any given chaotic map generating a state sequence $X$, the adjustment is calculated as the exact difference between the updated state and the previous one ($\Delta W = X_{t+1} - X_t$). 
@@ -1410,7 +1451,7 @@ The chaotic behavior is mathematically proven to be strongest under the classica
 \end{equation}
 
 \paragraph{Arnold's Cat Map}
-Originally conceptualized for image encryption, Arnold's Cat Map operates over a toroidal space by applying a modulo 1 operation to confine the state within a unit square. 
+Originally conceptualized for image encryption, Arnold's Cat Map operates over a cyclic space by applying a modulo 1 operation to confine the state within a unit square. 
 Interestingly, this strictly linear algebraic map achieves chaotic mixing without requiring any external control parameters, relying entirely on its structural matrix transformation.
 \begin{equation}
     \begin{cases}
@@ -1421,7 +1462,7 @@ Interestingly, this strictly linear algebraic map achieves chaotic mixing withou
 \end{equation}
 
 \subsection{Continuous Chaotic Systems}
-Differently from discrete maps, continuous chaotic systems are defined by ordinary differential equations (ODEs) that evolve seamlessly over continuous time. 
+Unlike discrete maps, continuous chaotic systems are defined by ordinary differential equations (ODEs) that evolve seamlessly over continuous time. 
 This conceptual framework is inherently incompatible with the discrete, clock-driven architecture of standard microcontrollers.
 
 In order to address this architectural gap, the continuous ODEs must be discretized. In this study, each continuous map has been implemented utilizing the \textit{Fourth-Order Runge-Kutta method (RK4)}~\cite[p. 711]{KR4}. 
@@ -1532,7 +1573,7 @@ A fundamental property of chaotic systems is the presence of an initial transien
 When a chaotic map is initialized, its earliest iterations may exhibit residual predictability before fully converging into its strange attractor. 
 To guarantee maximum non-linear entropy from the very first encrypted byte, the system must bypass this initial correlation.
 
-In this implementation, a "burn-in" mechanism is introduced: upon initialization, the chaotic map is iterated multiple times silently, updating its internal state without altering the S-Box. 
+In this implementation, a ``burn-in'' mechanism is introduced: upon initialization, the chaotic map is iterated multiple times silently, updating its internal state without altering the S-Box. 
 For discrete maps, the system executes 500 pre-iterations to ensure deep chaotic diffusion. 
 Conversely, for continuous systems evaluated via RK4 numerical integration, the pre-iterations are strictly limited to 10. 
 This architectural distinction is necessary because continuous ODEs are inherently susceptible to floating-point drift; iterating them excessively without bounded constraints could lead to severe numerical instability or overflow on embedded CPUs.
@@ -1551,7 +1592,7 @@ By evolving the chaotic state only once every 128 bits of plaintext, the overall
 
 \paragraph{Physical Security and RAM Pre-computation}
 Crucially, the chosen update frequency profoundly impacts the system's resilience to micro-architectural power leakages. 
-In a standard C implementation where memory is constrained, the chaotic S-Box substitution is computed "on the fly" by reading the standard static LUT from memory (via an Assembly \texttt{LDR} instruction) and subsequently adding the chaotic shift (via an \texttt{ADD} instruction). 
+In a standard C implementation where memory is constrained, the chaotic S-Box substitution is computed ``on the fly'' by reading the standard static LUT from memory (via an Assembly \texttt{LDR} instruction) and subsequently adding the chaotic shift (via an \texttt{ADD} instruction). 
 Theoretically, an attacker with an infinitely precise oscilloscope could isolate the power peak of the deterministic read a fraction of a nanosecond before the chaotic noise is injected. 
 
 In physical reality, this vulnerability is largely mitigated by signal convolution: the inherent capacitance of the circuit acts as a low-pass filter, physically merging the energy peaks of the two consecutive instructions into a single, unpredictable analog wave that defeats the ML classifier. 
@@ -1562,9 +1603,11 @@ The viability of this ultimate defense is strictly tied to the update frequency.
 Conversely, attempting this pre-computation 14 times per block under the \texttt{once-per-round} paradigm would completely negate the performance gains achieved by collapsing the multidimensional weight matrix into a scalar.
 
 \paragraph{Transition to Performance Analysis}
-In the next chapter, following the selection and testing of the optimal weight-balancing parameters ($\alpha$, $\beta$, $\gamma$, and $\delta$), a comprehensive benchmark comparison between the \texttt{once-per-round} and \texttt{once-per-block} approaches will be presented. 
+In the next chapter, following the selection and testing of the optimal weight-balancing parameters ($\alpha$, $\beta$, $\gamma$, and $\delta$), 
+additional NIST statistical tests will be performed over the \texttt{once-per-block} implementation to verify that the chaotic alteration maintains the strict randomness properties required for a cryptographic cipher.
+Finally, comprehensive benchmark comparison between the \texttt{once-per-round} and \texttt{once-per-block} approaches will be presented. 
 This analysis will evaluate energy consumption, execution time, and throughput variations against the default standard AES implementation. 
-Finally, additional NIST statistical tests will be performed over the \texttt{once-per-block} implementation to verify that the chaotic alteration maintains the strict randomness properties required for a cryptographic cipher.
+ 
 
 
 % ====================================================================================================
@@ -1580,8 +1623,8 @@ In the resource-constrained context of satellite communications, physical factor
 
 This chapter presents a comprehensive experimental analysis of the proposed chaotic AES architecture. 
 First, it details the rigorous empirical methodology utilized to tune the chaotic control parameters ($\alpha$, $\beta$, $\gamma$, and $\delta$). 
-Subsequently, it provides a benchmark comparison evaluating the \texttt{once-per-round} and \texttt{once-per-block} update strategies against the default AES-256-GCM implementation. 
-Finally, the selected chaotic configuration is subjected to the NIST Statistical Test Suite to formally verify that the pseudo-randomness and structural entropy of the modified cipher remain uncompromised.
+Subsequently, the selected chaotic configuration is subjected to the NIST Statistical Test Suite to formally verify that the pseudo-randomness and structural entropy of the modified cipher remain uncompromised.
+Finally, it provides a benchmark comparison evaluating the \texttt{once-per-round} and \texttt{once-per-block} update strategies against the default AES-256-GCM implementation.
 
 
 \section{Chaotic Parameter Selection and Tuning Methodology}
@@ -1699,7 +1742,7 @@ Consequently, these specific optimized values have been hardcoded into the C imp
 
 \section{Randomness Properties Preservation}
 Following the derivation of the optimal chaotic parameters, the subsequent validation phase entails the application of the official NIST Statistical Test Suite (SP 800-22 Rev 1a)~\cite{NISTRandomnessTestSuite}. 
-This standard framework comprises 15 distinct statistical tests (effectively 16, as the Cumulative Sums test is evaluated across two modes) specifically designed to assess the randomness of pseudo random number generators. 
+This standard framework comprises 15 distinct statistical tests (effectively 16, as the Cumulative Sums test is evaluated across two modes) specifically designed to assess the randomness of pseudo-random number generators. 
 
 In modern cryptographic literature, this suite is also rigorously employed to verify that the ciphertexts produced by symmetric encryption algorithms remain statistically indistinguishable from pure, unpredictable noise. 
 Consequently, this study utilizes the NIST suite to formally prove that the chaotic modifications injected into the AES implementation preserve the pristine random properties characteristic of the unaltered baseline algorithm.
@@ -1719,7 +1762,7 @@ Crucially, the overall validation of a cryptographic system cannot depend on a s
 Instead, an entire set of independently generated sequences must be analyzed to produce a statistically significant distribution capable of absorbing the 1\% error threshold. 
 For the purpose of this study, the evaluation metric is established over a sequence count of 100 iterations for each chaotic map.
 
-To prevent the application of an overly rigid "one-out, all-out" policy, where a single sequence failure would inexplicably compromise the entire cipher,
+To prevent the application of an overly rigid ``one-out, all-out'' policy, where a single sequence failure would inexplicably compromise the entire cipher,
 the assessment relies on the NIST proportion margin formula:
 \begin{equation}
     \text{Margin} = 3 \cdot \sqrt{\frac{\text{Target}_{\text{prop}} \cdot (1 - \text{Target}_{\text{prop}})}{\text{Sequence}_{\text{count}}}}
@@ -1782,7 +1825,7 @@ This provides a textbook empirical observation of the Type I error (false positi
 Before evaluating the physical performance metrics of the embedded implementation, a brief theoretical premise regarding the cipher's mathematical cryptanalysis resistance is required. 
 In the foundational study by Kumar et al.~\cite{KumarPaper}, the authors benchmarked chaotic S-Boxes against linear and differential cryptanalysis using the Logistic and Hénon maps as their primary case studies. 
 
-As reported in their theoretical analysis, dynamically perturbing the S-Box introduces a \\ marginal mathematical trade-off: individual chaotic maps cause a slight fluctuation in the \textit{Non-Linearity (NL)} score (dipping from the standard 112 to approximately 108-110) and a minor increase in \textit{Differential Uniformity (DU)} (from the baseline 4.0 to 5.0-6.0). 
+As reported in their theoretical analysis, dynamically perturbing the S-Box introduces a marginal mathematical trade-off: individual chaotic maps cause a slight fluctuation in the \textit{Non-Linearity (NL)} score (dipping from the standard 112 to approximately 108-110) and a minor increase in \textit{Differential Uniformity (DU)} (from the baseline 4.0 to 5.0-6.0). 
 In cryptographic engineering, this represents a well-documented and acceptable compromise: a minimal reduction of theoretical algebraic bounds in exchange for a massive increase in micro-architectural side-channel resilience. 
 
 Because the scalar optimization proposed in this thesis applies the exact same bounded mathematical perturbation (via the $\gamma \cdot \tanh$ limiter) across all evaluated maps, these marginal DU and NL fluctuations are inherently inherited. 
@@ -1800,8 +1843,8 @@ The node features a dual-socket architecture (32 physical cores total), of which
 The objective of these benchmarks is not to record the absolute maximum speed achievable on enterprise hardware, but rather to extract the relative performance delta (i.e. the overhead)
 between the baseline AES implementation and the chaotic injected variants.
 
-For both the proposed chaos-update implementation once-per-round and once-per-block, the measurement are based on 1000 iteration
-over a fixed weight payload of 5MB.
+For both the \texttt{once-per-round} and \texttt{once-per-block} chaos-update implementations, 
+the measurements are based on 1,000 iterations over a fixed-size payload of 5~MB.
 
 \subsection{Once-per-Round Update Benchmarks}
 As detailed in Table~\ref{tab:table_opr}, the \texttt{once-per-round} chaotic update strategy introduces an expected, quantifiable increase in the total execution time for both the encryption and decryption phases, with a consequent reduction in data throughput. 
@@ -1868,7 +1911,7 @@ Implementing the \texttt{once-per-round} Rössler map, for example, would drain 
 This significant energy penalty highlights the critical necessity of introducing the optimized \texttt{once-per-block} updating strategy.
 
 \paragraph{Memory Footprint and SWaP Viability}
-To complete the architectural profiling of the \\ \texttt{once-per-round} implementation, it is imperative to analyze its memory footprint, a critical metric for devices subjected to strict SWaP constraints. 
+To complete the architectural profiling of the \texttt{once-per-round} implementation, it is imperative to analyze its memory footprint, a critical metric for devices subjected to strict SWaP constraints. 
 Figure~\ref{fig:memory_footprint} illustrates the combined Stack and Heap memory usage for each configuration during execution.
 
 \begin{figure}[htbp]
@@ -1885,7 +1928,7 @@ This requirement logically scales to 32 bytes for the two-dimensional Hénon map
 
 It is important to contextualize that this dynamic Heap allocation is primarily an artifact of the modular testing environment, designed to swap chaotic parameters at runtime. 
 In a production-grade firmware deployed on a satellite, these parameters would be statically compiled into the Stack or flash memory. 
-Regardless of the allocation strategy, a maximum memory overhead of 56 Bytes is absolutely negligible even for the most constrained embedded microcontrollers, confirming that the chaotic injection satisfies the "Size" requirement of the aerospace SWaP paradigm flawlessly.
+Regardless of the allocation strategy, a maximum memory overhead of 56 Bytes is absolutely negligible even for the most constrained embedded microcontrollers, confirming that the chaotic injection satisfies the ``Size'' requirement of the aerospace SWaP paradigm flawlessly.
 
 \subsection{Once-per-Block Update Benchmarks}
 Finally, the exact same empirical benchmark suite was executed against the newly proposed \texttt{once-per-block} chaotic update strategy. 
@@ -1947,7 +1990,7 @@ Applying the same constant-power proxy assumptions established in the previous s
 For instance, the Rössler map, which previously exhibited a simulated $\approx 24\%$ energy penalty, now limits the satellite's battery drain to a highly sustainable $\approx 3.2\%$ overhead. 
 
 Crucially, this temporal and energetic optimization is achieved without imposing any supplementary memory footprint. 
-In the embedded C codebase, transitioning between the two strategies requires exclusively repositioning the \textsc{updateChaos()} function call outside the block's main `for` loop, as illustrated in the code~\ref{lst:chaosUpdate}.
+In the embedded C codebase, transitioning between the two strategies requires exclusively repositioning the \textsc{updateChaos()} function call outside the block's main \texttt{for} loop, as illustrated in the code~\ref{lst:chaosUpdate}.
 
 \begin{clisting}[label={lst:chaosUpdate}]{Chaos update architectural repositioning}
 static void Cipher(struct AES_CHAOS_ctx* ctx, state_t* state, const uint8_t* RoundKey) {
@@ -2002,13 +2045,13 @@ The architectural focus of the chaotic injection proposed by Kumar et al.~\cite{
 In these standard software implementations, every byte substitution requires the CPU to execute a deterministic read operation from the memory module holding the S-Box array.
 
 The fundamental vulnerability of this architecture lies in the physical properties of the underlying hardware. 
-In standard \texttt{Complementary Metal-Oxide-Semiconductor (CMOS)} technology, logic transitions, specifically charging capacitance of a data bus wire from a logic `0` to a logic `1`, require a measurable draw of electrical current. 
+In standard \texttt{Complementary Metal-Oxide-Semiconductor (CMOS)} technology, logic transitions, specifically charging capacitance of a data bus wire from a logic \texttt{0} to a logic \texttt{1}, require a measurable draw of electrical current. 
 Consequently, as extensively formalized by Mangard et al. in their foundational side-channel analysis~\cite{HW_PROPOZIONALE_CONSUMO}, the power consumed during a memory transfer is directly proportional to the \textit{Hamming Weight (HW)} of the data word being moved. 
 By observing the power trace of the LUT memory access, an attacker can directly infer the Hamming Weight of the substituted byte.
 
 Conversely, modern high-end processors mitigate this vulnerability by utilizing dedicated cryptographic hardware extensions (such as AES-NI). 
 These modules calculate the Galois Field $\mathrm{GF}(2^8)$ arithmetic dynamically in hardware logic gates within a few clock cycles, entirely bypassing the memory bus and nullifying the LUT leakage. 
-However, deploying dedicated dynamic cryptographic hardware significantly increases the energy-per-bit consumption. 
+However, integrating dedicated cryptographic silicon increases die area, design complexity, and manufacturing costs, especially for radiation-hardened space-grade processors.
 While power constraints are generally not an issue for terrestrial Ground Stations, this overhead is strictly prohibitive for the space segment (satellites) and lightweight end-user devices. 
 Constrained nodes such as handheld satellite phones, remote VSAT (Very Small Aperture Terminal) ground sensors, and IoT satellite transceivers simply cannot sustain the power requirements of dynamic hardware calculation, 
 rendering the software LUT implementation a strictly necessary architectural compromise.
@@ -2041,15 +2084,15 @@ Ultimately, while the operational goals differ radically from the reference lite
 It will conclusively demonstrate that the proposed chaotic-injected implementation is capable of blinding the ML classifier, preventing it from exploiting physical leakages to extract any usable information.
 
 \section{The Machine Learning-Assisted Attack}
-The proposed cryptanalysis is a two-phase procedure that leverages the physical energy leakage of the S-Box to achieve a complete cryptographic key recovery. 
+The proposed cryptanalysis is a three-phase procedure that leverages the physical energy leakage of the S-Box to achieve a complete cryptographic key recovery. 
 To render this theoretical micro-architectural vulnerability practically exploitable against the AES-256-GCM architecture, a Machine Learning classifier is employed as the core analytical engine.
 
 \subsection{Profiling Phase and Data Collection}
 Executing an ML-based Side-Channel Attack fundamentally requires a robust profiling phase, during which the classifier is trained on a substantial dataset to learn the hidden correlations between the physical leakages and the internal cryptographic states. 
-In this threat model, aligning with standard profiling attack methodologies, the attacker is assumed to possess a "clone device" identical to the target satellite hardware. 
+In this threat model, aligning with standard profiling attack methodologies, the attacker is assumed to possess a ``clone device'' identical to the target satellite hardware. 
 This allows the attacker to freely encrypt known data, monitor the hardware, and perfectly label the resulting leakages.
 
-The profiling dataset generated for this study consists of 15,000 distinct communication traces. 
+The profiling dataset generated for this study consists of 15000 distinct communication traces. 
 As illustrated in Table~\ref{tab:training_data_sample}, each entry perfectly mirrors the information an attacker could intercept during a real SATCOM transmission: 
 the public Initialization Vector (IV) and the corresponding sequence of physical leakages captured at the output of the S-Box substitution (represented by the Hamming Weight, HW). 
 In a real-world physical attack, these discrete HW integers would simply be substituted by the analog voltage measurements extracted from an oscilloscope.
@@ -2083,12 +2126,12 @@ Crucially, this operational dataset is completely lacking of the internal target
 Instead, the model must autonomously predict these unknown cryptographic variables by correlating the intercepted public IVs and the physical power leakages against its established profiling parameters.
 
 \subsection{The Selected ML Architecture: Random Forest}
-To execute the cryptanalysis phase, this study implements a \texttt{Random Forest} classifier, deployed within the Python simulation environment via the \textsc{scikit-learn} library. 
+To execute the cryptanalysis phase, this study implements a \texttt{Random Forest} classifier~\cite{RandomForest}, deployed within the Python simulation environment via the \textsc{scikit-learn} library~\cite{scikit-learn}. 
 As part of the ensemble learning family, the Random Forest algorithm is exceptionally suited for analyzing discrete, tabular datasets characterized by non-linear relationships, which perfectly describes the correlation between S-Box byte substitutions and hardware leakage. 
 
 While Deep Neural Networks (DNNs) are heavily featured in modern side-channel literature, they were deliberately discarded for this specific threat model. 
 Neural Networks require larger profiling datasets to converge accurately and demand significantly heavier computational resources. 
-Given the restricted 15,000-trace training set available in this simulation, a Random Forest guarantees superior classification accuracy with a fraction of the computational overhead, drastically outperforming a DNN under strict data availability constraints.
+Given the restricted 15000-trace training set available in this simulation, a Random Forest guarantees superior classification accuracy with a fraction of the computational overhead, drastically outperforming a DNN under strict data availability constraints.
 
 Architecturally, a Random Forest operates by constructing a multitude of independent binary decision trees during the training phase. 
 When an input vector (the features) is fed into the system, each individual tree processes the data through a hierarchical sequence of logical conditions (nodes). 
@@ -2116,7 +2159,7 @@ The model is then compiled using the \textsc{fit} function, strictly adhering to
     
     \item \texttt{max\_depth = 8}: The maximum hierarchical depth of any tree is capped at 8 layers. This structurally prevents the algorithm from endlessly branching to memorize the training data (\textit{overfitting}), forcing the model to learn generalized, robust physical leakage correlations.
     
-    \item \texttt{min\_samples\_split = 10} and \texttt{min\_samples\_leaf = 20}: As secondary anti-overfitting mechanisms, an internal node requires at least 10 samples to authorize a further split, and any resulting terminal leaf must encompass a minimum of 20 samples. 
+    \item \texttt{min\_samples\_split = 20} and \texttt{min\_samples\_leaf = 10}: As secondary anti-overfitting mechanisms, an internal node requires at least 20 samples to authorize a further split, and any resulting terminal leaf must encompass a minimum of 10 samples. 
     This prevents the creation of hyperspecific, irrelevant branches driven by analog noise.
 
     \item \texttt{random\_state}: A fixed procedural seed is initialized to guarantee the absolute reproducibility of the simulated attack.
@@ -2267,7 +2310,7 @@ To form the required 16-byte initial counter block ($J_0$) that enters the AES c
 resulting in the structural concatenation: $J_0 = \mathit{IV} \parallel \mathtt{0x00000002}$. 
 
 While this deterministic padding is mathematically rigorous for standard encryption, it compromises the ML profiling phase. 
-Because the last four input bytes are artificially forced to be constant ($\mathtt{0x00, 0x00, 0x00, 0x02}$) across every single communication, and the target key $K_{P1}$ remains fixed, the resulting S-Box outputs for byte indexes 12 through 15 never change (as previously observable in the static final columns of Table~\ref{tab:training_data_sample}). 
+Because the last four input bytes are artificially forced to be constant ($\mathtt{0x00, 0x00, 0x00, 0x02}$) across every single communication, and the target key $K_{P1}$ remains fixed, the resulting S-Box outputs for byte indexes 12 through 15 never change (as previously observable in the static columns of Table~\ref{tab:training_data_sample}). 
 
 Machine Learning classifiers inherently rely on data variance to establish correlations and recognize physical leakage patterns. 
 The absolute staticity of these four bytes starves the Random Forest of any informational entropy, rendering it impossible to profile and predict the last four bytes of $K_{P1}$. 
@@ -2292,10 +2335,10 @@ This yields the following partially recovered state for the first S-Box output:
 where $P_i$ represents the $i$-th predicted byte, and $X_i$ denotes the four unpredictable bytes severely masked by the fixed $\mathtt{0x00000002}$ suffix.
 
 Despite the missing column, the recovery of the first 12 key bytes remains entirely feasible. 
-Because both the \textsc{SubBytes}() (or $S^{-1}()$) and \textsc{AddRoundKey()} operations process the state matrix strictly byte-by-byte, 
+Because both the \textsc{SubBytes}() and \textsc{AddRoundKey()} operations process the state matrix strictly byte-by-byte, 
 the spatial independence of the 16 bytes is rigorously preserved. 
 Since the initial input block is completely known ($J_0 = \mathit{IV} \parallel \mathtt{0x00000002}$), the first section of the key is trivially retrieved through a direct algebraic derivation. 
-Using the symbol $*$ to represent the unpredictable values, the extraction is mathematically formalized as follows:
+Using the symbol $*$ to represent the unpredictable values, the extraction is mathematically formalized as follows (\textsc{InvSubBytes} $\equiv S^{-1}$):
 
 \begin{equation}
 \setlength{\arraycolsep}{3.5pt}
@@ -2339,7 +2382,7 @@ recovering the remaining 20 bytes of the AES-256 state (comprising the 4 missing
 However, the incomplete state of $K_{P1}$ presents a critical algebraic roadblock for the direct recovery of $K_{P2}$. 
 This complication is structurally induced by the \textsc{ShiftRows()} and \textsc{MixColumns()} diffusion layers. 
 During the first round, the \textsc{ShiftRows()} operation scatters the four unknown bytes from the state's last column, distributing exactly one unknown byte into each of the four columns. 
-Subsequently, the \textsc{MixColumns()} routine processes these columns vertically, causing each single unknown byte of $K_{P1}$ to algebraically diffuse and "infect" an entire 4-byte column of the Round 1 output state ($State^{(1)}_{out}$).
+Subsequently, the \textsc{MixColumns()} routine processes these columns vertically, causing each single unknown byte of $K_{P1}$ to algebraically diffuse and ``infect'' an entire 4-byte column of the Round 1 output state ($State^{(1)}_{out}$).
 
 Because the input to the second round is now heavily entangled with the unknown variables of $K_{P1}$, it becomes impossible to perfectly compute $State^{(1)}_{out}$. 
 Consequently, even if a second Random Forest model perfectly predicts the S-Box outputs of the second round:
@@ -2448,7 +2491,7 @@ If the locally computed GMAC tag matches the intercepted authentication tag, the
 Through this methodology, the theoretical AES-256 search space is catastrophically reduced from an impossible $2^{256}$ down to $256^4 = 2^{32}$, 
 rendering the brute-force phase computationally trivial. 
 
-Furthermore, a significant micro-architectural optimization can be deployed to reduce this space even drastically further. 
+Furthermore, a significant micro-architectural optimization can be deployed to drastically reduce this space even further. 
 While the static nature of the $J_0$ padding prevents the Random Forest from predicting the exact byte values of $X_{12}\dots X_{15}$, 
 a physical side-channel trace still perfectly leaks the \textit{Hamming Weight} (HW) of those constant bytes. 
 By knowing exactly how many active bits ('1's) are present in the target byte, the attacker can preemptively filter the 256 iterations. 
@@ -2497,8 +2540,8 @@ Progress: 544096 / 1229312 keys tested
 \end{lightterminal}
 
 \paragraph{Chaotic Resilience: Once-per-Block Implementation}
-Conversely, the exact same attack \\
-methodology, utilizing the identical key, IV set, and profiling parameters, was deployed against the AES variant protected by the \texttt{once-per-block} Logistic Map injection.
+Conversely, the exact same attack methodology, utilizing the identical key, IV set, and profiling parameters, 
+was deployed against the AES variant protected by the \texttt{once-per-block} Logistic Map injection.
 
 The Phase 1 extraction failed entirely. As shown in Figure~\ref{fig:lgt_attack}, 
 the chaotic perturbation effectively masked the physical leakage, severely flattening the MLE probability distributions. 
@@ -2518,7 +2561,7 @@ Consequently, the ensuing brute-force search iterates over an entirely flawed st
 \begin{lightterminal}
 --- Phase 1: First 12 Bytes Extraction ---
 Byte 0 under analysis...  -> Found: 0f
-Byte 1 under analysis...  -> Found: db (WRONG)
+Byte 1 under analysis...  -> Found: d0 (WRONG)
 [...]
 Byte 11 under analysis... -> Found: f4 (WRONG)
 [*] Found K1 portion: 0fdb909c238b57fb1ef27af4
@@ -2573,7 +2616,7 @@ Lightweight one-dimensional discrete maps (such as Logistic and Tent) and two-di
 Conversely, trigonometric maps and three-dimensional continuous ODE systems (Lorenz, Chen, R\"ossler) imposed excessive computational penalties (exceeding $+20\%$ overhead), rendering them unsuitable for strict aerospace SWaP (Size, Weight, and Power) budgets under this update frequency.
 
 To resolve this bottleneck, this thesis introduced and validated the \texttt{once-per-block} update optimization. 
-The empirical results proved that updating the chaotic state once per 128-bit block flattens the temporal and energetic overhead across all evaluated systems—bringing lightweight maps down to a negligible $\approx 0.5\% - 1.5\%$ penalty and complex 3D systems below $4\%$,
+The empirical results proved that updating the chaotic state once per 128-bit block flattens the temporal and energetic overhead across all evaluated systems, bringing lightweight maps down to a negligible $\approx 0.5\% - 1.5\%$ penalty and complex 3D systems below $4\%$,
 while keeping the memory footprint completely invariant (at most 56 extra bytes).
 Most importantly, the offensive cryptanalysis confirmed that this architectural optimization does not compromise security: 
 while the Random Forest and Divide-and-Conquer attack achieved a $100\%$ key recovery rate on standard AES-256-GCM, it failed catastrophically against the \texttt{once-per-block} chaotic variants, 
@@ -2593,7 +2636,9 @@ While this study establishes a solid proof-of-concept for lightweight chaotic ma
     \item \textbf{Rad-Hard FPGA and Assembly Optimization:} Implementing the proposed chaotic cipher on radiation-hardened (rad-hard) FPGAs typically utilized in space segments would enable precise, 
     hardware-level timing and Joule dissipation measurements. In parallel, rewriting the core chaotic routines using a hybrid C-Assembly approach, inspired by the OpenSSL cryptographic library, could push software execution efficiency even closer to native hardware speeds.
 
-    \item \textbf{Fixed-Point Arithmetic Migration:} To completely eliminate reliance on Floating-Point Units (FPUs), future iterations could translate the chaotic map equations from floating-point (\texttt{double}) to fixed-point integer arithmetic, further reducing energy consumption and execution latency.
+    \item \textbf{Fixed-Point Arithmetic Migration:} To eliminate reliance on Floating-Point Units (FPUs) on low-power microcontrollers, and as a prerequisite for efficient FPGA synthesis, 
+    future iterations should translate the chaotic map equations from floating-point (\texttt{double}) to fixed-point integer arithmetic. 
+    This would guarantee cross-platform bit-level determinism and reduce energy consumption, while requiring careful analysis to mitigate \textit{dynamical degradation} and preserve cryptographic entropy.
     
     \item \textbf{Deep Learning-Based Cryptanalysis:} Finally, the \texttt{once-per-block} architecture should be stress-tested against more aggressive profiling adversaries utilizing Deep Learning models (such as Convolutional Neural Networks or Multi-Layer Perceptrons) trained on substantially larger datasets ($>100,000$ traces).
 \end{itemize}

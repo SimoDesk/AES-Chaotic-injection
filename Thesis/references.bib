@@ -1,12 +1,11 @@
 La mia repo
 @software{simodesk_aes_chaotic,
-  author       = {Simone Desk},
+  author       = {Simone Descontus},
   title        = {{AES-Chaotic-injection}: Chaotic Injection and Machine Unlearning on AES},
   year         = {2026},
   publisher    = {GitHub},
   journal      = {GitHub repository},
   url          = {https://github.com/SimoDesk/AES-Chaotic-injection},
-  urldate      = {2026-11-10}
 }
 
 Tante cose, quello lungo
@@ -59,6 +58,20 @@ url = {https://onlinelibrary.wiley.com/doi/abs/10.1002/sat.70009},
 eprint = {https://onlinelibrary.wiley.com/doi/pdf/10.1002/sat.70009},
 abstract = {ABSTRACT Satellite communication systems are important in global information exchange in areas such as military security, weather forecasting, and telecommunications. Advanced encryption standard (AES) is widely used in satellite communication due to its robustness and efficiency. However, conventional AES implementations focus primarily on encryption and decryption, which require further improvements in attack resilience, particularly against adversaries that use machine learning–based cryptanalysis and quantum threats. This paper examines the use of AES algorithms to protect data transmission over satellite communications. It introduces novel modifications to AES, incorporating machine unlearning as a defensive mechanism against attacks, chaotic injection for enhanced key unpredictability, and a quantum-inspired approach based on wavefunction collapse to mislead attackers. Machine unlearning dynamically alters cryptographic states upon intrusion detection, preventing key recovery. Chaotic injection is explored in the S-Box and key scheduling process to introduce controlled unpredictability without compromising reversibility. Additionally, a quantum circuit representation of AES is proposed, where an adversarial attack induces a wavefunction collapse, leading to incorrect but deterministic outputs. Performance evaluation under additive white Gaussian noise (AWGN) conditions demonstrates that the proposed AES achieves an average encryption throughput of 194 Mbps with only 3.2\% additional computational overhead, whereas entropy analysis shows 7.85–7.92 bits/byte, with an improvement of 1.08\% over standard AES and expanding the effective key space by approximately 6.6 times. Comparative security testing shows a 25\% increase in resistance to differential attacks. Empirical machine learning attacks demonstrate a drop in classifier accuracy from approximately 92.3\% for the baseline AES to 55.5\% for the proposed scheme. These results confirm that the proposed modifications significantly strengthen AES while maintaining computational efficiency for real-world satellite communication scenarios.},
 year = {2026}
+}
+
+ECB e CTR
+@techreport{ECB_CTR,
+  author      = {Morris Dworkin},
+  title       = {Recommendation for Block Cipher Modes of Operation: Methods and Techniques},
+  institution = {National Institute of Standards and Technology (NIST)},
+  type        = {NIST Special Publication},
+  number      = {800-38A},
+  address     = {Gaithersburg, MD},
+  month       = dec,
+  year        = {2001},
+  doi         = {10.6028/NIST.SP.800-38A},
+  url         = {https://nvlpubs.nist.gov/nistpubs/legacy/sp/nistspecialpublication800-38a.pdf}
 }
 
 GCM
@@ -336,7 +349,7 @@ Segments
   author       = {{Wikimedia Commons}},
   title        = {Diagram of the Space, Ground, and User Segments in a Satellite Communications System},
   year         = {2026},
-  url          = {https://commons.wikimedia.org/wiki/File:Space_Ground_User_segments.png}, % Sostituisci con l'URL esatto della pagina del file
+  url          = {https://commons.wikimedia.org/wiki/File:Ground_segment.png},
   note         = {Accessed: 06-11-2026}
 }
 
@@ -517,4 +530,47 @@ HW DIRETTAMENTE PROPORZIONALE A CONSUNMO
   publisher={Springer},
   isbn={978-0-387-38162-6},
   doi={10.1007/978-0-387-38162-6}
+}
+
+Shup method per il GCM rapito
+@misc{Shoup,
+  author       = {David A. McGrew and John Viega},
+  title        = {The Galois/Counter Mode of Operation (GCM)},
+  howpublished = {Submission to NIST Modes of Operation Process},
+  year         = {2004},
+  url          = {https://csrc.nist.rip/groups/ST/toolkit/BCM/documents/proposedmodes/gcm/gcm-spec.pdf}
+}
+
+PCLMULQDQ per GCM rapido
+@techreport{PCLMULQDQ,
+  author      = {Shay Gueron and Michael E. Kounavis},
+  title       = {Intel Carry-Less Multiplication Instruction and its Usage for Computing the GCM Mode},
+  institution = {Intel Corporation},
+  year        = {2010},
+  note        = {White Paper, Revision 2.0},
+  url         = {https://www.intel.com/content/dam/develop/external/us/en/documents/clmul-wp-rev-2-02-2014-04-20.pdf}
+}
+
+Random forest creator
+@article{RandomForest,
+  author  = {Leo Breiman},
+  title   = {Random Forests},
+  journal = {Machine Learning},
+  volume  = {45},
+  number  = {1},
+  pages   = {5--32},
+  year    = {2001},
+  doi     = {10.1023/A:1010933404324},
+  url     = {https://www.stat.berkeley.edu/~breiman/randomforest2001.pdf}
+}
+
+scikit-learn original paper
+@article{scikit-learn,
+  author  = {Fabian Pedregosa and Ga{\"e}l Varoquaux and Alexandre Gramfort and Vincent Michel and Bertrand Thirion and Olivier Grisel and Mathieu Blondel and Peter Prettenhofer and Ron Weiss and Vincent Dubourg and Jake Vanderplas and Alexandre Passos and David Cournapeau and Matthieu Brucher and Matthieu Perrot and {\'E}douard Duchesnay},
+  title   = {Scikit-learn: Machine Learning in {P}ython},
+  journal = {Journal of Machine Learning Research},
+  volume  = {12},
+  pages   = {2825--2830},
+  year    = {2011},
+  url     = {https://www.jmlr.org/papers/volume12/pedregosa11a/pedregosa11a.pdf}
 }
