@@ -1,14 +1,14 @@
 # Fdb version 4
-["biber Thesis"] 1795102181.83585 "Thesis.bcf" "Thesis.bbl" "Thesis" 1795114085.77295 0
-  "Thesis.bcf" 1795114085.64162 114473 56c2629b40e249203a55da10b5157127 "pdflatex"
+["biber Thesis"] 0 "Thesis.bcf" "Thesis.bbl" "Thesis" 1795194940.8141 -1
+  "Thesis.bcf" 1795194940.68472 114473 56c2629b40e249203a55da10b5157127 "pdflatex"
   "references.bib" 1795102195.5952 26219 23af15a3f1fb820731e07addfd3532bd ""
   (generated)
   "Thesis.bbl"
   "Thesis.blg"
   (rewritten before read)
-["pdflatex"] 1795114077.75282 "/home/simodesk/Documenti/tirocinio/AES-Chaotic-injection/Thesis/Thesis.tex" "Thesis.pdf" "Thesis" 1795114085.77319 0
+["pdflatex"] 1795194932.54867 "/home/simodesk/Documenti/tirocinio/AES-Chaotic-injection/Thesis/Thesis.tex" "Thesis.pdf" "Thesis" 1795194940.81434 0
   "/etc/texmf/web2c/texmf.cnf" 1793624639.97428 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/simodesk/Documenti/tirocinio/AES-Chaotic-injection/Thesis/Thesis.tex" 1795114077.54905 199061 5f07e4349fe4b7fe171d86d72f877d70 ""
+  "/home/simodesk/Documenti/tirocinio/AES-Chaotic-injection/Thesis/Thesis.tex" 1795194932.34431 200709 a4278d61241d2988c61d1cc1c2fb3d2b ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/adobe/symbol/psyr.tfm" 1136768653 1408 5937f58aa508ea2cea4901c07d10f5fe ""
@@ -280,13 +280,13 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1769369718 41603 27f93b3067076450172040dcd57ca8b3 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1793624664 5541477 3118940318599480888143717dd32d64 ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1793624706 3640839 892460ea349d91aa43e7a6e499b6218e ""
-  "Thesis.aux" 1795114085.63345 35982 dc969765a1470adc6a41842638527ebc "pdflatex"
+  "Thesis.aux" 1795194940.67572 36453 29428c7b18a1aa2a9bcd15e011e02391 "pdflatex"
   "Thesis.bbl" 1795102182.51925 77611 f1239d97574fdf5294214e295282bab1 "biber Thesis"
-  "Thesis.listing" 1795114081.64081 439 06e6d07cbe904f0eb22bd3c4f08e55d5 "pdflatex"
-  "Thesis.out" 1795114085.64045 13077 13f33ef80a1ee9841de71d347f223508 "pdflatex"
-  "Thesis.run.xml" 1795114085.64293 2350 f7074ee95bb26fb241c6ac8c80c34e08 "pdflatex"
-  "Thesis.tex" 1795114077.54905 199061 5f07e4349fe4b7fe171d86d72f877d70 ""
-  "Thesis.toc" 1795114085.64293 9475 2c3392161029d817660b722e66663bce "pdflatex"
+  "Thesis.listing" 1795194936.56523 439 1dd30f4132066fac88d1281b5bec5b57 "pdflatex"
+  "Thesis.out" 1795194940.68372 13077 13f33ef80a1ee9841de71d347f223508 "pdflatex"
+  "Thesis.run.xml" 1795194940.68593 2350 f7074ee95bb26fb241c6ac8c80c34e08 "pdflatex"
+  "Thesis.tex" 1795194932.34431 200709 a4278d61241d2988c61d1cc1c2fb3d2b ""
+  "Thesis.toc" 1795194940.68593 9474 d7feac8f602b8a9dd9214de4faea08de "pdflatex"
   "images/AES.png" 1794142998.8847 74562 f54862dbfa7f8bcfdc3ecb2b1fe2e5b8 ""
   "images/GCM_encryption.png" 1794327901.85171 76416 abaaff7f31813f09c91e418b2789ea81 ""
   "images/Memory_Footprint.png" 1794848702.21525 197408 2caf42bf1abb17c5565521ae9d2a4701 ""
@@ -294,8 +294,9 @@
   "images/Time_opb.png" 1794914871.05979 187868 3745e8ec1fe6c1e2bec749794b3fe8ec ""
   "images/Time_opr.png" 1794848440.03746 188408 9448aea65c5422d7038136ffeadb0850 ""
   "images/average_success_rate.png" 1794840098.42121 104120 94ec14f9478c9c592e0eab55bda0b26a ""
-  "images/logistic_attack_res.png" 1795113836.28815 4388309 3c57b1d4d257fab9705d34bec5264f48 ""
+  "images/logistic_attack_res.png" 1795186879.71387 4388254 b2c58d26aceeb2fe3faffc9b1d274a28 ""
   "images/logistic_hamming.png" 1794778272.84944 443578 5e04b46a2caef2af8b56fb7344037812 ""
+  "images/mySignature.png" 1795194636.52964 28783 40f97f1c1657d96e54c6966e42d672a5 ""
   "images/p_value_distributions.png" 1794841412.85573 93806 afae574a023276de641562d1bb9efea2 ""
   "images/sapienza_logo.png" 1793633726.81337 382398 7cc3328737a045896441c8804a7d52e3 ""
   "images/segment.png" 1793961875.49506 142521 922f3385afa99d5068bb0427f9689ff6 ""

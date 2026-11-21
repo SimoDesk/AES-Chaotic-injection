@@ -1,5 +1,5 @@
 \babel@toc {english}{}\relax 
-\contentsline {chapter}{Abstract}{ii}{Doc-Start}%
+\contentsline {chapter}{Abstract}{i}{Doc-Start}%
 \contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}%
 \contentsline {section}{\numberline {1.1}Thesis Objective}{1}{section.1.1}%
 \contentsline {section}{\numberline {1.2}Thesis Structure}{2}{section.1.2}%

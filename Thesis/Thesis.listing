@@ -1,6 +1,6 @@
 --- Phase 1: First 12 Bytes Extraction ---
 Byte 0 under analysis...  -> Found: 0f
-Byte 1 under analysis...  -> Found: d0 (WRONG)
+Byte 1 under analysis...  -> Found: db (WRONG)
 [...]
 Byte 11 under analysis... -> Found: f4 (WRONG)
 [*] Found K1 portion: 0fdb909c238b57fb1ef27af4

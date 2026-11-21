@@ -72,6 +72,7 @@
 
 % C code listing environment with custom styling
 \newtcblisting[auto counter, number within=chapter]{clisting}[2][]{
+    enhanced,
     listing only,
     arc=2mm,
     boxrule=0.7pt,
@@ -190,7 +191,7 @@
         targeting the S-box via machine unlearning
         \par}
 
-        \vspace{4cm}
+        \vspace{3.7cm}
 
         % Faculty and degree information
         {\small \color{sapienzaRed}
@@ -203,15 +204,17 @@
         % My name and ID number
         {\normalsize
         \textbf{Simone Descontus} \\
-        ID number 2116496
+        ID number 2116496 \\[0.3cm]
+        \includegraphics[height=1.2cm]{images/mySignature.png}
         \par}
 
-        \vspace{1.5cm}
+        \vspace{1cm}
 
         % Advisor information
         {\normalsize
         Advisor \\
-        Prof. Emiliano Casalicchio
+        Prof. Emiliano Casalicchio \\[0.3cm]
+%        \includegraphics[height=1.2cm]{images/profSignature.png}
         \par}
 
         \vfill
@@ -254,6 +257,18 @@ Author's email: \texttt{simo.desk04@gmail.com}
 
 \vspace{1cm} % Margine finale rispetto al bordo inferiore della pagina
 }
+
+\cleardoublepage
+\thispagestyle{empty}
+
+\vspace*{0.28\textheight}
+\begin{flushright}
+    \begin{minipage}{0.70\textwidth}
+        \raggedleft
+        \textit{It's time for something new, now.}\\
+    \end{minipage}
+\end{flushright}
+\cleardoublepage
 
 
 % Contents page
@@ -1681,7 +1696,7 @@ A smaller $dev_{\text{sum}}$ indicates a cryptographic behavior closer to the th
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.78\textwidth]{images/logistic_hamming.png}
+    \includegraphics[width=1\textwidth]{images/logistic_hamming.png}
     \caption{Logistic map tests results on the first phase}
     \label{fig:logisticParams}
 \end{figure}
@@ -1911,7 +1926,7 @@ Implementing the \texttt{once-per-round} Rössler map, for example, would drain 
 This significant energy penalty highlights the critical necessity of introducing the optimized \texttt{once-per-block} updating strategy.
 
 \paragraph{Memory Footprint and SWaP Viability}
-To complete the architectural profiling of the \texttt{once-per-round} implementation, it is imperative to analyze its memory footprint, a critical metric for devices subjected to strict SWaP constraints. 
+To complete the architectural profiling of the \texttt{once-per-\\round} implementation, it is imperative to analyze its memory footprint, a critical metric for devices subjected to strict SWaP constraints. 
 Figure~\ref{fig:memory_footprint} illustrates the combined Stack and Heap memory usage for each configuration during execution.
 
 \begin{figure}[htbp]
@@ -1990,7 +2005,7 @@ Applying the same constant-power proxy assumptions established in the previous s
 For instance, the Rössler map, which previously exhibited a simulated $\approx 24\%$ energy penalty, now limits the satellite's battery drain to a highly sustainable $\approx 3.2\%$ overhead. 
 
 Crucially, this temporal and energetic optimization is achieved without imposing any supplementary memory footprint. 
-In the embedded C codebase, transitioning between the two strategies requires exclusively repositioning the \textsc{updateChaos()} function call outside the block's main \texttt{for} loop, as illustrated in the code~\ref{lst:chaosUpdate}.
+In the embedded C codebase, transitioning between the two strategies requires exclusively repositioning the \textsc{updateChaos()} function call outside the block's main \texttt{for} loop, as illustrated in Listing~\ref{lst:chaosUpdate}.
 
 \begin{clisting}[label={lst:chaosUpdate}]{Chaos update architectural repositioning}
 static void Cipher(struct AES_CHAOS_ctx* ctx, state_t* state, const uint8_t* RoundKey) {
@@ -2517,7 +2532,7 @@ the correct value accumulated a score exceeding 1500, while all incorrect candid
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.75\textwidth]{images/standard_attack_res.png}
-    \caption{MLE probability scores for the Random Forest prediction of the first 12 key bytes on the standard AES-256-GCM architecture.}
+    \caption{MLE probability scores for the Random Forest prediction of the first 12 key bytes on the standard AES-256-GCM architecture. The green bar represents the confidence score achieved by the model for the predicted byte value.}
     \label{fig:std_attack}
 \end{figure}
 
@@ -2550,7 +2565,7 @@ The model managed to correctly identify only two bytes out of twelve. Given the 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.75\textwidth]{images/logistic_attack_res.png}
-    \caption{Flattened MLE probability scores for the prediction attempt on the chaotic-injected AES utilizing the \texttt{once-per-block} Logistic Map.}
+    \caption{Flattened MLE probability scores on chaotic-injected AES using the \texttt{once-per-block} Logistic Map. As in Figure~\ref{fig:std_attack}, the green bar shows the predicted value's confidence score, while the red bar highlights the actual key byte's score upon misprediction.}
     \label{fig:lgt_attack}
 \end{figure}
 
@@ -2561,7 +2576,7 @@ Consequently, the ensuing brute-force search iterates over an entirely flawed st
 \begin{lightterminal}
 --- Phase 1: First 12 Bytes Extraction ---
 Byte 0 under analysis...  -> Found: 0f
-Byte 1 under analysis...  -> Found: d0 (WRONG)
+Byte 1 under analysis...  -> Found: db (WRONG)
 [...]
 Byte 11 under analysis... -> Found: f4 (WRONG)
 [*] Found K1 portion: 0fdb909c238b57fb1ef27af4
@@ -2647,6 +2662,24 @@ While this study establishes a solid proof-of-concept for lightweight chaotic ma
 % New page for the bibliography
 \newpage
 \printbibliography[heading=bibintoc, title={Bibliography}]
+
+\cleardoublepage
+\chapter*{Ringraziamenti}
+\thispagestyle{empty}
+
+Per iniziare, ringrazio chi ha reso possibile il conseguimento di questo percorso senza mai pretendere nulla in cambio:
+i miei genitori, che in ogni momento mi hanno sempre supportato nel corso della mia crescita fino ad arrivare qui.
+
+Ringrazio anche mio fratello e mia sorella, i quali con la loro presenza hanno contribuito a rendermi la persona che sono oggi.
+
+Doveroso è anche il ringraziamento al professor Casalicchio per avermi seguito con costanza e disponibilità
+durante il periodo di tirocinio e nella stesura di questa tesi.
+
+In ultimo, ringrazio il miglior gruppo di amici che potessi mai desiderare di trovare, che mi hanno accompagnato in questi anni di studio
+non solo rendendoli estremamente più leggeri, ma probabilmente anche i tre migliori anni della mia vita, colmando le mie
+giornate di divertimento e spenzieratezza.
+
+Tra questi, un grazie speciale va a colei che da due anni è quotidianamente al mio fianco.
 
 
 \end{document}
